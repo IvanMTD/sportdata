@@ -1,0 +1,17 @@
+<div>
+  <form th:method="POST" th:action="@{/auth/user/add}" th:object="${user}">
+    <label for="username">имя пользователя</label><br>
+    <input type="text" placeholder="username" id="username" th:field="*{username}"><br>
+    <label for="password">пароль</label><br>
+    <input type="password" placeholder="password" id="password" th:field="*{password}"><br>
+    <label for="confirm">подтвердите пароль</label><br>
+    <input type="password" placeholder="confirm password" id="confirm" th:field="*{confirm}"><br>
+    <label for="email">электронная почта</label><br>
+    <input type="text" placeholder="email" id="email" th:field="*{email}"><br>
+    <label for="select">выберите роль</label><br>
+    <select th:field="*{role}" id="select">
+      <option th:each="r : ${roles}" th:text="${r.getName()}" th:value="${r}"></option>
+    </select><br><br>
+    <input type="submit" value="зарегистрировать">
+  </form>
+</div>
