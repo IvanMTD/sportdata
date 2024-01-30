@@ -1,5 +1,7 @@
 <div>
+    <form id="logoutForm" method="post" th:action="@{/logout}"></form>
     <a th:href="@{/}">главная</a>
     <a th:href="@{/athletes}">спортсмены</a>
+    <a id="logout" href="#" onclick="document.getElementById('logoutForm').submit()" th:if="${auth}">выход</a>
     <hr>
 </div>
