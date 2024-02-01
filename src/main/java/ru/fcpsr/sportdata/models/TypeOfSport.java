@@ -26,4 +26,8 @@ public class TypeOfSport {
     private SportFilterType sportFilterType;
     Set<Integer> subjectIds = new HashSet<>();
     Set<Integer> disciplineIds = new HashSet<>();
+
+    public void addDiscipline(Discipline discipline){
+        disciplineIds.add(discipline.getId());
+    }
 }

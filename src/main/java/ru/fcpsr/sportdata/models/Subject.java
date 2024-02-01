@@ -22,6 +22,7 @@ public class Subject {
     @Id
     private int id;
     private String title;
+    private FederalDistrict federalDistrict;
     private Set<Integer> typeOfSportIds = new HashSet<>();
     private Set<Integer> participantIds = new HashSet<>();
 }
