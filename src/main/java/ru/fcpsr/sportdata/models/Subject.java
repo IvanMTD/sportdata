@@ -25,4 +25,8 @@ public class Subject {
     private FederalDistrict federalDistrict;
     private Set<Integer> typeOfSportIds = new HashSet<>();
     private Set<Integer> participantIds = new HashSet<>();
+
+    public void addTypeOfSport(TypeOfSport typeOfSport){
+        typeOfSportIds.add(typeOfSport.getId());
+    }
 }

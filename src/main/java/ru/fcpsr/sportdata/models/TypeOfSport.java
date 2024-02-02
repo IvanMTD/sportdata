@@ -23,11 +23,16 @@ public class TypeOfSport {
     @Id
     private int id;
     private String title;
+    private Season season;
     private SportFilterType sportFilterType;
     Set<Integer> subjectIds = new HashSet<>();
     Set<Integer> disciplineIds = new HashSet<>();
 
     public void addDiscipline(Discipline discipline){
         disciplineIds.add(discipline.getId());
+    }
+
+    public void addSubject(Subject subject){
+        subjectIds.add(subject.getId());
     }
 }
