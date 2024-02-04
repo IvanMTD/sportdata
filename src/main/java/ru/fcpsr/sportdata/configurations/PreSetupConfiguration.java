@@ -9,7 +9,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.repositories.DisciplineRepository;
@@ -18,7 +17,6 @@ import ru.fcpsr.sportdata.repositories.TypeOfSportRepository;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.*;
 
 @Configuration
@@ -31,7 +29,13 @@ public class PreSetupConfiguration {
                 //setupSportDataBase(sportRepository,disciplineRepository);
                 //setupSubjects(sportRepository,subjectRepository);
                 //setupSportFilters(sportRepository,subjectRepository);
-                setupInSportSubject(sportRepository,subjectRepository);
+                //setupInSportSubject(sportRepository,subjectRepository);
+                /*sportRepository.findAll().flatMap(sport -> {
+                    if(sport.getSeason() != null) {
+                        System.out.println(sport.getTitle() + " | " + sport.getSeason().getTitle() + " | " + sport.getSportFilterType().getTitle());
+                    }
+                    return Mono.just(sport);
+                }).subscribe();*/
             }
         };
     }
@@ -60,7 +64,12 @@ public class PreSetupConfiguration {
         }
 
         for(String subjectName : baseMap.keySet()){
-
+            for(String sportName : baseMap.get(subjectName)){
+                sportRepository.findByTitle(sportName).flatMap(sport -> subjectRepository.findByTitle(subjectName).flatMap(subject -> {
+                    sport.addSubject(subject);
+                    return sportRepository.save(sport);
+                })).subscribe();
+            }
         }
 
         System.out.println("End process");
@@ -73,7 +82,7 @@ public class PreSetupConfiguration {
     }
 
     private void setupSportFilters(TypeOfSportRepository sportRepository, SubjectRepository subjectRepository){
-        HSSFWorkbook wb = getWorkBookFromHSSF("./src/main/resources/static/file/subjects.xls");
+        HSSFWorkbook wb = getWorkBookFromHSSF("./src/main/resources/static/file/basic_sports.xls");
         HSSFSheet sheet = wb.getSheet("ВСЕГО");
         Iterator<Row> rowIter = sheet.rowIterator();
         while (rowIter.hasNext()){
@@ -85,7 +94,6 @@ public class PreSetupConfiguration {
             Cell season = row.getCell(4); // Сезон
             if(row.getRowNum() != 0){
                 sportRepository.findByTitle(baseSportName.toString()).flatMap(s -> {
-                    System.out.println(s.getTitle());
                     s.setSeason(parseSeason(season.toString()));
                     s.setSportFilterType(parseFilter(sportType.toString()));
                     return Mono.just(s);
