@@ -1,7 +1,14 @@
 <div>
     <form id="logoutForm" method="post" th:action="@{/logout}"></form>
-    <a th:href="@{/}">главная</a>
-    <a th:href="@{/athletes}">спортсмены</a>
+    <div class="dropdown">
+        <button class="dropbtn">База данных</button>
+        <div class="dropdown-content">
+            <a th:href="@{/sport}">Виды спорта</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+            <a href="#">Link 4</a>
+        </div>
+    </div>
     <a id="logout" href="#" onclick="document.getElementById('logoutForm').submit()" th:if="${auth}">выход</a>
     <hr>
 </div>

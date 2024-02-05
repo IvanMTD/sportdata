@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title th:text="${title}">page-title</title>
+        <link href="/css/base.css" rel="stylesheet">
     </head>
     <body>
         <header th:insert="~{block/header}"></header>
@@ -11,6 +12,7 @@
         <div th:insert="~{page/login-page}" th:if="${index} == 'login-page'"></div>
         <div th:insert="~{page/main-page}" th:if="${index} == 'main-page'"></div>
         <div th:insert="~{page/user-reg-page}" th:if="${index} == 'user-reg-page'"></div>
+        <div th:insert="~{page/sport-page}" th:if="${index} == 'sport-page'"></div>
 
         <footer th:insert="~{block/footer}"></footer>
     </body>
