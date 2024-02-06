@@ -34,8 +34,8 @@ public class SportController {
                 Rendering.view("template")
                         .modelAttribute("title","sport")
                         .modelAttribute("index","sport-page")
-                        .modelAttribute("sports", sportService.getAll()
-                                /*sportService.getAll().flatMap(sport -> {
+                        .modelAttribute("sports",
+                                sportService.getAll().flatMap(sport -> {
                                     TypeOfSportDTO sportDTO = new TypeOfSportDTO(sport);
                                     return disciplineService.getAllByIds(sport.getDisciplineIds()).collectList().flatMap(disciplines -> {
                                         List<DisciplineDTO> disciplineDTOList = new ArrayList<>();
@@ -44,7 +44,6 @@ public class SportController {
                                             DisciplineDTO disciplineDTO = new DisciplineDTO();
                                             disciplineDTO.setId(discipline.getId());
                                             disciplineDTO.setTitle(discipline.getTitle());
-                                            disciplineDTO.setTypeOfSport(sportDTO);
                                             disciplineDTOList.add(disciplineDTO);
                                             groupIds.addAll(discipline.getAgeGroupIds());
                                         }
@@ -57,17 +56,15 @@ public class SportController {
                                                         AgeGroupDTO ageGroupDTO = new AgeGroupDTO();
                                                         ageGroupDTO.setId(ageGroup.getId());
                                                         ageGroupDTO.setTitle(ageGroup.getTitle());
-                                                        ageGroupDTO.setDiscipline(disciplineDTO);
                                                         disciplineDTO.addAgeGroup(ageGroupDTO);
                                                     }
                                                 }
                                             }
                                             sportDTO.setDisciplines(disciplineDTOS);
-                                            System.out.println(sportDTO.toString());
                                             return Mono.just(sportDTO);
                                         });
                                     });
-                                })*/
+                                })
                         )
                         .build()
         );

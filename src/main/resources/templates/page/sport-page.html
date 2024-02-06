@@ -1,7 +1,32 @@
 <div>
-    Информация
-    <script th:inline="javascript">
-        let data = [[${sports}]];
-        console.log(data)
-    </script>
+    <div style="display: inline-block; width: 20%">
+        <button onclick="doSort()">По алфавиту</button>
+        <div th:each="sport, stat : ${sports}" th:id="'s' + ${stat.index}">
+            <button th:text="${sport.getTitle()}" style="width: 100%"></button>
+        </div>
+        <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
+        <script th:inline="javascript">
+            function doSort() {
+                let sports = [[${sports}]];
+                sports.sort(function (a, b) {
+                    if (a.title < b.title) {
+                        return -1;
+                    }
+                    if (a.title > b.title) {
+                        return 1;
+                    }
+                    // если имена равны
+                    return 0;
+                });
+                for(let i=0; i<sports.length; i++){
+                    $('#s' + i).html('');
+                    $('#s' + i).append(
+                        '<div id="s' + i + '">\n' +
+                        '   <button style="width: 100%">' + sports[i].title + '</button>\n' +
+                        '</div>'
+                    )
+                }
+            }
+        </script>
+    </div>
 </div>
