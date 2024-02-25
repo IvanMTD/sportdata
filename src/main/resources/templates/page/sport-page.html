@@ -1,32 +1,54 @@
 <div>
-    <div style="display: inline-block; width: 20%">
+    <div style="display: inline-block; width: 20%; border: solid 1px black">
         <button onclick="doSort()">По алфавиту</button>
         <div th:each="sport, stat : ${sports}" th:id="'s' + ${stat.index}">
-            <button th:text="${sport.getTitle()}" style="width: 100%"></button>
+            <button th:id="${stat.index}" th:text="${sport.getTitle()}" style="width: 100%" onclick="showDisciplines(this.id)"></button>
         </div>
-        <script src="https://snipp.ru/cdn/jquery/2.1.1/jquery.min.js"></script>
-        <script th:inline="javascript">
-            function doSort() {
-                let sports = [[${sports}]];
-                sports.sort(function (a, b) {
-                    if (a.title < b.title) {
-                        return -1;
-                    }
-                    if (a.title > b.title) {
-                        return 1;
-                    }
-                    // если имена равны
-                    return 0;
-                });
-                for(let i=0; i<sports.length; i++){
-                    $('#s' + i).html('');
-                    $('#s' + i).append(
-                        '<div id="s' + i + '">\n' +
-                        '   <button style="width: 100%">' + sports[i].title + '</button>\n' +
-                        '</div>'
-                    )
-                }
-            }
-        </script>
+    </div>
+    <div id="disciplines" style="display: inline-block; width: 25%; height: 100%; border: solid 1px black">
+
     </div>
 </div>
+
+<script th:inline="javascript">
+    let sports = [[${sports}]];
+    function doSort() {
+        console.log(sports)
+        sports.sort(function (a, b) {
+            if (a.title < b.title) {
+                return -1;
+            }
+            if (a.title > b.title) {
+                return 1;
+            }
+            // если имена равны
+            return 0;
+        });
+        for(let i=0; i<sports.length; i++){
+            $('#s' + i).html('');
+            $('#s' + i).append(
+                '<button id="' + i + '" style="width: 100%" onclick="showDisciplines(this.id)">' + sports[i].title + '</button>\n'
+            );
+        }
+    }
+
+    function showDisciplines(id){
+        console.log(sports[id].title)
+        let disciplines = sports[id].disciplines;
+        $('#disciplines').html('');
+        $('#disciplines').prepend(
+            '<div style="display: block; border: solid 1px black">' +
+            '   <h4>' + sports[id].title + '</h4>' +
+            '   <p>Сезон: ' + sports[id].season + '</p>' +
+            '   <p>Спортифный фильтр: ' + sports[id].sportFilterType + '</p>' +
+            '</div>'
+        );
+        for(let i=0; i<disciplines.length; i++){
+            $('#disciplines').append(
+                '<div style="display: block">' +
+                '   <button style="text-align: center; width: 100%">' + disciplines[i].title + '</button>' +
+                '</div>'
+            );
+        }
+    }
+</script>
