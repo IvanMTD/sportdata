@@ -1,9 +1,202 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col"></div>
-        <div class="col-6 text-center">
-            <h1>Проект "Спортивная Дата"</h1>
+<header class="py-3 mb-3 border-bottom">
+    <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <ul class="dropdown-menu text-small shadow" style="">
+                <li>
+                    <a class="dropdown-item active" href="#" aria-current="page">Overview</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Inventory</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Customers</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Products</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Reports</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#">Analytics</a>
+                </li>
+            </ul>
         </div>
-        <div class="col"></div>
+        <div class="d-flex align-items-center">
+            <form class="w-100 me-3" role="search">
+                <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+            </form>
+            <div class="flex-shrink-0 dropdown">
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small shadow">
+                    <li>
+                        <a class="dropdown-item" href="#">New project...</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">Settings</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">Profile</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="#">Sign out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid pb-3">
+    <div class="d-grid gap-3" style="grid-template-columns: 1fr 2fr;">
+        <div class="bg-body-tertiary border rounded-3">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div id="profit-spark" class="apex-charts"></div>
+                </div>
+            </div>
+        </div>
+        <div class="bg-body-tertiary border rounded-3">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div id="sales-spark" class="apex-charts"></div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script>
+    Apex.grid = {
+        padding: {
+            right: 0,
+            left: 0
+        }
+    }
+
+    Apex.dataLabels = {
+        enabled: false
+    }
+
+    var randomizeArray = function (arg) {
+        var array = arg.slice();
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        while (0 !== currentIndex) {
+
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
+
+    var sparklineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46];
+
+    var colorPalette = ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0']
+
+    var salesspark = {
+        chart: {
+            type: 'area',
+            height: 180,
+            sparkline: {
+                enabled: true
+            },
+        },
+        stroke: {
+            width: 2,
+            curve: 'straight'
+        },
+        fill: {
+            opacity: 0.2,
+        },
+        series: [{
+            name: 'Hyper Sales ',
+            data: randomizeArray(sparklineData)
+        }],
+        yaxis: {
+            min: 0
+        },
+        colors: ['#DCE6EC'],
+        title: {
+            text: '$424,652',
+            offsetX: 20,
+            offsetY: 20,
+            style: {
+                fontSize: '24px'
+            }
+        },
+        subtitle: {
+            text: 'Sales',
+            offsetX: 20,
+            offsetY: 55,
+            style: {
+                fontSize: '14px'
+            }
+        }
+    }
+    new ApexCharts(document.querySelector("#sales-spark"), salesspark).render();
+
+    var profitspark = {
+        chart: {
+            type: 'bar',
+            height: 180,
+            sparkline: {
+                enabled: true
+            },
+        },
+        stroke: {
+            width: 0,
+            curve: 'straight'
+        },
+        fill: {
+            opacity: 0.5,
+        },
+        series: [{
+            name: 'Net Profits ',
+            data: randomizeArray(sparklineData)
+        }],
+        xaxis: {
+            crosshairs: {
+                width: 1
+            },
+        },
+        yaxis: {
+            min: 0
+        },
+        colors: ['#0acf97'],
+        title: {
+            text: '$135,965',
+            offsetX: 20,
+            offsetY: 20,
+            style: {
+                fontSize: '24px'
+            }
+        },
+        subtitle: {
+            text: 'Profits',
+            offsetX: 20,
+            offsetY: 55,
+            style: {
+                fontSize: '14px'
+            }
+        }
+    }
+
+    new ApexCharts(document.querySelector("#profit-spark"), profitspark).render();
+</script>

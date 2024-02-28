@@ -5,147 +5,18 @@
         <title th:text="${title}">page-title</title>
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="https://www.google.com/jsapi"></script>
-        <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
+        <script src="/js/apexcharts.amd.js"></script>
+        <script src="/js/apexcharts.common.js"></script>
+        <script src="/js/apexcharts.esm.js"></script>
+        <script src="/js/apexcharts.esm.js"></script>
+        <script src="/js/apexcharts.js"></script>
+        <link rel="stylesheet" href="/css/apexcharts.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     </head>
     <body>
         <header th:insert="~{block/header}"></header>
         <nav th:insert="~{block/navbar}"></nav>
-
-        <div class="card">
-            <div class="card-body p-0">
-                <div id="sales-spark" class="apex-charts"></div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body p-0">
-                <div id="profit-spark" class="apex-charts"></div>
-            </div>
-        </div>
-        <script>
-            Apex.grid = {
-                padding: {
-                    right: 0,
-                    left: 0
-                }
-            }
-
-            Apex.dataLabels = {
-                enabled: false
-            }
-
-            var randomizeArray = function (arg) {
-                var array = arg.slice();
-                var currentIndex = array.length, temporaryValue, randomIndex;
-
-                while (0 !== currentIndex) {
-
-                    randomIndex = Math.floor(Math.random() * currentIndex);
-                    currentIndex -= 1;
-
-                    temporaryValue = array[currentIndex];
-                    array[currentIndex] = array[randomIndex];
-                    array[randomIndex] = temporaryValue;
-                }
-
-                return array;
-            }
-
-            var sparklineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35, 27, 93, 53, 61, 27, 54, 43, 19, 46];
-
-            var colorPalette = ['#00D8B6', '#008FFB', '#FEB019', '#FF4560', '#775DD0']
-
-            var salesspark = {
-                chart: {
-                    type: 'area',
-                    height: 180,
-                    sparkline: {
-                        enabled: true
-                    },
-                },
-                stroke: {
-                    width: 2,
-                    curve: 'straight'
-                },
-                fill: {
-                    opacity: 0.2,
-                },
-                series: [{
-                    name: 'Hyper Sales ',
-                    data: randomizeArray(sparklineData)
-                }],
-                yaxis: {
-                    min: 0
-                },
-                colors: ['#DCE6EC'],
-                title: {
-                    text: '$424,652',
-                    offsetX: 20,
-                    offsetY: 20,
-                    style: {
-                        fontSize: '24px'
-                    }
-                },
-                subtitle: {
-                    text: 'Sales',
-                    offsetX: 20,
-                    offsetY: 55,
-                    style: {
-                        fontSize: '14px'
-                    }
-                }
-            }
-            new ApexCharts(document.querySelector("#sales-spark"), salesspark).render();
-
-            var profitspark = {
-                chart: {
-                    type: 'bar',
-                    height: 180,
-                    sparkline: {
-                        enabled: true
-                    },
-                },
-                stroke: {
-                    width: 0,
-                    curve: 'straight'
-                },
-                fill: {
-                    opacity: 0.5,
-                },
-                series: [{
-                    name: 'Net Profits ',
-                    data: randomizeArray(sparklineData)
-                }],
-                xaxis: {
-                    crosshairs: {
-                        width: 1
-                    },
-                },
-                yaxis: {
-                    min: 0
-                },
-                colors: ['#0acf97'],
-                title: {
-                    text: '$135,965',
-                    offsetX: 20,
-                    offsetY: 20,
-                    style: {
-                        fontSize: '24px'
-                    }
-                },
-                subtitle: {
-                    text: 'Profits',
-                    offsetX: 20,
-                    offsetY: 55,
-                    style: {
-                        fontSize: '14px'
-                    }
-                }
-            }
-
-            new ApexCharts(document.querySelector("#profit-spark"), profitspark).render();
-        </script>
 
         <div th:insert="~{page/login-page}" th:if="${index} == 'login-page'"></div>
         <div th:insert="~{page/main-page}" th:if="${index} == 'main-page'"></div>
