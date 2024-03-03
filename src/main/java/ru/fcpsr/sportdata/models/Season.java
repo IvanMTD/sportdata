@@ -3,7 +3,8 @@ package ru.fcpsr.sportdata.models;
 public enum Season {
     WINTER("Зимний"),
     SUMMER("Летний"),
-    ALL("Всесезонный");
+    ALL("Всесезонный"),
+    NO("");
 
     private final String title;
 

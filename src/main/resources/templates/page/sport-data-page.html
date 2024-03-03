@@ -1,0 +1,477 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'А'">
+                    <span class="page-link">А</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'А'">
+                    <a class="page-link" th:href="@{/database/sport/А}" >А</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Б'">
+                    <span class="page-link">Б</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Б'">
+                    <a class="page-link" th:href="@{/database/sport/Б}" >Б</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'В'">
+                    <span class="page-link">В</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'В'">
+                    <a class="page-link" th:href="@{/database/sport/В}">В</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Г'">
+                    <span class="page-link">Г</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Г'">
+                    <a class="page-link" th:href="@{/database/sport/Г}">Г</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Д'">
+                    <span class="page-link">Д</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Д'">
+                    <a class="page-link" th:href="@{/database/sport/Д}">Д</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Е'">
+                    <span class="page-link">Е</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Е'">
+                    <a class="page-link" th:href="@{/database/sport/Е}">Е</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ё'">
+                    <span class="page-link">Ё</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ё'">
+                    <a class="page-link" th:href="@{/database/sport/Ё}" >Ё</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ж'">
+                    <span class="page-link">Ж</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ж'">
+                    <a class="page-link" th:href="@{/database/sport/Ж}">Ж</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'З'">
+                    <span class="page-link">З</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'З'">
+                    <a class="page-link" th:href="@{/database/sport/З}">З</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'И'">
+                    <span class="page-link">И</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'И'">
+                    <a class="page-link" th:href="@{/database/sport/И}">И</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Й'">
+                    <span class="page-link">Й</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Й'">
+                    <a class="page-link" th:href="@{/database/sport/Й}">Й</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'К'">
+                    <span class="page-link">К</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'К'">
+                    <a class="page-link" th:href="@{/database/sport/К}">К</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Л'">
+                    <span class="page-link">Л</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Л'">
+                    <a class="page-link" th:href="@{/database/sport/Л}">Л</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'М'">
+                    <span class="page-link">М</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'М'">
+                    <a class="page-link" th:href="@{/database/sport/М}">М</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Н'">
+                    <span class="page-link">Н</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Н'">
+                    <a class="page-link" th:href="@{/database/sport/Н}">Н</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'О'">
+                    <span class="page-link">О</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'О'">
+                    <a class="page-link" th:href="@{/database/sport/О}">О</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'П'">
+                    <span class="page-link">П</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'П'">
+                    <a class="page-link" th:href="@{/database/sport/П}">П</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Р'">
+                    <span class="page-link">Р</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Р'">
+                    <a class="page-link" th:href="@{/database/sport/Р}">Р</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'С'">
+                    <span class="page-link">С</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'С'">
+                    <a class="page-link" th:href="@{/database/sport/С}">С</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Т'">
+                    <span class="page-link">Т</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Т'">
+                    <a class="page-link" th:href="@{/database/sport/Т}">Т</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'У'">
+                    <span class="page-link">У</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'У'">
+                    <a class="page-link" th:href="@{/database/sport/У}">У</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ф'">
+                    <span class="page-link">Ф</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ф'">
+                    <a class="page-link" th:href="@{/database/sport/Ф}">Ф</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Х'">
+                    <span class="page-link">Х</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Х'">
+                    <a class="page-link" th:href="@{/database/sport/Х}">Х</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ц'">
+                    <span class="page-link">Ц</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ц'">
+                    <a class="page-link" th:href="@{/database/sport/Ц}">Ц</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ч'">
+                    <span class="page-link">Ч</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ч'">
+                    <a class="page-link" th:href="@{/database/sport/Ч}">Ч</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ш'">
+                    <span class="page-link">Ш</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ш'">
+                    <a class="page-link" th:href="@{/database/sport/Ш}">Ш</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Щ'">
+                    <span class="page-link">Щ</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Щ'">
+                    <a class="page-link" th:href="@{/database/sport/Щ}">Щ</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ъ'">
+                    <span class="page-link">Ъ</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ъ'">
+                    <a class="page-link" th:href="@{/database/sport/Ъ}">Ъ</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ы'">
+                    <span class="page-link">Ы</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ы'">
+                    <a class="page-link" th:href="@{/database/sport/Ы}">Ы</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ь'">
+                    <span class="page-link">Ь</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ь'">
+                    <a class="page-link" th:href="@{/database/sport/Ь}">Ь</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Э'">
+                    <span class="page-link">Э</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Э'">
+                    <a class="page-link" th:href="@{/database/sport/Э}">Э</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ю'">
+                    <span class="page-link">Ю</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ю'">
+                    <a class="page-link" th:href="@{/database/sport/Ю}">Ю</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Я'">
+                    <span class="page-link">Я</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Я'">
+                    <a class="page-link" th:href="@{/database/sport/Я}">Я</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6 text-center py-5">
+            <h1>
+                <small class="text-body-secondary">
+                    Детальное состояние базы данных "Виды спорта"
+                </small>
+            </h1>
+            <h4 th:object="${disciplineForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </h4>
+            <h4 th:object="${sportForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </h4>
+            <h4 th:object="${groupForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+            </h4>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <!--<div class="col-6 py-5 overflow-auto border" style="height: 450px">-->
+        <div class="col-6 py-5">
+            <div class="accordion m-2" id="accordion-0">
+                <div class="accordion-item" th:each="sport, sport_stat : ${sports}">
+                    <h2 class="accordion-header">
+                        <button th:id="'btn-0-' + ${sport_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <span th:text="${sport.getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="${sport.getSeason().getTitle()}"></span>
+                                        <span th:text="${sport.getSportFilterType().getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="float-end">
+                                            <span class="muted">
+                                                <span data-bs-toggle="tooltip" data-bs-title="Отсутствую дисциплины" th:if="${sport.getDisciplines().size() == 0}"><i class="bi bi-exclamation-square fs-4 text-danger"></i></span>
+                                                <span th:id="'w-0-' + ${sport_stat.index}" data-bs-toggle="tooltip" data-bs-title="Отсутствуют возрастные группы" hidden><i class="bi bi-exclamation-triangle fs-4 text-warning"></i></span>
+                                                <span data-bs-toggle="tooltip" data-bs-title="Не указан сезон" th:if="${sport.getSeason().getTitle()} == ''"><i class="bi bi-calendar-minus fs-4 text-primary"></i></span>
+                                                <span data-bs-toggle="tooltip" data-bs-title="Не указан олимпийский фильтр" th:if="${sport.getSportFilterType().getTitle()} == ''"><i class="bi bi-flag fs-4 text-info"></i></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div th:id="'collapse-0-' + ${sport_stat.index}" class="accordion-collapse collapse">
+                        <div class="accordion-body bg-secondary-subtle">
+                            <div class="card m-2">
+                                <div class="card-header">
+                                    <span th:text="'Настройка ' + ${sport.getTitle()}"></span>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/title/update(letter = ${letter})}" th:object="${sportForm}">
+                                                <input th:id="'hidden3-0-' + ${sport_stat.index}" type="number" th:field="*{id}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('hidden3-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
+                                                </script>
+                                                <div class="col-8">
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text">Название</span>
+                                                        <input th:id="'text-0-' + ${sport_stat.index}" type="text" class="form-control" th:field="*{title}">
+                                                    </div>
+                                                    <script th:inline="javascript">
+                                                        document.getElementById('text-0-' + [[${sport_stat.index}]]).value = [[${sport}]].title;
+                                                    </script>
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="submit" class="btn btn-primary mb-3" value="Обновить" style="width: 100%">
+                                                </div>
+                                            </form>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/filter/update(letter = ${letter})}" th:object="${filterForm}">
+                                                <input th:id="'hidden-0-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('hidden-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
+                                                </script>
+                                                <div class="col-4">
+                                                    <div th:if="${sport.getSeason().getTitle} != ''">
+                                                        <select th:id="'select-0-' + ${sport_stat.index}" class="form-select" th:field="*{season}">
+                                                            <option th:each="s : ${seasons}" th:value="${s}" th:text="${s.getTitle()}"></option>
+                                                        </select>
+                                                        <script th:inline="javascript">
+                                                            document.getElementById('select-0-' + [[${sport_stat.index}]]).value = [[${sport}]].season;
+                                                        </script>
+                                                    </div>
+                                                    <div th:if="${sport.getSeason().getTitle} == ''">
+                                                        <select class="form-select" th:field="*{season}">
+                                                            <option th:each="s : ${seasons}" th:value="${s}" th:text="${s.getTitle()}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div th:if="${sport.getSportFilterType().getTitle} != ''">
+                                                        <select th:id="'select2-0-' + ${sport_stat.index}" class="form-select" th:field="*{filter}">
+                                                            <option th:each="f : ${filters}" th:value="${f}" th:text="${f.getTitle()}"></option>
+                                                        </select>
+                                                        <script th:inline="javascript">
+                                                            document.getElementById('select2-0-' + [[${sport_stat.index}]]).value = [[${sport}]].sportFilterType;
+                                                        </script>
+                                                    </div>
+                                                    <div th:if="${sport.getSportFilterType().getTitle} == ''">
+                                                        <select class="form-select" th:field="*{filter}">
+                                                            <option th:each="f : ${filters}" th:value="${f}" th:text="${f.getTitle()}"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="submit" class="btn btn-primary mb-3" value="Установить" style="width: 100%">
+                                                </div>
+                                            </form>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/add(letter = ${letter})}" th:object="${disciplineForm}">
+                                                <input th:id="'hidden2-0-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('hidden2-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
+                                                </script>
+                                                <div class="col-8">
+                                                    <input type="text" class="form-control" placeholder="Название дисциплины" th:field="*{title}">
+                                                </div>
+                                                <div class="col-4">
+                                                    <input type="submit" class="btn btn-primary mb-3" value="Добавить" style="width: 100%">
+                                                </div>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="accordion m-2" th:id="'accordion-0-' + ${sport_stat.index}">
+                                <div class="accordion-item" th:each="discipline, disciplines_stat : ${sport.getDisciplines()}">
+                                    <h2 class="accordion-header">
+                                        <button th:id="'btn-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <span th:text="${discipline.getTitle()}"></span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="float-end">
+                                                            <span class="muted">
+                                                                <span data-bs-toggle="tooltip" data-bs-title="Отсутствуют возрастные группы" th:if="${discipline.getAgeGroups().size() == 0}"><i class="bi bi-exclamation-triangle fs-4 text-warning"></i></span>
+                                                                <script th:inline="javascript">
+                                                                    if([[${discipline.getAgeGroups().size()}]] == 0){
+                                                                        document.getElementById('w-0-' + [[${sport_stat.index}]]).hidden = false;
+                                                                    }
+                                                                </script>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div th:id="'collapse-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" class="accordion-collapse collapse">
+                                        <div class="accordion-body bg-secondary-subtle">
+                                            <div class="card m-2">
+                                                <div class="card-header">
+                                                    <span th:text="'Настройка ' + ${discipline.getTitle()}"></span>
+                                                </div>
+                                                <div class="card-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/title/update(letter = ${letter})}" th:object="${disciplineForm}">
+                                                                <input th:id="'hidden3-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="number" th:field="*{id}" hidden>
+                                                                <script th:inline="javascript">
+                                                                    document.getElementById('hidden3-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].id;
+                                                                </script>
+                                                                <div class="col-8">
+                                                                    <div class="input-group mb-3">
+                                                                        <span class="input-group-text">Название</span>
+                                                                        <input th:id="'text-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="text" class="form-control" th:field="*{title}">
+                                                                    </div>
+                                                                    <script th:inline="javascript">
+                                                                        document.getElementById('text-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].title;
+                                                                    </script>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <input type="submit" class="btn btn-primary mb-3" value="Обновить" style="width: 100%">
+                                                                </div>
+                                                            </form>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/group/add(letter = ${letter})}" th:object="${groupForm}">
+                                                                <input th:id="'hidden2-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="number" th:field="*{disciplineId}" hidden>
+                                                                <script th:inline="javascript">
+                                                                    document.getElementById('hidden2-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].id;
+                                                                </script>
+                                                                <div class="col-8">
+                                                                    <input type="text" class="form-control" placeholder="Название группы" th:field="*{title}">
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <input type="submit" class="btn btn-primary mb-3" value="Добавить" style="width: 100%">
+                                                                </div>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="accordion m-2" th:id="'accordion-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}">
+                                                <div class="accordion-item" th:each="group, group_stat : ${discipline.getAgeGroups()}">
+                                                    <h2 class="accordion-header">
+                                                        <button th:id="'btn-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                                            <span th:text="${group.getTitle()}"></span>
+                                                        </button>
+                                                    </h2>
+                                                    <div th:id="'collapse-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" class="accordion-collapse collapse">
+                                                        <div class="accordion-body">
+                                                            <div class="card m-2">
+                                                                <div class="card-header">
+                                                                    <span th:text="'Настройка ' + ${group.getTitle()}"></span>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <ul class="list-group">
+                                                                        <li class="list-group-item">
+                                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/group/title/update(letter = ${letter})}" th:object="${groupForm}">
+                                                                                <input th:id="'hidden3-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="number" th:field="*{id}" hidden>
+                                                                                <script th:inline="javascript">
+                                                                                    document.getElementById('hidden3-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].id;
+                                                                                </script>
+                                                                                <div class="col-8">
+                                                                                    <div class="input-group mb-3">
+                                                                                        <span class="input-group-text">Название</span>
+                                                                                        <input th:id="'text-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="text" class="form-control" th:field="*{title}">
+                                                                                    </div>
+                                                                                    <script th:inline="javascript">
+                                                                                        document.getElementById('text-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].title;
+                                                                                    </script>
+                                                                                </div>
+                                                                                <div class="col-4">
+                                                                                    <input type="submit" class="btn btn-primary mb-3" value="Обновить" style="width: 100%">
+                                                                                </div>
+                                                                            </form>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <script th:inline="javascript">
+                                                        document.getElementById('btn-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]  + '-' + [[${group_stat.index}]]);
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script th:inline="javascript">
+                                        document.getElementById('btn-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]);
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script th:inline="javascript">
+                        document.getElementById('btn-0-' + [[${sport_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${sport_stat.index}]]);
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

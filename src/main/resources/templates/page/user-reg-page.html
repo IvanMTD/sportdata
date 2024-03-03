@@ -1,17 +1,38 @@
-<div>
-  <form th:method="POST" th:action="@{/auth/user/add}" th:object="${user}">
-    <label for="username">имя пользователя</label><br>
-    <input type="text" placeholder="username" id="username" th:field="*{username}"><br>
-    <label for="password">пароль</label><br>
-    <input type="password" placeholder="password" id="password" th:field="*{password}"><br>
-    <label for="confirm">подтвердите пароль</label><br>
-    <input type="password" placeholder="confirm password" id="confirm" th:field="*{confirm}"><br>
-    <label for="email">электронная почта</label><br>
-    <input type="text" placeholder="email" id="email" th:field="*{email}"><br>
-    <label for="select">выберите роль</label><br>
-    <select th:field="*{role}" id="select">
-      <option th:each="r : ${roles}" th:text="${r.getName()}" th:value="${r}"></option>
-    </select><br><br>
-    <input type="submit" value="зарегистрировать">
-  </form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col py-5">
+            <form th:method="POST" th:action="@{/auth/user/add}" th:object="${user}">
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-file-person fs-4"></i></span>
+                    <input type="text" class="form-control" placeholder="Имя пользователя" aria-label="Username"
+                           aria-describedby="basic-addon1" th:field="*{username}">
+                </div>
+                <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-file-earmark-lock2 fs-4"></i></span>
+                    <input type="password" class="form-control" placeholder="Придумайте пароль" aria-label="Password"
+                           aria-describedby="basic-addon1" th:field="*{password}">
+                </div>
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-file-earmark-lock fs-4"></i></span>
+                    <input type="password" class="form-control" placeholder="Подтверждение пароля" aria-label="Confirm"
+                           aria-describedby="basic-addon1" th:field="*{confirm}">
+                </div>
+                <span th:if="${#fields.hasErrors('confirm')}" th:errors="*{confirm}" style="color: red"></span>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-envelope-at fs-4"></i></span>
+                    <input type="email" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                           aria-describedby="basic-addon1" th:field="*{email}">
+                </div>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
+                <select class="form-select" th:field="*{role}" id="select">
+                    <option th:each="r : ${roles}" th:text="${r.getName()}" th:value="${r}"></option>
+                </select><br><br>
+                <input class="btn btn-primary" type="submit" value="Регистрация">
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
 </div>

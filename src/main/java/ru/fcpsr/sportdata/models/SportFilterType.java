@@ -3,7 +3,8 @@ package ru.fcpsr.sportdata.models;
 public enum SportFilterType {
     OLYMPIC("Олимпийский"),
     NO_OLYMPIC("Неолимпийский"),
-    ADAPTIVE("Адаптивный");
+    ADAPTIVE("Адаптивный"),
+    NO("");
 
     private final String title;
 

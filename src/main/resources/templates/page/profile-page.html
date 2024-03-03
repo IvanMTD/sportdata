@@ -1,0 +1,137 @@
+<div class="container-fluid">
+    <div id="profile" class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="list-group list-group-flush py-5">
+                <li class="list-group-item text-center text-dark  bg-secondary-subtle">Профиль</li>
+                <li class="list-group-item">
+                    <div th:object="${user}">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-file-person fs-4"></i></span>
+                            <input type="text" class="form-control" placeholder="Имя пользователя" aria-label="Username"
+                                   aria-describedby="basic-addon1" th:field="*{username}" disabled readonly>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-envelope-at fs-4"></i></span>
+                            <input type="email" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                                   aria-describedby="basic-addon1" th:field="*{email}" disabled readonly>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-gear fs-4"></i></span>
+                            <input type="text" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                                   aria-describedby="basic-addon1" th:value="${user.getRole().getName()}" disabled
+                                   readonly>
+                        </div>
+                        <div class="d-grid gap-2 p-2 m-0">
+                            <button class="btn btn-primary" type="button" onclick="edit()">Редактировать</button>
+                            <button class="btn btn-primary" type="button" onclick="password()">Обновить пароль</button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div id="edit" class="row" hidden>
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="list-group list-group-flush py-5">
+                <li class="list-group-item text-center text-dark  bg-secondary-subtle">Редактор</li>
+                <li class="list-group-item">
+                    <form th:method="POST" th:action="@{/auth/user/update}" th:object="${user}">
+                        <input type="number" th:field="*{id}" th:value="${user.getId()}" hidden>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-file-person fs-4"></i></span>
+                            <input type="text" class="form-control" placeholder="Имя пользователя" aria-label="Username"
+                                   aria-describedby="basic-addon1" th:field="*{username}">
+                        </div>
+                        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red"></span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-envelope-at fs-4"></i></span>
+                            <input type="email" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                                   aria-describedby="basic-addon1" th:field="*{email}">
+                        </div>
+                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
+                        <select class="form-select" th:field="*{role}" id="select">
+                            <option th:each="r : ${roles}" th:text="${r.getName()}" th:value="${r}"></option>
+                        </select>
+                        <div class="d-grid gap-2 p-2 m-0">
+                            <button class="btn btn-primary" type="button" onclick="profile()">Назад</button>
+                            <input class="btn btn-primary" type="submit" value="Сохранить">
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div id="password" class="row" hidden>
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="list-group list-group-flush py-5">
+                <li class="list-group-item text-center text-dark  bg-secondary-subtle">Поменять пароль</li>
+                <li class="list-group-item">
+                    <form th:method="POST" th:action="@{/auth/user/update/password}" th:object="${password}">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-file-earmark-lock2-fill fs-4"></i></span>
+                            <input type="password" class="form-control" placeholder="Старый пароль" aria-label="Username"
+                                   aria-describedby="basic-addon1" th:field="*{oldPassword}">
+                        </div>
+                        <span th:if="${#fields.hasErrors('oldPassword')}" th:errors="*{oldPassword}" style="color: red"></span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-file-earmark-lock2 fs-4"></i></span>
+                            <input type="password" class="form-control" placeholder="Новый пароль" aria-label="Username"
+                                   aria-describedby="basic-addon1" th:field="*{newPassword}">
+                        </div>
+                        <span th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}" style="color: red"></span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="bi bi-file-earmark-lock fs-4"></i></span>
+                            <input type="password" class="form-control" placeholder="Подтверждение нового пароля" aria-label="Username"
+                                   aria-describedby="basic-addon1" th:field="*{newPasswordConfirm}">
+                        </div>
+                        <span th:if="${#fields.hasErrors('newPasswordConfirm')}" th:errors="*{newPasswordConfirm}" style="color: red"></span>
+                        <div class="d-grid gap-2 p-2 m-0">
+                            <button class="btn btn-primary" type="button" onclick="profile()">Назад</button>
+                            <input class="btn btn-primary" type="submit" value="Обновить">
+                        </div>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let isEdit = [[${edit}]];
+    let isPassword = [[${pass}]]
+    if(isEdit){
+        document.getElementById('profile').hidden = true;
+        document.getElementById('edit').hidden = false;
+        document.getElementById('password').hidden = true;
+    }else if(isPassword){
+        document.getElementById('profile').hidden = true;
+        document.getElementById('edit').hidden = true;
+        document.getElementById('password').hidden = false;
+    }else{
+        document.getElementById('profile').hidden = false;
+        document.getElementById('edit').hidden = true;
+        document.getElementById('password').hidden = true;
+    }
+
+    function profile(){
+        document.getElementById('profile').hidden = false;
+        document.getElementById('edit').hidden = true;
+        document.getElementById('password').hidden = true;
+    }
+    function edit() {
+        document.getElementById('profile').hidden = true;
+        document.getElementById('edit').hidden = false;
+        document.getElementById('password').hidden = true;
+    }
+    function password(){
+        document.getElementById('profile').hidden = true;
+        document.getElementById('edit').hidden = true;
+        document.getElementById('password').hidden = false;
+    }
+</script>

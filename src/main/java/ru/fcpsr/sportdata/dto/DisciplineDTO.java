@@ -1,20 +1,30 @@
 package ru.fcpsr.sportdata.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.NoArgsConstructor;
+import ru.fcpsr.sportdata.models.Discipline;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class DisciplineDTO {
-    @Id
     private int id;
+    private int sportId;
+    @NotBlank(message = "Вы пытались добавить/обновить дисциплину с пустым полем названия. Поле не может быть пустым!")
     private String title;
     private TypeOfSportDTO typeOfSport;
-    private List<AgeGroupDTO> ageGroupDTOS = new ArrayList<>();
+    private List<AgeGroupDTO> ageGroups = new ArrayList<>();
 
     public void addAgeGroup(AgeGroupDTO ageGroupDTO) {
-        ageGroupDTOS.add(ageGroupDTO);
+        ageGroups.add(ageGroupDTO);
+    }
+
+    public DisciplineDTO(Discipline discipline){
+        setId(discipline.getId());
+        setTitle(discipline.getTitle());
+        setSportId(discipline.getTypeOfSportId());
     }
 }

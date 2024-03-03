@@ -1,0 +1,199 @@
+<!--
+form
+private int sportTotal;
+private int disciplineTotal;
+private int groupTotal;
+private int subjectTotal;
+private int participantTotal;
+-->
+
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6 text-center py-5">
+            <h1>
+                <small class="text-body-secondary">
+                    Общее состояние базы данных
+                </small>
+            </h1>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <ol class="list-group">
+                <li id="sportList" class="list-group-item d-flex justify-content-between align-items-start"
+                    onclick="showSport()">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Виды спорта</div>
+                        Информация по видам спорта
+                    </div>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getSportTotal()}"></span>
+                </li>
+                <li id="subjectList" class="list-group-item d-flex justify-content-between align-items-start"
+                    onclick="showSubject()">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Субъекты</div>
+                        Информация по субъектам
+                    </div>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getSubjectTotal()}"></span>
+                </li>
+                <li id="personList" class="list-group-item d-flex justify-content-between align-items-start"
+                    onclick="showPerson()">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Участники</div>
+                        Информация по участникам финалистам
+                    </div>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getParticipantTotal()}"></span>
+                </li>
+            </ol>
+        </div>
+        <div class="col-9">
+            <div id="sportInfo" class="container" hidden>
+                <ul class="list-group">
+                    <li class="list-group-item active" aria-current="true">Состояние базы данных "Виды спорта"</li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Видов спорта</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${form.getSportTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted">
+                                     <span id="s-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Дисциплин</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${form.getDisciplineTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted">
+                                     <span id="d-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                     <span id="d-w" data-bs-toggle="tooltip" data-bs-title="Дисциплин меньше чем видов спорта - неполнота базы данных" hidden><i class="bi bi-exclamation-square fs-4 text-warning"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Возрастных групп</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${form.getGroupTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted">
+                                     <span id="g-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                     <span id="g-w" data-bs-toggle="tooltip" data-bs-title="Возрастных групп меньше чем дисциплин - неполнота базы данных" hidden><i class="bi bi-exclamation-square fs-4 text-warning"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="d-grid gap-2 p-2">
+                    <a th:href="@{/database/sport/А}" class="btn btn-primary" type="button">Управление записями - "Виды спорта"</a>
+                </div>
+            </div>
+            <div id="subjectInfo" class="container" hidden>
+                <ul class="list-group">
+                    <li class="list-group-item active" aria-current="true">Состояние базы данных "Субъекты"</li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Субъектов</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${form.getSubjectTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted">
+                                     <span id="sub-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="d-grid gap-2 p-2">
+                    <a href="#" class="btn btn-primary" type="button">Управление записями - "Субъекты"</a>
+                </div>
+            </div>
+            <div id="personInfo" class="container" hidden>
+                <ul class="list-group">
+                    <li class="list-group-item active" aria-current="true">Состояние базы данных "Участники"</li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Участников</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${form.getParticipantTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted">
+                                     <span id="p-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="d-grid gap-2 p-2">
+                    <a href="#" class="btn btn-primary" type="button">Управление записями - "Участники"</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let sportTotal = [[${form}]].sportTotal;
+    let disciplineTotal = [[${form}]].disciplineTotal;
+    let groupTotal = [[${form}]].groupTotal;
+    let subjectTotal = [[${form}]].subjectTotal;
+    let participantTotal = [[${form}]].participantTotal;
+    document.getElementById('s-a').hidden = sportTotal !== 0;
+    document.getElementById('d-a').hidden = disciplineTotal !== 0;
+    document.getElementById('d-w').hidden = disciplineTotal > sportTotal;
+    document.getElementById('g-a').hidden = groupTotal !== 0;
+    document.getElementById('g-w').hidden = groupTotal > disciplineTotal;
+    document.getElementById('sub-a').hidden = subjectTotal !== 0
+    document.getElementById('p-a').hidden = participantTotal !== 0;
+
+    function showSport() {
+        document.getElementById('sportList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start active');
+        document.getElementById('subjectList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+        document.getElementById('personList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+
+        document.getElementById('sportInfo').hidden = false;
+        document.getElementById('subjectInfo').hidden = true;
+        document.getElementById('personInfo').hidden = true;
+    }
+
+    function showSubject() {
+        document.getElementById('sportList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+        document.getElementById('subjectList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start active');
+        document.getElementById('personList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+
+        document.getElementById('sportInfo').hidden = true;
+        document.getElementById('subjectInfo').hidden = false;
+        document.getElementById('personInfo').hidden = true;
+    }
+
+    function showPerson() {
+        document.getElementById('sportList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+        document.getElementById('subjectList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start');
+        document.getElementById('personList').setAttribute('class', 'list-group-item d-flex justify-content-between align-items-start active');
+        document.getElementById('sportInfo').hidden = true;
+        document.getElementById('subjectInfo').hidden = true;
+        document.getElementById('personInfo').hidden = false;
+    }
+</script>

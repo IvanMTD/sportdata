@@ -1,14 +1,74 @@
-<div>
-    <form id="logoutForm" method="post" th:action="@{/logout}"></form>
-    <div class="dropdown">
-        <button class="dropbtn">База данных</button>
-        <div class="dropdown-content">
-            <a th:href="@{/sport}">Виды спорта</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
-            <a href="#">Link 4</a>
-        </div>
+<div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasNavbarDark" aria-labelledby="offcanvasNavbarDarkLabel" aria-modal="true" role="dialog">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarDarkLabel">Меню</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <a id="logout" href="#" onclick="document.getElementById('logoutForm').submit()" th:if="${auth}">выход</a>
-    <hr>
+    <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" th:href="@{/}" onmouseover="closeOption()">Главная</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/database/summary}" onmouseover="showOption(1)">База данных</a>
+                <div id="option1" class="container" hidden>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-8">
+                            <a class="nav-link" aria-current="page" th:href="@{/database/sport/А}">Виды спорта</a>
+                            <a class="nav-link" aria-current="page" href="#">Субъекты</a>
+                            <a class="nav-link" aria-current="page" href="#">Участники</a>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onmouseover="showOption(2)">Соревнования</a>
+                <div id="option2" class="container" hidden>
+                    <div class="row">
+                        <div class="col"></div>
+                        <div class="col-8">
+                            <a class="nav-link" aria-current="page" href="#">Добавить результаты</a>
+                            <a class="nav-link" aria-current="page" href="#">Получить информацию</a>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onmouseover="closeOption(0)">Учебник</a>
+            </li>
+            <!--<li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>-->
+        </ul>
+        <!--<form class="d-flex mt-3" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>-->
+    </div>
 </div>
+
+<script th:inline="javascript">
+    function showOption(except){
+        if(except == 1){
+            document.getElementById('option1').hidden = false;
+        }else if(except == 2){
+            document.getElementById('option2').hidden = false;
+        }
+    }
+    function closeOption(){
+        document.getElementById('option1').hidden = true;
+        document.getElementById('option2').hidden = true;
+    }
+</script>

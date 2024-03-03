@@ -1,8 +1,33 @@
-<form th:method="POST" th:action="@{/auth/login}">
-    <h2>Вход</h2>
-    <label for="username">имя пользователя</label><br>
-    <input type="text" placeholder="username" name="username" id="username"><br>
-    <label for="password">пароль</label><br>
-    <input type="password" placeholder="password" name="password" id="password"><br><br>
-    <input type="submit" value="вход"><br>
-</form>
+<div class="container">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col py-5">
+            <form th:method="POST" th:action="@{/auth/login}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Имя пользователя</label>
+                    <input type="text" class="form-control" name="username" id="username" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">Не сообщайте вашу электронную почту и пароль никому.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control" name="password" id="password">
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="show-password">
+                    <label class="form-check-label" for="show-password">Показать пароль</label>
+                    <script>
+                        $('body').on('click', '#show-password', function () {
+                            if ($(this).is(':checked')) {
+                                $('#password').attr('type', 'text');
+                            } else {
+                                $('#password').attr('type', 'password');
+                            }
+                        });
+                    </script>
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

@@ -24,4 +24,8 @@ public class Discipline {
     private String title;
     private int typeOfSportId;
     private Set<Integer> ageGroupIds = new HashSet<>();
+
+    public void addGroup(AgeGroup group){
+        ageGroupIds.add(group.getId());
+    }
 }
