@@ -35,4 +35,8 @@ public class TypeOfSport {
     public void addSubject(Subject subject){
         subjectIds.add(subject.getId());
     }
+
+    public void addSubjectId(int subjectId) {
+        subjectIds.add(subjectId);
+    }
 }

@@ -9,6 +9,7 @@ import ru.fcpsr.sportdata.models.TypeOfSport;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public interface TypeOfSportRepository extends ReactiveCrudRepository<TypeOfSport,Integer> {
     Mono<TypeOfSport> findByTitle(String title);
@@ -16,4 +17,6 @@ public interface TypeOfSportRepository extends ReactiveCrudRepository<TypeOfSpor
 
     @Query("select * from type_of_sport where title like :letter || '%'")
     Flux<TypeOfSport> findAllWhereFirstLetterIs(@Param("letter") String letter);
+
+    Flux<TypeOfSport> findByIdIn(Set<Integer> ids);
 }

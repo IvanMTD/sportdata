@@ -1,0 +1,390 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6 text-center py-5">
+            <h1>
+                <small class="text-body-secondary">
+                    Детальное состояние базы данных "Субъекты"
+                </small>
+            </h1>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="pagination pagination-sm justify-content-center">
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'А'">
+                    <span class="page-link">А</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'А'">
+                    <a class="page-link" th:href="@{/database/subject/А}" >А</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Б'">
+                    <span class="page-link">Б</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Б'">
+                    <a class="page-link" th:href="@{/database/subject/Б}" >Б</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'В'">
+                    <span class="page-link">В</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'В'">
+                    <a class="page-link" th:href="@{/database/subject/В}">В</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Г'">
+                    <span class="page-link">Г</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Г'">
+                    <a class="page-link" th:href="@{/database/subject/Г}">Г</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Д'">
+                    <span class="page-link">Д</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Д'">
+                    <a class="page-link" th:href="@{/database/subject/Д}">Д</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Е'">
+                    <span class="page-link">Е</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Е'">
+                    <a class="page-link" th:href="@{/database/subject/Е}">Е</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ё'">
+                    <span class="page-link">Ё</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ё'">
+                    <a class="page-link" th:href="@{/database/subject/Ё}" >Ё</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ж'">
+                    <span class="page-link">Ж</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ж'">
+                    <a class="page-link" th:href="@{/database/subject/Ж}">Ж</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'З'">
+                    <span class="page-link">З</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'З'">
+                    <a class="page-link" th:href="@{/database/subject/З}">З</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'И'">
+                    <span class="page-link">И</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'И'">
+                    <a class="page-link" th:href="@{/database/subject/И}">И</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Й'">
+                    <span class="page-link">Й</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Й'">
+                    <a class="page-link" th:href="@{/database/subject/Й}">Й</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'К'">
+                    <span class="page-link">К</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'К'">
+                    <a class="page-link" th:href="@{/database/subject/К}">К</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Л'">
+                    <span class="page-link">Л</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Л'">
+                    <a class="page-link" th:href="@{/database/subject/Л}">Л</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'М'">
+                    <span class="page-link">М</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'М'">
+                    <a class="page-link" th:href="@{/database/subject/М}">М</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Н'">
+                    <span class="page-link">Н</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Н'">
+                    <a class="page-link" th:href="@{/database/subject/Н}">Н</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'О'">
+                    <span class="page-link">О</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'О'">
+                    <a class="page-link" th:href="@{/database/subject/О}">О</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'П'">
+                    <span class="page-link">П</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'П'">
+                    <a class="page-link" th:href="@{/database/subject/П}">П</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Р'">
+                    <span class="page-link">Р</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Р'">
+                    <a class="page-link" th:href="@{/database/subject/Р}">Р</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'С'">
+                    <span class="page-link">С</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'С'">
+                    <a class="page-link" th:href="@{/database/subject/С}">С</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Т'">
+                    <span class="page-link">Т</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Т'">
+                    <a class="page-link" th:href="@{/database/subject/Т}">Т</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'У'">
+                    <span class="page-link">У</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'У'">
+                    <a class="page-link" th:href="@{/database/subject/У}">У</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ф'">
+                    <span class="page-link">Ф</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ф'">
+                    <a class="page-link" th:href="@{/database/subject/Ф}">Ф</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Х'">
+                    <span class="page-link">Х</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Х'">
+                    <a class="page-link" th:href="@{/database/subject/Х}">Х</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ц'">
+                    <span class="page-link">Ц</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ц'">
+                    <a class="page-link" th:href="@{/database/subject/Ц}">Ц</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ч'">
+                    <span class="page-link">Ч</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ч'">
+                    <a class="page-link" th:href="@{/database/subject/Ч}">Ч</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ш'">
+                    <span class="page-link">Ш</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ш'">
+                    <a class="page-link" th:href="@{/database/subject/Ш}">Ш</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Щ'">
+                    <span class="page-link">Щ</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Щ'">
+                    <a class="page-link" th:href="@{/database/subject/Щ}">Щ</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ъ'">
+                    <span class="page-link">Ъ</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ъ'">
+                    <a class="page-link" th:href="@{/database/subject/Ъ}">Ъ</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ы'">
+                    <span class="page-link">Ы</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ы'">
+                    <a class="page-link" th:href="@{/database/subject/Ы}">Ы</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ь'">
+                    <span class="page-link">Ь</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ь'">
+                    <a class="page-link" th:href="@{/database/subject/Ь}">Ь</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Э'">
+                    <span class="page-link">Э</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Э'">
+                    <a class="page-link" th:href="@{/database/subject/Э}">Э</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Ю'">
+                    <span class="page-link">Ю</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Ю'">
+                    <a class="page-link" th:href="@{/database/subject/Ю}">Ю</a>
+                </li>
+                <li class="page-item active" aria-current="page" th:if="${letter} == 'Я'">
+                    <span class="page-link">Я</span>
+                </li>
+                <li class="page-item" th:if="${letter} != 'Я'">
+                    <a class="page-link" th:href="@{/database/subject/Я}">Я</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <div class="accordion">
+                <div class="accordion-item" th:each="subject, subject_stat : ${subjects}">
+                    <h2 class="accordion-header">
+                        <button th:id="'btn-0-' + ${subject_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <span th:text="${subject.getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="${subject.getFederalDistrict().getTitle}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <div class="float-end">
+                                            <span class="muted">
+                                                <!--<span data-bs-toggle="tooltip" data-bs-title="Описание проблемы"><i class="bi bi-exclamation-square fs-4 text-danger"></i></span>-->
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div th:id="'collapse-0-' + ${subject_stat.index}" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <p class="fs-4">Виды спорта которые представляет регион</p>
+                            <div class="container">
+                                <div class="row">
+                                    <ul class="list-group">
+                                        <li class="list-group-item active fs-5" aria-current="true">Добавить вид спорта</li>
+                                        <li class="list-group-item">
+                                            <form th:method="POST" th:action="@{/database/{letter}/subject/sport/add(letter=${letter})}" th:object="${ssForm}">
+                                                <input type="number" th:id="'id-2-' + ${subject_stat.index}" th:field="*{subjectId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('id-2-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                                </script>
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Виды спорта</span>
+                                                            <select class="form-select" aria-label="Default select example" th:field="*{sportId}">
+                                                                <option th:each="s : ${sportList}" th:value="${s.getId()}" th:text="${s.getTitle()}"></option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input class="btn btn-primary" type="submit" value="Добавить" style="width: 100%">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="row row-cols-4 py-5">
+                                    <div class="col border border-dark m-1" th:each="sport, sport_stat : ${subject.getSports()}" style="width: 200px">
+                                        <div class="row bg-success-subtle">
+                                            <div class="col-10">
+                                                <p th:text="${sport.getTitle()}"></p>
+                                            </div>
+                                            <div class="col-2" style="padding: 5px">
+                                                <button th:id="'b-' + ${subject_stat.index} + '-' + ${sport_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                                <div class="modal fade" th:id="'modal-' + ${subject_stat.index} + '-' + ${sport_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Внимание! Вы хотите удалить <span th:text="${sport.getTitle()}"></span>?</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>
+                                                                    Это удалит <span th:text="${sport.getTitle()}"></span> из списка который представляет регион <span th:text="${subject.getTitle()}"></span>. Вы уверены?
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                                <form th:method="GET" th:action="@{/database/{letter}/subject/{subjectId}/sport/delete/{sportId}(letter=${letter},subjectId=${subject.getId()},sportId=${sport.getId()})}">
+                                                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('b-' + [[${subject_stat.index}]] + '-' + [[${sport_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${subject_stat.index}]] + '-' + [[${sport_stat.index}]])
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <p th:text="${sport.getSeason().getTitle()}"></p>
+                                            <p th:text="${sport.getSportFilterType().getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="fs-4">Участники представляющие регион</p>
+                            <div class="container">
+                                <div class="row">
+                                    <ul class="list-group">
+                                        <li class="list-group-item active fs-5" aria-current="true">Добавить участника</li>
+                                        <li class="list-group-item">
+                                            <form th:method="POST" th:action="@{/database/{letter}/subject/participant/add(letter=${letter})}">
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Поиск участника</span>
+                                                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                                                            <datalist id="datalistOptions">
+                                                                <option th:each="p : ${pList}" th:value="${p.getFullName()}">
+                                                            </datalist>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input class="btn btn-primary" type="submit" value="Добавить" style="width: 100%">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="row row-cols-4 py-5">
+                                    <div class="col border border-dark m-1" th:each="user, user_stat : ${subject.getParticipants()}" style="width: 200px">
+                                        <div class="row bg-warning-subtle">
+                                            <div class="col-10">
+                                                <p th:text="${user.getFullName()}"></p>
+                                            </div>
+                                            <div class="col-2" style="padding: 5px">
+                                                <button th:id="'b-0-' + ${subject_stat.index} + '-' + ${user_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                                <div class="modal fade" th:id="'modal-0-' + ${subject_stat.index} + '-' + ${user_stat.index}" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5">Внимание!</span></h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                                <form>
+                                                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('b-0-' + [[${subject_stat.index}]] + '-' + [[${user_stat.index}]]).setAttribute('data-bs-target','#modal-0-' + [[${subject_stat.index}]] + '-' + [[${user_stat.index}]])
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <p th:text="'Дата рождения: ' + ${user.getDate()}"></p>
+                                            <p th:text="'Возраст: ' + ${user.getAge()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script th:inline="javascript">
+                        document.getElementById('btn-0-' + [[${subject_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${subject_stat.index}]])
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

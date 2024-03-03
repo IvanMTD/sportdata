@@ -40,7 +40,7 @@ public class AuthController {
     public Mono<Rendering> loginPage(){
         return Mono.just(
                 Rendering.view("template")
-                        .modelAttribute("title","login")
+                        .modelAttribute("title","Login page")
                         .modelAttribute("index","login-page")
                         .build()
         );
@@ -55,7 +55,7 @@ public class AuthController {
     public Mono<Rendering> userReg(){
         return Mono.just(
                 Rendering.view("template")
-                        .modelAttribute("title","registration")
+                        .modelAttribute("title","Registration")
                         .modelAttribute("index","user-reg-page")
                         .modelAttribute("user", new UserDTO())
                         .modelAttribute("roles", Role.values())
@@ -71,7 +71,7 @@ public class AuthController {
             if(errors.hasErrors()){
                 return Mono.just(
                         Rendering.view("template")
-                                .modelAttribute("title","registration")
+                                .modelAttribute("title","Registration")
                                 .modelAttribute("index","user-reg-page")
                                 .modelAttribute("user", user)
                                 .modelAttribute("roles", Role.values())

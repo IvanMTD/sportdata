@@ -33,6 +33,24 @@ public class AgeGroupService {
         return Mono.just(new AgeGroup()).flatMap(group -> {
             group.setDisciplineId(groupDTO.getDisciplineId());
             group.setTitle(groupDTO.getTitle());
+            group.setMinAge(groupDTO.getMinAge());
+            group.setMaxAge(groupDTO.getMaxAge());
+            return groupRepository.save(group);
+        });
+    }
+
+    // UPDATE
+    public Mono<AgeGroup> updateTitle(AgeGroupDTO groupDTO) {
+        return groupRepository.findById(groupDTO.getId()).flatMap(group -> {
+            group.setTitle(groupDTO.getTitle());
+            return groupRepository.save(group);
+        });
+    }
+
+    public Mono<AgeGroup> updateAges(AgeGroupDTO groupDTO) {
+        return groupRepository.findById(groupDTO.getId()).flatMap(group -> {
+            group.setMinAge(groupDTO.getMinAge());
+            group.setMaxAge(groupDTO.getMaxAge());
             return groupRepository.save(group);
         });
     }

@@ -11,7 +11,7 @@ public class HomeController {
     public Mono<Rendering> mainPage(){
         return Mono.just(
                 Rendering.view("template")
-                        .modelAttribute("title","main")
+                        .modelAttribute("title","Main page")
                         .modelAttribute("index","main-page")
                         .build()
         );

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,4 +32,16 @@ public class Participant {
     private LocalDate birthday;
     private Set<Integer> subjectIds = new HashSet<>();
     private Set<Integer> qualificationIds = new HashSet<>();
+
+    public String getFullName(){
+        return lastname + " " + name + " " + middleName;
+    }
+
+    public String getDate(){
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(birthday);
+    }
+
+    public int getAge(){
+        return LocalDate.now().getYear() - birthday.getYear();
+    }
 }

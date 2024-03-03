@@ -12,11 +12,20 @@ public class SubjectDTO {
     private int id;
     private String title;
     private FederalDistrict federalDistrict;
-    private List<TypeOfSportDTO> typeOfSportDTOS = new ArrayList<>();
+    private List<TypeOfSportDTO> sports = new ArrayList<>();
+    private List<ParticipantDTO> participants = new ArrayList<>();
 
     public SubjectDTO(Subject subject){
         setId(subject.getId());
         setTitle(subject.getTitle());
         setFederalDistrict(subject.getFederalDistrict());
+    }
+
+    public void addSport(TypeOfSportDTO sport){
+        sports.add(sport);
+    }
+
+    public void addParticipant(ParticipantDTO participant){
+        participants.add(participant);
     }
 }
