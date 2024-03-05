@@ -1,14 +1,11 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
-import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.FilterDTO;
-import ru.fcpsr.sportdata.dto.SubjectDTO;
-import ru.fcpsr.sportdata.dto.SubjectSportDTO;
+import ru.fcpsr.sportdata.dto.SubSportPartDTO;
 import ru.fcpsr.sportdata.dto.TypeOfSportDTO;
 import ru.fcpsr.sportdata.models.Discipline;
 import ru.fcpsr.sportdata.models.TypeOfSport;
@@ -24,6 +21,9 @@ public class TypeOfSportService {
     // FIND MONO
     public Mono<TypeOfSport> findSportByTitle(String title) {
         return sportRepository.findByTitle(title);
+    }
+    public Mono<TypeOfSport> findByIds(int typeOfSportId) {
+        return sportRepository.findById(typeOfSportId).defaultIfEmpty(new TypeOfSport());
     }
     public Mono<TypeOfSport> getById(int sportId) {
         return sportRepository.findById(sportId);
@@ -70,7 +70,7 @@ public class TypeOfSportService {
         });
     }
 
-    public Mono<TypeOfSport> addSubjectInSport(SubjectSportDTO ssDTO) {
+    public Mono<TypeOfSport> addSubjectInSport(SubSportPartDTO ssDTO) {
         return sportRepository.findById(ssDTO.getSportId()).flatMap(sport -> {
             sport.addSubjectId(ssDTO.getSubjectId());
             return sportRepository.save(sport);

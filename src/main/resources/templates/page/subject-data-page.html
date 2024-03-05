@@ -234,7 +234,8 @@
                                     <div class="col">
                                         <div class="float-end">
                                             <span class="muted">
-                                                <!--<span data-bs-toggle="tooltip" data-bs-title="Описание проблемы"><i class="bi bi-exclamation-square fs-4 text-danger"></i></span>-->
+                                                <span data-bs-toggle="tooltip" data-bs-title="Субъект не представляет ни какие виды спорта" th:if="${subject.getSports().size() == 0}"><i class="bi bi-exclamation-circle fs-4 text-danger"></i></span>
+                                                <span data-bs-toggle="tooltip" data-bs-title="Субъект не представляет ни каких участников" th:if="${subject.getParticipants().size() == 0}"><i class="bi bi-people-fill fs-4 text-danger"></i></i></span>
                                             </span>
                                         </div>
                                     </div>
@@ -319,14 +320,18 @@
                                     <ul class="list-group">
                                         <li class="list-group-item active fs-5" aria-current="true">Добавить участника</li>
                                         <li class="list-group-item">
-                                            <form th:method="POST" th:action="@{/database/{letter}/subject/participant/add(letter=${letter})}">
+                                            <form th:method="POST" th:action="@{/database/{letter}/subject/participant/add(letter=${letter})}" th:object="${ssForm}">
+                                                <input type="number" th:id="'user-add-' + ${subject_stat.index}" th:field="*{subjectId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('user-add-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                                </script>
                                                 <div class="row">
                                                     <div class="col-8">
                                                         <div class="input-group mb-3">
                                                             <span class="input-group-text">Поиск участника</span>
-                                                            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                                                            <input class="form-control" list="datalistOptions" placeholder="Наберите для поиска ..." th:field="*{fullName}">
                                                             <datalist id="datalistOptions">
-                                                                <option th:each="p : ${pList}" th:value="${p.getFullName()}">
+                                                                <option th:each="p : ${pList}" th:value="${p.getFullName()}" th:text="${p.getDate()} + ' | Возраст: ' + ${p.getAge()}">
                                                             </datalist>
                                                         </div>
                                                     </div>
@@ -354,11 +359,11 @@
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
-
+                                                                Вы пытаетесь удалить <span th:text="${user.getFullName}"></span> из списка представителей региона <span th:text="${subject.getTitle()}">. Вы уверены?</span>
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                                                <form>
+                                                                <form th:method="GET" th:action="@{/database/{letter}/subject/{subjectId}/delete/patricipant/{pid}(letter=${letter}, subjectId = ${subject.getId}, pid = ${user.getId()})}">
                                                                     <button type="submit" class="btn btn-primary">Подтвердить</button>
                                                                 </form>
                                                             </div>

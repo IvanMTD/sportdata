@@ -18,7 +18,11 @@ public class SubjectDTO {
     public SubjectDTO(Subject subject){
         setId(subject.getId());
         setTitle(subject.getTitle());
-        setFederalDistrict(subject.getFederalDistrict());
+        if(subject.getFederalDistrict() != null){
+            setFederalDistrict(subject.getFederalDistrict());
+        }else{
+            setFederalDistrict(FederalDistrict.NO);
+        }
     }
 
     public void addSport(TypeOfSportDTO sport){

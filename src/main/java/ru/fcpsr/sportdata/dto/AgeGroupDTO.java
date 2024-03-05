@@ -4,9 +4,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.fcpsr.sportdata.models.AgeGroup;
 
 
 @Data
+@NoArgsConstructor
 public class AgeGroupDTO {
     private int id;
     private int disciplineId;
@@ -19,4 +22,11 @@ public class AgeGroupDTO {
     @Max(value = 25, message = "Нельзя установить максимальный возраст больше 25 лет")
     private int maxAge;
     private DisciplineDTO discipline;
+
+    public AgeGroupDTO(AgeGroup group) {
+        setId(group.getId());
+        setTitle(group.getTitle());
+        setMinAge(group.getMinAge());
+        setMaxAge(group.getMaxAge());
+    }
 }

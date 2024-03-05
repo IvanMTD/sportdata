@@ -15,7 +15,7 @@ public class DisciplineDTO {
     private int sportId;
     @NotBlank(message = "Вы пытались добавить/обновить дисциплину с пустым полем названия. Поле не может быть пустым!")
     private String title;
-    private TypeOfSportDTO typeOfSport;
+    private TypeOfSportDTO sport;
     private List<AgeGroupDTO> ageGroups = new ArrayList<>();
 
     public void addAgeGroup(AgeGroupDTO ageGroupDTO) {

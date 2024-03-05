@@ -44,4 +44,8 @@ public class Participant {
     public int getAge(){
         return LocalDate.now().getYear() - birthday.getYear();
     }
+
+    public void addSubjectId(int subjectId) {
+        subjectIds.add(subjectId);
+    }
 }

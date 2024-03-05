@@ -1,0 +1,26 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6 text-center py-5">
+            <h1>
+                <small class="text-body-secondary">
+                    Детальное состояние базы данных "Участники"
+                </small>
+            </h1>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <form method="get" action="/database/participant/search">
+                <label for="dataList" class="form-label">Поиск в базе данных</label>
+                <input name="search" class="form-control" list="datalistOptions" id="dataList" placeholder="Напишите для поиска ... ">
+                <datalist id="datalistOptions">
+                    <option th:each="p : ${pList}" th:value="${p.getFullName}" th:text="${p.getDate()} + ' | Возраст: ' + ${p.getAge()}">
+                </datalist>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

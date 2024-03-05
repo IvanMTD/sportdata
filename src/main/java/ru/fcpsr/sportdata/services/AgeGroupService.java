@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -18,7 +19,9 @@ public class AgeGroupService {
     private final AgeGroupRepository groupRepository;
 
     // FIND MONO
-
+    public Mono<AgeGroup> getById(int ageGroupId) {
+        return groupRepository.findById(ageGroupId).defaultIfEmpty(new AgeGroup());
+    }
     // FIND FLUX
     public Flux<AgeGroup> getAllByIdsList(List<Integer> ageGroupIds) {
         return groupRepository.findAllByIdIn(ageGroupIds);

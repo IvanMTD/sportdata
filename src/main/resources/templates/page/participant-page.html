@@ -1,0 +1,178 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6 text-center py-5">
+            <h1>
+                <small class="text-body-secondary">
+                    Детальное состояние базы данных "Участники"
+                </small>
+            </h1>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <form method="get" action="/database/participant/search">
+                <label for="dataList" class="form-label">Поиск в базе данных</label>
+                <input name="search" class="form-control" list="datalistOptions" id="dataList" placeholder="Напишите для поиска ... ">
+                <datalist id="datalistOptions">
+                    <option th:each="p : ${pList}" th:value="${p.getFullName}" th:text="${p.getDate()} + ' | Возраст: ' + ${p.getAge()}">
+                </datalist>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <div class="py-5">
+                <div class="card" th:each="p, p_stat : ${participants}">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                                <span th:text="'Карточка пользователя ' + ${p.getFullName()}"></span>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" th:object="${p}">
+                        <h5 class="card-title text-center">Детали</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 150px">Фамилия</span>
+                                    <input type="text" class="form-control" disabled th:field="*{lastname}">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 150px">Имя</span>
+                                    <input type="text" class="form-control" disabled th:field="*{name}">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 150px">Отчество</span>
+                                    <input type="text" class="form-control" disabled th:field="*{middleName}">
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 150px">Дата рождения</span>
+                                    <input type="text" class="form-control" th:value="${p.getDate()}" disabled>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" style="width: 150px">Возраст</span>
+                                    <input type="text" class="form-control" th:value="${p.getAge()}" disabled>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <span class="fs-4 text-center">Представляет субъекты</span>
+                                </div>
+                                <div class="row">
+                                    <ul class="list-group">
+                                        <li class="list-group-item text-center fx-4 active" aria-current="true">Добавить регион</li>
+                                        <li class="list-group-item">
+                                            <form th:method="POST" th:action="@{/database/participant/subject/add}" th:object="${sspForm}">
+                                                <input th:id="'b-p-1-' + ${p_stat.index}" type="number" th:value="${p.getId()}" th:field="*{participantId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('b-p-1-' + [[${p_stat.index}]]).value = [[${p}]].id;
+                                                </script>
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Выбирите регион</span>
+                                                            <select class="form-select" th:field="*{subjectId}">
+                                                                <option th:each="sub : ${subjectList}" th:value="${sub.getId()}" th:text="${sub.getTitle()}"></option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="d-grid gap-2">
+                                                            <input class="btn btn-primary" type="submit" value="Добавить">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="row row-cols-4 py-5">
+                                    <div class="col border border-dark m-1" th:each="subject, subject_stat : ${p.getSubjects()}" style="width: 200px" th:if="${subject.getFederalDistrict().getTitle() != ''}">
+                                        <div class="row bg-success-subtle">
+                                            <div class="col-10">
+                                                <p th:text="${subject.getTitle()}"></p>
+                                            </div>
+                                            <div class="col-2" style="padding: 5px">
+                                                <button th:id="'b-' + ${subject_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                                <div class="modal fade" th:id="'modal-' + ${subject_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Внимание! Вы хотите удалить <span th:text="${subject.getTitle()}"></span>?</h1>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>
+                                                                    Это удалит <span th:text="${subject.getTitle()}"></span> из списка участника <span th:text="${p.getFullName()}"></span>. Вы уверены?
+                                                                </p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                                <form th:method="GET" th:action="@{/database/participant/{pid}/subject/{sid}/delete(pid=${p.getId()},sid=${subject.getId()})}">
+                                                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('b-' + [[${subject_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${subject_stat.index}]])
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <p th:text="${subject.getFederalDistrict().getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <span class="fs-4 text-center">Квалификации участника</span>
+                                </div>
+                                <div class="row bg-warning-subtle">
+                                    <div class="col">Квалификация</div>
+                                    <div class="col">Группа</div>
+                                    <div class="col">Дисциплина</div>
+                                    <div class="col">Вид спорта</div>
+                                </div>
+                                <div class="row" th:each="q : ${p.getQualifications()}">
+                                    <div class="col">
+                                        <span th:text="${q.getCategory().getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="${q.getGroup().getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="${q.getGroup().getDiscipline().getTitle()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="${q.getGroup().getDiscipline().getSport().getTitle()}"></span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>

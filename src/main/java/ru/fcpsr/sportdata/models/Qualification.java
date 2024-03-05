@@ -21,4 +21,8 @@ public class Qualification {
     private Category category;
     private int ageGroupId;
     private int participantId;
+
+    public Qualification(Category br) {
+        setCategory(br);
+    }
 }

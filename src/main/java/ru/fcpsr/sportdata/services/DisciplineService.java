@@ -19,7 +19,9 @@ public class DisciplineService {
     private final DisciplineRepository disciplineRepository;
 
     // FIND MONO
-
+    public Mono<Discipline> getById(int disciplineId) {
+        return disciplineRepository.findById(disciplineId).defaultIfEmpty(new Discipline());
+    }
     // FIND FLUX
     public Flux<Discipline> getAllByIds(Set<Integer> disciplineIds) {
         return disciplineRepository.findAllByIdIn(disciplineIds);

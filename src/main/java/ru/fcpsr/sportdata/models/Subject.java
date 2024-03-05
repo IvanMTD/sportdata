@@ -33,4 +33,8 @@ public class Subject {
     public void addSportId(int sportId) {
         typeOfSportIds.add(sportId);
     }
+
+    public void addParticipantId(int id) {
+        participantIds.add(id);
+    }
 }
