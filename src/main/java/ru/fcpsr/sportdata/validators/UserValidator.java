@@ -13,9 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class UserValidator implements Validator {
-    private final UserService userService;
 
     @Override
     public boolean supports(Class<?> clazz) {

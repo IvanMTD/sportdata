@@ -12,7 +12,7 @@ import ru.fcpsr.sportdata.models.AgeGroup;
 @NoArgsConstructor
 public class AgeGroupDTO {
     private int id;
-    private int disciplineId;
+    private int sportId;
     @NotBlank(message = "Вы пытались добавить/обновить возрастную группу с пустым полем название. Поле не может быть пустым!")
     private String title;
     @Min(value = 3, message = "Нельзя установить минимальный возраст меньше 3 лет")
@@ -21,7 +21,7 @@ public class AgeGroupDTO {
     @Min(value = 3, message = "Нельзя установить максимальный возраст меньше 3 лет")
     @Max(value = 25, message = "Нельзя установить максимальный возраст больше 25 лет")
     private int maxAge;
-    private DisciplineDTO discipline;
+    private TypeOfSportDTO sport;
 
     public AgeGroupDTO(AgeGroup group) {
         setId(group.getId());

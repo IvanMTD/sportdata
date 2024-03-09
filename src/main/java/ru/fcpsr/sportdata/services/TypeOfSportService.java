@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.FilterDTO;
-import ru.fcpsr.sportdata.dto.SubSportPartDTO;
 import ru.fcpsr.sportdata.dto.TypeOfSportDTO;
+import ru.fcpsr.sportdata.models.AgeGroup;
+import ru.fcpsr.sportdata.models.BaseSport;
 import ru.fcpsr.sportdata.models.Discipline;
 import ru.fcpsr.sportdata.models.TypeOfSport;
 import ru.fcpsr.sportdata.repositories.TypeOfSportRepository;
@@ -70,17 +71,44 @@ public class TypeOfSportService {
         });
     }
 
-    public Mono<TypeOfSport> addSubjectInSport(SubSportPartDTO ssDTO) {
-        return sportRepository.findById(ssDTO.getSportId()).flatMap(sport -> {
-            sport.addSubjectId(ssDTO.getSubjectId());
+    public Mono<TypeOfSport> deleteDisciplineFromSport(Discipline discipline) {
+        return sportRepository.findById(discipline.getTypeOfSportId()).flatMap(sport -> {
+            sport.getDisciplineIds().remove(discipline.getId());
             return sportRepository.save(sport);
         });
     }
-    // DELETE DATA
-    public Mono<TypeOfSport> deleteSubjectFromSport(int sportId, int subjectId) {
-        return sportRepository.findById(sportId).flatMap(sport -> {
-            sport.getSubjectIds().remove(subjectId);
+
+    public Mono<TypeOfSport> addGroupInSport(AgeGroup group) {
+        return sportRepository.findById(group.getTypeOfSportId()).flatMap(sport -> {
+            sport.addAgeGroup(group);
             return sportRepository.save(sport);
         });
+    }
+
+    public Mono<TypeOfSport> addBaseSportInSport(BaseSport baseSport) {
+        return sportRepository.findById(baseSport.getTypeOfSportId()).flatMap(sport -> {
+            sport.addBaseSport(baseSport);
+            return sportRepository.save(sport);
+        });
+    }
+
+    // DELETE
+    public Mono<TypeOfSport> deleteGroupFromSport(AgeGroup group) {
+        return sportRepository.findById(group.getTypeOfSportId()).flatMap(sport -> {
+            sport.getAgeGroupIds().remove(group.getId());
+            return sportRepository.save(sport);
+        });
+    }
+
+    public Mono<TypeOfSport> deleteBaseSportFromSport(BaseSport baseSport) {
+        return sportRepository.findById(baseSport.getTypeOfSportId()).flatMap(sport -> {
+            sport.getBaseSportIds().remove(baseSport.getId());
+            return sportRepository.save(sport);
+        }).defaultIfEmpty(new TypeOfSport());
+    }
+
+    // COUNT
+    public Mono<Long> getCount() {
+        return sportRepository.getCount();
     }
 }

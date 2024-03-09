@@ -1,35 +1,38 @@
 package ru.fcpsr.sportdata.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.FederalDistrict;
 import ru.fcpsr.sportdata.models.Subject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
+@NoArgsConstructor
 public class SubjectDTO {
     private int id;
+    @NotBlank(message = "Поле не может быть пустым!")
     private String title;
+    @NotBlank(message = "Поле не может быть пустым!")
+    @Pattern(regexp = "\\D\\D-\\w+",message = "Введите значение в соответствии с ISO 3166")
+    private String iso;
     private FederalDistrict federalDistrict;
-    private List<TypeOfSportDTO> sports = new ArrayList<>();
-    private List<ParticipantDTO> participants = new ArrayList<>();
+    private List<SportSchoolDTO> schools = new ArrayList<>();
+    private List<BaseSportDTO> baseSports = new ArrayList<>();
 
     public SubjectDTO(Subject subject){
         setId(subject.getId());
         setTitle(subject.getTitle());
+        setIso(subject.getIso());
         if(subject.getFederalDistrict() != null){
             setFederalDistrict(subject.getFederalDistrict());
         }else{
             setFederalDistrict(FederalDistrict.NO);
         }
-    }
-
-    public void addSport(TypeOfSportDTO sport){
-        sports.add(sport);
-    }
-
-    public void addParticipant(ParticipantDTO participant){
-        participants.add(participant);
     }
 }

@@ -11,6 +11,7 @@ import ru.fcpsr.sportdata.models.AgeGroup;
 import ru.fcpsr.sportdata.models.Discipline;
 import ru.fcpsr.sportdata.repositories.DisciplineRepository;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 @Service
@@ -48,10 +49,19 @@ public class DisciplineService {
         });
     }
 
-    public Mono<Discipline> updateGroupInDiscipline(AgeGroup group) {
+    // DELETE
+    public Mono<Discipline> deleteDiscipline(int disciplineId) {
+        return disciplineRepository.findById(disciplineId).flatMap(discipline -> disciplineRepository.delete(discipline).then(Mono.just(discipline)));
+    }
+
+    // COUNT
+    public Mono<Long> getCount() {
+        return disciplineRepository.getCount();
+    }
+
+   /* public Mono<Discipline> updateGroupInDiscipline(AgeGroup group) {
         return disciplineRepository.findById(group.getDisciplineId()).flatMap(discipline -> {
-            discipline.addGroup(group);
             return disciplineRepository.save(discipline);
         });
-    }
+    }*/
 }

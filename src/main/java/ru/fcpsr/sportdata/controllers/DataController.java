@@ -3,19 +3,24 @@ package ru.fcpsr.sportdata.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
+import ru.fcpsr.sportdata.validators.BaseSportValidation;
+import ru.fcpsr.sportdata.validators.ParticipantValidation;
+import ru.fcpsr.sportdata.validators.SchoolValidation;
+import ru.fcpsr.sportdata.validators.SubjectValidation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,13 +38,25 @@ public class DataController {
 
     private final QualificationService qualificationService;
 
+    private final SportSchoolService schoolService;
+
+    private final BaseSportService baseSportService;
+
+    private final BaseSportValidation baseSportValidation;
+
+    private final SchoolValidation schoolValidation;
+
+    private final SubjectValidation subjectValidation;
+
+    private final ParticipantValidation participantValidation;
+
     @GetMapping("/summary")
     public Mono<Rendering> getSummary(){
         return Mono.just(
                 Rendering.view("template")
                         .modelAttribute("title","Summary information")
                         .modelAttribute("index","data-sum-page")
-                        .modelAttribute("form", getTotalStatistic())
+                        .modelAttribute("dbStat", getTotalStatistic())
                         .build()
         );
     }
@@ -58,7 +75,7 @@ public class DataController {
                 Rendering.view("template")
                         .modelAttribute("title","Sport data")
                         .modelAttribute("index","sport-data-page")
-                        .modelAttribute("sports",getCompletedTypeOfSport(letter))
+                        .modelAttribute("sports", getCompletedTypeOfSport(letter))
                         .modelAttribute("sportForm", new TypeOfSportDTO())
                         .modelAttribute("disciplineForm", new DisciplineDTO())
                         .modelAttribute("groupForm", new AgeGroupDTO())
@@ -74,40 +91,10 @@ public class DataController {
     public Mono<Rendering> addSport(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "sportForm") @Valid TypeOfSportDTO sportDTO, Errors errors){
         return sportService.findSportByTitle(sportDTO.getTitle()).flatMap(sport -> {
             errors.rejectValue("title","","Такой вид спорта уже есть");
-            List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC, SportFilterType.NO_OLYMPIC, SportFilterType.ADAPTIVE));
-            List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL, Season.SUMMER, Season.WINTER));
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title", "Sport data")
-                            .modelAttribute("index", "sport-data-page")
-                            .modelAttribute("sports", getCompletedTypeOfSport(letter))
-                            .modelAttribute("sportForm", sportDTO)
-                            .modelAttribute("disciplineForm", new DisciplineDTO())
-                            .modelAttribute("groupForm", new AgeGroupDTO())
-                            .modelAttribute("filterForm", new FilterDTO())
-                            .modelAttribute("filters", filters)
-                            .modelAttribute("seasons", seasons)
-                            .modelAttribute("letter", letter)
-                            .build()
-            );
+            return getBaseSportErrorRendering(letter,sportDTO);
         }).switchIfEmpty(Mono.just(sportDTO).flatMap(sport -> {
             if(errors.hasErrors()){
-                List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC, SportFilterType.NO_OLYMPIC, SportFilterType.ADAPTIVE));
-                List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL, Season.SUMMER, Season.WINTER));
-                return Mono.just(
-                        Rendering.view("template")
-                                .modelAttribute("title", "Sport data")
-                                .modelAttribute("index", "sport-data-page")
-                                .modelAttribute("sports", getCompletedTypeOfSport(letter))
-                                .modelAttribute("sportForm", sportDTO)
-                                .modelAttribute("disciplineForm", new DisciplineDTO())
-                                .modelAttribute("groupForm", new AgeGroupDTO())
-                                .modelAttribute("filterForm", new FilterDTO())
-                                .modelAttribute("filters", filters)
-                                .modelAttribute("seasons", seasons)
-                                .modelAttribute("letter", letter)
-                                .build()
-                );
+                return getBaseSportErrorRendering(letter,sportDTO);
             }
 
             return sportService.addNewSport(sport).flatMap(s -> {
@@ -130,22 +117,7 @@ public class DataController {
     @PostMapping("/sport/{letter}/title/update")
     public Mono<Rendering> sportTitleUpdate(@ModelAttribute(name = "sportForm") @Valid TypeOfSportDTO sportDTO, Errors errors, @PathVariable(name = "letter") String letter){
         if(errors.hasErrors()){
-            List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC,SportFilterType.NO_OLYMPIC,SportFilterType.ADAPTIVE));
-            List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL,Season.SUMMER,Season.WINTER));
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title","Sport data")
-                            .modelAttribute("index","sport-data-page")
-                            .modelAttribute("sports",getCompletedTypeOfSport(letter))
-                            .modelAttribute("sportForm", sportDTO)
-                            .modelAttribute("disciplineForm", new DisciplineDTO())
-                            .modelAttribute("groupForm", new AgeGroupDTO())
-                            .modelAttribute("filterForm", new FilterDTO())
-                            .modelAttribute("filters", filters)
-                            .modelAttribute("seasons", seasons)
-                            .modelAttribute("letter", letter)
-                            .build()
-            );
+            return getBaseSportErrorRendering(letter,sportDTO);
         }
 
         return sportService.updateSportTitle(sportDTO).flatMap(sport -> {
@@ -184,34 +156,18 @@ public class DataController {
         });
     }
 
-    @PostMapping("/sport/{letter}/discipline/title/update")
-    public Mono<Rendering> updateDisciplineTitle(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "disciplineForm") @Valid DisciplineDTO disciplineDTO, Errors errors){
-        if(errors.hasErrors()){
-            List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC,SportFilterType.NO_OLYMPIC,SportFilterType.ADAPTIVE));
-            List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL,Season.SUMMER,Season.WINTER));
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title","Sport data")
-                            .modelAttribute("index","sport-data-page")
-                            .modelAttribute("sports",getCompletedTypeOfSport(letter))
-                            .modelAttribute("sportForm", new TypeOfSportDTO())
-                            .modelAttribute("disciplineForm", disciplineDTO)
-                            .modelAttribute("groupForm", new AgeGroupDTO())
-                            .modelAttribute("filterForm", new FilterDTO())
-                            .modelAttribute("filters", filters)
-                            .modelAttribute("seasons", seasons)
-                            .modelAttribute("letter", letter)
-                            .build()
-            );
-        }
-
-        return disciplineService.updateTitle(disciplineDTO).flatMap(discipline -> {
-            log.info("discipline title update: " + discipline.getTitle());
-            return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
+    @GetMapping("/{letter}/sport/{sportId}/discipline/{disciplineId}/delete")
+    public Mono<Rendering> deleteDisciplineFromSport(@PathVariable String letter, @PathVariable int sportId, @PathVariable int disciplineId){
+        return disciplineService.deleteDiscipline(disciplineId).flatMap(discipline -> {
+            log.info("discipline has been deleted: " + discipline.toString());
+            return sportService.deleteDisciplineFromSport(discipline).flatMap(sport -> {
+                log.info("discipline has been removed from sport " + sport.getDisciplineIds());
+                return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
+            });
         });
     }
 
-    @PostMapping("/sport/{letter}/discipline/group/add")
+    @PostMapping("/sport/{letter}/add/group")
     public Mono<Rendering> addNewGroup(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "groupForm") @Valid AgeGroupDTO groupDTO, Errors errors){
         if(groupDTO.getMinAge() >= groupDTO.getMaxAge()){
             errors.rejectValue("minAge","","Минимальный возраст не может быть больше или равен максимальному!");
@@ -237,84 +193,35 @@ public class DataController {
         }
 
         return groupService.addNewGroup(groupDTO).flatMap(group -> {
-            log.info("group create: " + group.getId());
-            return disciplineService.updateGroupInDiscipline(group).flatMap(discipline -> {
-                log.info("discipline updated: " + discipline.getAgeGroupIds());
+            log.info("group saved " + group.toString());
+            return sportService.addGroupInSport(group).flatMap(sport -> {
+                log.info("group added in sport " + sport.getAgeGroupIds());
                 return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
             });
         });
     }
 
-    @PostMapping("/sport/{letter}/discipline/group/title/update")
-    public Mono<Rendering> updateGroupTitle(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "groupForm") @Valid AgeGroupDTO groupDTO, Errors errors){
-        if(errors.hasErrors()){
-            List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC,SportFilterType.NO_OLYMPIC,SportFilterType.ADAPTIVE));
-            List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL,Season.SUMMER,Season.WINTER));
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title","Sport data")
-                            .modelAttribute("index","sport-data-page")
-                            .modelAttribute("sports",getCompletedTypeOfSport(letter))
-                            .modelAttribute("sportForm", new TypeOfSportDTO())
-                            .modelAttribute("disciplineForm", new DisciplineDTO())
-                            .modelAttribute("groupForm", groupDTO)
-                            .modelAttribute("filterForm", new FilterDTO())
-                            .modelAttribute("filters", filters)
-                            .modelAttribute("seasons", seasons)
-                            .modelAttribute("letter", letter)
-                            .build()
-            );
-        }
-
-        return groupService.updateTitle(groupDTO).flatMap(group -> {
-            log.info("group title updated: " + group.getTitle());
-            return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
-        });
-    }
-
-    @PostMapping("/sport/{letter}/discipline/group/age/setup")
-    public Mono<Rendering> setupAgeInAgeGroup(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "groupForm") @Valid AgeGroupDTO groupDTO, Errors errors){
-        if(groupDTO.getMinAge() >= groupDTO.getMaxAge()){
-            errors.rejectValue("minAge","","Минимальный возраст не может быть больше или равен максимальному!");
-            errors.rejectValue("maxAge","","Максимальный возраст не может быть меньше или равен минимальному!");
-        }
-        if(errors.hasFieldErrors("minAge") || errors.hasFieldErrors("maxAge")){
-            List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC,SportFilterType.NO_OLYMPIC,SportFilterType.ADAPTIVE));
-            List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL,Season.SUMMER,Season.WINTER));
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title","Sport data")
-                            .modelAttribute("index","sport-data-page")
-                            .modelAttribute("sports",getCompletedTypeOfSport(letter))
-                            .modelAttribute("sportForm", new TypeOfSportDTO())
-                            .modelAttribute("disciplineForm", new DisciplineDTO())
-                            .modelAttribute("groupForm", groupDTO)
-                            .modelAttribute("filterForm", new FilterDTO())
-                            .modelAttribute("filters", filters)
-                            .modelAttribute("seasons", seasons)
-                            .modelAttribute("letter", letter)
-                            .build()
-            );
-        }
-
-        return groupService.updateAges(groupDTO).flatMap(group -> {
-            log.info("group age has been updated: " + group.getMinAge() + " - " + group.getMaxAge());
-            return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
+    @GetMapping("/{letter}/sport/{sportId}/group/{groupId}/delete")
+    public Mono<Rendering> deleteGroupFromSport(@PathVariable String letter, @PathVariable int sportId, @PathVariable int groupId){
+        return groupService.deleteGroup(groupId).flatMap(group -> {
+            log.info("group has been deleted " + group.toString());
+            return sportService.deleteGroupFromSport(group).flatMap(sport -> {
+                log.info("group has been removed from sport " + sport.getAgeGroupIds());
+                return Mono.just(Rendering.redirectTo("/database/sport/" + letter).build());
+            });
         });
     }
 
     /**
      * УПРАВЛЕНИЕ БАЗОЙ ДАННЫХ - СУБЪЕКТЫ
+     * @param letter
      * @return
      */
+
     @GetMapping("/subject/{letter}")
     public Mono<Rendering> showSubjects(@PathVariable(name = "letter") String letter){
         Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
-            return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);
-        Flux<Participant> participants = participantService.getAll().collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
 
@@ -323,81 +230,385 @@ public class DataController {
                         .modelAttribute("title","Subject data")
                         .modelAttribute("index","subject-data-page")
                         .modelAttribute("subjects", getCompletedSubjects(letter))
+                        .modelAttribute("subjectForm", new SubjectDTO())
+                        .modelAttribute("baseSportForm", new BaseSportDTO())
+                        .modelAttribute("schoolForm", new SportSchoolDTO())
+                        .modelAttribute("participantForm", new ParticipantDTO())
+                        .modelAttribute("federals", FederalDistrict.getDistricts())
                         .modelAttribute("sportList", sports)
-                        .modelAttribute("pList", participants)
-                        .modelAttribute("ssForm", new SubSportPartDTO())
                         .modelAttribute("letter",letter)
                         .build()
         );
     }
 
-    @GetMapping("/{letter}/subject/{subjectId}/sport/delete/{sportId}")
-    public Mono<Rendering> deleteSportFromSubject(@PathVariable(name = "letter") String letter, @PathVariable(name = "subjectId") int subjectId, @PathVariable(name = "sportId") int sportId){
-        return subjectService.deleteSportFromSubject(subjectId,sportId).flatMap(subject -> {
-            log.info("sport deleted from subject: " + subject.getTypeOfSportIds());
-            return sportService.deleteSubjectFromSport(sportId,subject.getId()).flatMap(sport -> {
-                log.info("subject deleted from sport: " + sport.getSubjectIds());
+    @PostMapping("/subject/{letter}/add")
+    public Mono<Rendering> addNewSubject(@PathVariable String letter, @ModelAttribute(name = "subjectForm") @Valid SubjectDTO subjectDTO, Errors errors){
+        return subjectService.findByTitle(subjectDTO.getTitle()).flatMap(subject -> {
+            if(subject.getId() != 0){
+                errors.rejectValue("title","","Такой субъект уже есть!");
+            }
+            if(errors.hasErrors()){
+                Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                    l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                    return Flux.fromIterable(l);
+                }).flatMapSequential(Mono::just);
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Subject data")
+                                .modelAttribute("index","subject-data-page")
+                                .modelAttribute("subjects", getCompletedSubjects(letter))
+                                .modelAttribute("subjectForm", subjectDTO)
+                                .modelAttribute("baseSportForm", new BaseSportDTO())
+                                .modelAttribute("schoolForm", new SportSchoolDTO())
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .modelAttribute("federals", FederalDistrict.getDistricts())
+                                .modelAttribute("sportList", sports)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return subjectService.save(subjectDTO).flatMap(s -> {
+                log.info("subject saved: " + s.toString());
                 return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
             });
         });
     }
 
-    @PostMapping("/{letter}/subject/sport/add")
-    public Mono<Rendering> addSportInSubject(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "ssForm") SubSportPartDTO ssDTO){
-        return subjectService.addSportInSubject(ssDTO).flatMap(subject -> {
-            log.info("sport added in subject: " + subject.getTypeOfSportIds());
-            return sportService.addSubjectInSport(ssDTO);
-        }).flatMap(sport -> {
-            log.info("subject added in sport: " + sport.getSubjectIds());
-            return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+    @PostMapping("/subject/{letter}/add/base/sport")
+    public Mono<Rendering> addBaseSportInSubject(@PathVariable String letter, @ModelAttribute(name = "baseSportForm") @Valid BaseSportDTO baseSportDTO, Errors errors){
+        baseSportValidation.validate(baseSportDTO,errors);
+        if (errors.hasErrors()){
+            Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                return Flux.fromIterable(l);
+            }).flatMapSequential(Mono::just);
+            return Mono.just(
+                    Rendering.view("template")
+                            .modelAttribute("title","Subject data")
+                            .modelAttribute("index","subject-data-page")
+                            .modelAttribute("subjects", getCompletedSubjects(letter))
+                            .modelAttribute("subjectForm", new SubjectDTO())
+                            .modelAttribute("baseSportForm", baseSportDTO)
+                            .modelAttribute("schoolForm", new SportSchoolDTO())
+                            .modelAttribute("participantForm", new ParticipantDTO())
+                            .modelAttribute("federals", FederalDistrict.getDistricts())
+                            .modelAttribute("sportList", sports)
+                            .modelAttribute("letter",letter)
+                            .build()
+            );
+        }
+
+        return baseSportService.addNewBaseSport(baseSportDTO).flatMap(baseSport -> {
+            log.info("base sport created " + baseSport.getId());
+            return sportService.addBaseSportInSport(baseSport).flatMap(sport -> {
+                log.info("baseSport added in to sport: " + sport.getBaseSportIds());
+                return subjectService.addBaseSportInSubject(baseSport).flatMap(subject -> {
+                    log.info("baseSport added in to subject: " + subject.getBaseSportIds());
+                    return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+                });
+            });
         });
     }
 
-    @PostMapping("/{letter}/subject/participant/add")
-    public Mono<Rendering> addParticipantInSubject(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "ssForm") SubSportPartDTO ssDTO){
-        return participantService.addSubjectInParticipant(ssDTO).flatMap(participant -> {
-            log.info("subject added in participant: " + participant.getSubjectIds());
-            return subjectService.addParticipantInSubject(ssDTO,participant).flatMap(subject -> {
-                log.info("participant added in subject: " + subject.getParticipantIds());
+    @GetMapping("/{letter}/delete/base/sport/{bSportId}")
+    public Mono<Rendering> deleteBaseSportFromSubject(@PathVariable String letter, @PathVariable int bSportId){
+        return baseSportService.deleteBaseSport(bSportId).flatMap(baseSport -> {
+            log.info("baseSport deleted: " + baseSport.getId());
+            return sportService.deleteBaseSportFromSport(baseSport).flatMap(sport -> {
+                log.info("baseSport has been removed from sport: " + sport.getBaseSportIds());
+                return subjectService.removeBaseSportFromSubject(baseSport).flatMap(subject -> {
+                    log.info("baseSport has been removed from subject: " + subject.getBaseSportIds());
+                    return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+                });
+            });
+        });
+    }
+
+    @PostMapping("/subject/{letter}/add/school")
+    public Mono<Rendering> addSchoolInSubject(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "schoolForm") @Valid SportSchoolDTO sportSchoolDTO, Errors errors){
+        return schoolService.findByTitle(sportSchoolDTO.getTitle()).flatMap(school -> {
+            schoolValidation.setSportSchool(school);
+            schoolValidation.validate(sportSchoolDTO,errors);
+            if(errors.hasErrors()){
+                Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                    l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                    return Flux.fromIterable(l);
+                }).flatMapSequential(Mono::just);
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Subject data")
+                                .modelAttribute("index","subject-data-page")
+                                .modelAttribute("subjects", getCompletedSubjects(letter))
+                                .modelAttribute("subjectForm", new SubjectDTO())
+                                .modelAttribute("baseSportForm", new BaseSportDTO())
+                                .modelAttribute("schoolForm", sportSchoolDTO)
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .modelAttribute("federals", FederalDistrict.getDistricts())
+                                .modelAttribute("sportList", sports)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return schoolService.saveSchool(sportSchoolDTO).flatMap(sportSchool -> {
+                log.info("school saved: " + sportSchool.getId());
+                return subjectService.addSchoolInSubject(sportSchool).flatMap(subject -> {
+                    log.info("school added in subject: " + subject.getSportSchoolIds());
+                    return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+                });
+            });
+        });
+    }
+
+    @PostMapping("/subject/{letter}/title/update")
+    public Mono<Rendering> subjectTitleUpdate(@PathVariable String letter, @ModelAttribute(name = "subjectForm") @Valid SubjectDTO subjectDTO, Errors errors){
+        return subjectService.findByTitle(subjectDTO.getTitle()).flatMap(subject -> {
+            subjectValidation.setSubject(subject);
+            subjectValidation.validate(subjectDTO,errors);
+            if(errors.hasFieldErrors("title")){
+                Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                    l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                    return Flux.fromIterable(l);
+                }).flatMapSequential(Mono::just);
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Subject data")
+                                .modelAttribute("index","subject-data-page")
+                                .modelAttribute("subjects", getCompletedSubjects(letter))
+                                .modelAttribute("subjectForm", subjectDTO)
+                                .modelAttribute("baseSportForm", new BaseSportDTO())
+                                .modelAttribute("schoolForm", new SportSchoolDTO())
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .modelAttribute("federals", FederalDistrict.getDistricts())
+                                .modelAttribute("sportList", sports)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return subjectService.updateTitle(subjectDTO).flatMap(s -> {
+                log.info("title in subject has been updated: " + s.getTitle());
                 return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
             });
         });
     }
 
-    @GetMapping("/{letter}/subject/{subjectId}/delete/patricipant/{pid}")
-    public Mono<Rendering> deleteParticipantFromSubject(@PathVariable(name = "letter") String letter, @PathVariable(name = "subjectId") int subjectId, @PathVariable(name = "pid") int pid){
-        return subjectService.deleteParticipantFromSubject(subjectId,pid).flatMap(subject -> {
-            log.info("participant has been removed from subject: " + subject.getParticipantIds());
-            return participantService.deleteSubjectFromParticipant(pid,subject.getId()).flatMap(participant -> {
-                log.info("subject has been removed from participant " + participant.getSubjectIds());
+    @PostMapping("/subject/{letter}/iso/update")
+    public Mono<Rendering> updateIsoInSubject(@PathVariable String letter, @ModelAttribute(name = "subjectForm") @Valid SubjectDTO subjectDTO, Errors errors){
+        return subjectService.findByISO(subjectDTO.getIso()).flatMap(subject -> {
+            subjectValidation.setSubject(subject);
+            subjectValidation.validate(subjectDTO,errors);
+            if(errors.hasFieldErrors("iso")){
+                Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                    l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                    return Flux.fromIterable(l);
+                }).flatMapSequential(Mono::just);
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Subject data")
+                                .modelAttribute("index","subject-data-page")
+                                .modelAttribute("subjects", getCompletedSubjects(letter))
+                                .modelAttribute("subjectForm", subjectDTO)
+                                .modelAttribute("baseSportForm", new BaseSportDTO())
+                                .modelAttribute("schoolForm", new SportSchoolDTO())
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .modelAttribute("federals", FederalDistrict.getDistricts())
+                                .modelAttribute("sportList", sports)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return subjectService.updateISO(subjectDTO).flatMap(s -> {
+                log.info("ISO in subject has been updated: " + s.getIso());
                 return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+            });
+        });
+    }
+
+    @PostMapping("/subject/{letter}/school/update")
+    public Mono<Rendering> updateSchool(@PathVariable String letter, @ModelAttribute(name = "schoolForm") @Valid SportSchoolDTO sportSchoolDTO, Errors errors){
+        return schoolService.findByTitle(sportSchoolDTO.getTitle()).flatMap(sportSchool -> {
+            schoolValidation.setSportSchool(sportSchool);
+            schoolValidation.validate(sportSchoolDTO, errors);
+            if(errors.hasErrors()){
+                Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+                    l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+                    return Flux.fromIterable(l);
+                }).flatMapSequential(Mono::just);
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Subject data")
+                                .modelAttribute("index","subject-data-page")
+                                .modelAttribute("subjects", getCompletedSubjects(letter))
+                                .modelAttribute("subjectForm", new SubjectDTO())
+                                .modelAttribute("baseSportForm", new BaseSportDTO())
+                                .modelAttribute("schoolForm", sportSchoolDTO)
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .modelAttribute("federals", FederalDistrict.getDistricts())
+                                .modelAttribute("sportList", sports)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return schoolService.updateTitleAndAddress(sportSchoolDTO).flatMap(school -> {
+                log.info("title and address in school updated " + school.toString());
+                return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+            });
+        });
+    }
+
+    @GetMapping("/{schoolId}/subject/{letter}/school/participant/add")
+    public Mono<Rendering> addParticipantInSchool(@PathVariable int schoolId, @PathVariable String letter, @RequestParam(name = "search") String search){
+        return participantService.findByFullName(search).flatMap(participant -> {
+            participant.addSportSchoolId(schoolId);
+            return participantService.saveParticipant(participant);
+        }).flatMap(participant -> {
+            log.info("school info added in participant: " + participant.getSportSchoolIds());
+            return schoolService.addParticipantInSchool(schoolId, participant).flatMap(school -> {
+                log.info("participant added in school " + school.getParticipantIds());
+                return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+            });
+        });
+    }
+
+    @GetMapping("/subject/{letter}/school/{sid}/remove/participant/{pid}")
+    public Mono<Rendering> removeParticipantFromSchool(@PathVariable String letter, @PathVariable int sid, @PathVariable int pid){
+        return schoolService.removeParticipantFromSchool(sid,pid).flatMap(sportSchool -> {
+            log.info("participant removed from school: " + sportSchool.getParticipantIds());
+            return participantService.removeSchoolFromParticipant(pid,sid).flatMap(participant -> {
+                log.info("school removed from participant: " + participant.getSportSchoolIds());
+                return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+            });
+        });
+    }
+
+    @GetMapping("/{letter}/subject/{subjectId}/school/{schoolId}/delete")
+    public Mono<Rendering> deleteSchool(@PathVariable String letter, @PathVariable int subjectId, @PathVariable int schoolId){
+        return schoolService.deleteSchool(schoolId).flatMap(sportSchool -> {
+            log.info("school deleted: " + sportSchool.toString());
+            return participantService.removeSchoolFromParticipants(sportSchool).collectList().flatMap(participants -> {
+                for(Participant participant : participants){
+                    log.info("school has been removed from participant " + participant.getSportSchoolIds());
+                }
+                return subjectService.removeSchoolFromSubject(subjectId,schoolId).flatMap(subject -> {
+                    log.info("school has been removed from subject " + subject.getSportSchoolIds());
+                    return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+                });
+            });
+        });
+    }
+
+    @GetMapping("/subject/{letter}/delete/{subjectId}")
+    public Mono<Rendering> deleteSubject(@PathVariable String letter, @PathVariable int subjectId){
+        /*
+        1. Удаляем субъект +
+        2. Удаляем карточку базового спорта +
+        3. Удаляем карточку базового спорта из спорта +
+        4. Удаляем школу
+        5. Удаляем школу из спортсмена
+         */
+        return subjectService.deleteSubject(subjectId).flatMap(subject -> {
+            log.info("subject has been deleted: " + subject.toString());
+            log.info("step 1");
+            return baseSportService.deleteAllBaseSports(subject.getBaseSportIds()).flatMap(baseSport -> {
+                log.info("baseSport has been deleted " + baseSport.toString());
+                return sportService.deleteBaseSportFromSport(baseSport).flatMap(sport -> {
+                    log.info("baseSport has been removed from sport " + sport.getBaseSportIds());
+                    return Mono.just(sport);
+                });
+            }).collectList().flatMap(sportList -> {
+                log.info("step 2");
+                return schoolService.deleteSchoolsByIds(subject.getSportSchoolIds()).flatMap(school -> {
+                    log.info("school has been deleted " + school.toString());
+                    return participantService.removeSchoolFromParticipants(school).flatMap(participant -> {
+                        log.info("school has been removed from participant " + participant.getSportSchoolIds());
+                        return Mono.just(participant);
+                    });
+                }).collectList().flatMap(l -> Mono.just(Rendering.redirectTo("/database/subject/" + letter).build()));
             });
         });
     }
 
     /**
-     * УПРАВЛЕНИЕ БАЗОЙ ДАННЫХ - УЧАСТНИКИ
-     * @param
+     * УПРАВЛЕНИЕ БАЗОЙ ДАННОЙ - УЧАСТНИКИ
      * @return
      */
 
-    @GetMapping("/participant")
-    public Mono<Rendering> showParticipant(){
-        Flux<Participant> participantFlux = participantService.getAll().collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
-            return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);
-
+    @GetMapping("/participant/{letter}")
+    public Mono<Rendering> showParticipant(@PathVariable String letter){
         return Mono.just(
                 Rendering.view("template")
                         .modelAttribute("title","Participant page")
                         .modelAttribute("index", "participant-data-page")
-                        .modelAttribute("pList", participantFlux)
+                        .modelAttribute("participants", getCompletedParticipantByFirstLetter(letter))
+                        .modelAttribute("participantForm", new ParticipantDTO())
+                        .modelAttribute("letter",letter)
                         .build()
         );
     }
 
-    @GetMapping("/participant/search")
+    @PostMapping("/participant/{letter}/add")
+    public Mono<Rendering> addNewParticipant(@PathVariable String letter, @ModelAttribute(name = "participantForm") @Valid ParticipantDTO participantDTO, Errors errors){
+        return participantService.findByFullNameAndBirthday(participantDTO).flatMap(participant -> {
+            participantValidation.setParticipant(participant);
+            participantValidation.validate(participantDTO, errors);
+            if(errors.hasErrors()){
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Participant page")
+                                .modelAttribute("index", "participant-data-page")
+                                .modelAttribute("participants", getCompletedParticipantByFirstLetter(letter))
+                                .modelAttribute("participantForm", participantDTO)
+                                .modelAttribute("letter",letter)
+                                .build()
+                );
+            }
+
+            return participantService.addNewParticipant(participantDTO).flatMap(p -> {
+                log.info("participant saved " + participant.toString());
+                return Mono.just(Rendering.redirectTo("/database/participant/" + letter).build());
+            });
+        });
+    }
+
+    @GetMapping("/participant/{id}/show")
+    public Mono<Rendering> showParticipant(@PathVariable int id){
+        return Mono.just(
+                Rendering.view("template")
+                        .modelAttribute("title","Participant page")
+                        .modelAttribute("index","participant-page")
+                        .modelAttribute("participant", getCompletedParticipant(id))
+                        .modelAttribute("subjects", getCompletedSubjects())
+                        .build()
+        );
+    }
+
+    @PostMapping("/participant/subject/school/update")
+    public Mono<Rendering> participantUpdateSubjectAndSchool(@ModelAttribute(name = "participant") ParticipantDTO participantDTO){
+        return participantService.updateSchool(participantDTO.getId(), participantDTO.getOldSchoolId(), participantDTO.getSchoolId()).flatMap(participant -> {
+            log.info("school in participant updated: " + participant.getSportSchoolIds());
+            return schoolService.updateSchoolParticipant(participantDTO.getId(), participantDTO.getOldSchoolId(), participantDTO.getSchoolId()).flatMap(school -> {
+                log.info("participant added in new school " + school.getParticipantIds());
+                return Mono.just(Rendering.redirectTo("/database/participant/" + participantDTO.getId() + "/show").build());
+            });
+        });
+    }
+
+    @PostMapping("/participant/subject/school/add")
+    public Mono<Rendering> participantAddNewSchool(@ModelAttribute(name = "participant") ParticipantDTO participantDTO){
+        return participantService.updateSchool(participantDTO.getId(), participantDTO.getSchoolId()).flatMap(participant -> {
+            log.info("school added in participant list " + participant.getSportSchoolIds());
+            return schoolService.addParticipantInSchool(participantDTO.getSchoolId(),participant).flatMap(school -> {
+                log.info("participant added in new school " + school.getParticipantIds());
+                return Mono.just(Rendering.redirectTo("/database/participant/" + participantDTO.getId() + "/show").build());
+            });
+        });
+    }
+
+    /*@GetMapping("/participant/search")
     public Mono<Rendering> searchParticipant(@RequestParam(name = "search") String fullName){
         Flux<Participant> participantFlux = participantService.getAll().collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
@@ -417,112 +628,90 @@ public class DataController {
                         .modelAttribute("sspForm", new SubSportPartDTO())
                         .build()
         );
-    }
+    }*/
 
-    @PostMapping("/participant/subject/add")
-    public Mono<Rendering> addSubjectToParticipant(@ModelAttribute(name = "sspForm") SubSportPartDTO sspDTO){
-        return participantService.addSubjectInParticipantById(sspDTO).flatMap(participant -> {
-            log.info("subject added to participant: " + participant.getSubjectIds());
-            return subjectService.addParticipantInSubject(sspDTO,participant).flatMap(subject -> {
-                log.info("participant added to subject: " + subject.getParticipantIds());
-                String searchRequest = participant.getLastname() + "+" + participant.getName() + "+" + participant.getMiddleName();
-                return Mono.just(Rendering.redirectTo("/database/participant/search?search=" + searchRequest).build());
+    /**
+     * ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+     * @param
+     * @return
+     */
+
+    private Mono<ParticipantDTO> getCompletedParticipant(int id) {
+        return participantService.getById(id).flatMap(participant -> {
+            ParticipantDTO participantDTO = new ParticipantDTO(participant);
+            return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
+                    TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                    qualificationDTO.setSport(typeOfSportDTO);
+                    return Mono.just(qualificationDTO);
+                });
+            }).collectList().flatMap(ql -> {
+                ql = ql.stream().sorted(Comparator.comparing(QualificationDTO::getCategory)).collect(Collectors.toList());
+                participantDTO.setQualifications(ql);
+                return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                    SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                    return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        sportSchoolDTO.setSubject(subjectDTO);
+                        return Mono.just(sportSchoolDTO);
+                    });
+                }).collectList().flatMap(schools -> {
+                    schools = schools.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                    participantDTO.setSchools(schools);
+                    return Mono.just(participantDTO);
+                });
             });
         });
     }
 
-    @GetMapping("/participant/{pid}/subject/{sid}/delete")
-    public Mono<Rendering> deleteSubjectFromParticipant(@PathVariable int pid, @PathVariable int sid) {
-        return participantService.deleteSubjectFromParticipant(pid,sid).flatMap(participant -> {
-            log.info("subject has been removed from participant: " + participant.getSubjectIds());
-            return subjectService.deleteParticipantFromSubject(sid,pid).flatMap(subject -> {
-                log.info("participant has been removed from subject: " + subject.getParticipantIds());
-                String searchRequest = participant.getLastname() + "+" + participant.getName() + "+" + participant.getMiddleName();
-                return Mono.just(Rendering.redirectTo("/database/participant/search?search=" + searchRequest).build());
+    private Flux<ParticipantDTO> getCompletedParticipantByFirstLetter(String letter){
+        /*
+        1. Получаем спортсменов
+        2. Собираем квалификацию
+        3. Собираем виды спорта по квалификации
+        4. Собираем школы
+        5. Собираем субъекты
+         */
+        return participantService.getAllByFirstLetter(letter).flatMap(participant -> {
+            ParticipantDTO participantDTO = new ParticipantDTO(participant);
+            return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
+                    TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                    qualificationDTO.setSport(typeOfSportDTO);
+                    return Mono.just(qualificationDTO);
+                });
+            }).collectList().flatMap(ql -> {
+                ql = ql.stream().sorted(Comparator.comparing(QualificationDTO::getCategory)).collect(Collectors.toList());
+                participantDTO.setQualifications(ql);
+                return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                    SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                    return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        sportSchoolDTO.setSubject(subjectDTO);
+                        return Mono.just(sportSchoolDTO);
+                    });
+                }).collectList().flatMap(schools -> {
+                    schools = schools.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                    participantDTO.setSchools(schools);
+                    return Mono.just(participantDTO);
+                });
             });
-        });
-    }
-
-    private Flux<ParticipantDTO> getCompletedParticipant(String fullName){
-        int spacePos = fullName.indexOf(" ");
-        String lastname;
-        String searchOnlyLastname = null;
-        if (spacePos > -1) { // Если пробел найден
-            lastname = fullName.substring(0, spacePos);
-        } else { // Если пробел не найден
-            lastname = fullName;
-            searchOnlyLastname = fullName;
-        }
-        String finalSearchOnlyLastname = searchOnlyLastname;
-
-        return participantService.findAllByLastname(lastname).flatMap(participant -> {
-            if(finalSearchOnlyLastname != null){
-                return getParticipantDTO(participant);
-            }else {
-                if (participant.getFullName().equals(fullName)) {
-                    return getParticipantDTO(participant);
-                } else {
-                    return Mono.empty();
-                }
-            }
         }).collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(ParticipantDTO::getLastname)).collect(Collectors.toList());
+            l = l.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
     }
 
-    private Mono<ParticipantDTO> getParticipantDTO(Participant participant){
-        ParticipantDTO participantDTO = new ParticipantDTO(participant);
-        return subjectService.getByIds(participant.getSubjectIds()).collectList().flatMap(subjects -> {
-            List<SubjectDTO> subjectList = new ArrayList<>();
-            for (Subject subject : subjects) {
-                subjectList.add(new SubjectDTO(subject));
-            }
-            subjectList = subjectList.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
-            participantDTO.setSubjects(subjectList);
-            return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
-                QualificationDTO qualificationDTO = new QualificationDTO(qualification);
-                return groupService.getById(qualification.getAgeGroupId()).flatMap(group -> {
-                    AgeGroupDTO ageGroupDTO = new AgeGroupDTO(group);
-                    return disciplineService.getById(group.getDisciplineId()).flatMap(discipline -> {
-                        DisciplineDTO disciplineDTO = new DisciplineDTO(discipline);
-                        return sportService.findByIds(discipline.getTypeOfSportId()).flatMap(sport -> {
-                            TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-                            disciplineDTO.setSport(typeOfSportDTO);
-                            ageGroupDTO.setDiscipline(disciplineDTO);
-                            qualificationDTO.setGroup(ageGroupDTO);
-                            return Mono.just(qualificationDTO);
-                        });
-                    });
-                });
-            }).collectList().flatMap(qualificationDTOS -> {
-                qualificationDTOS = qualificationDTOS.stream().sorted(Comparator.comparing(QualificationDTO::getCategory)).collect(Collectors.toList());
-                participantDTO.setQualifications(qualificationDTOS);
-                return Mono.just(participantDTO);
-            });
-        });
-    }
-
-    private Flux<SubjectDTO> getCompletedSubjects(String letter){
-        return subjectService.getSubjectsByFirstLetter(letter).flatMap(subject -> {
+    private Flux<SubjectDTO> getCompletedSubjects() {
+        return subjectService.getAll().flatMap(subject -> {
             SubjectDTO subjectDTO = new SubjectDTO(subject);
-            return sportService.findByIds(subject.getTypeOfSportIds()).collectList().flatMap(sports -> {
-                List<TypeOfSportDTO> sportDTOList = new ArrayList<>();
-                for(TypeOfSport sport : sports){
-                    TypeOfSportDTO sportDTO = new TypeOfSportDTO(sport);
-                    sportDTOList.add(sportDTO);
-                }
-                sportDTOList = sportDTOList.stream().sorted(Comparator.comparing(TypeOfSportDTO::getTitle)).collect(Collectors.toList());
-                subjectDTO.setSports(sportDTOList);
-                return participantService.findByIds(subject.getParticipantIds()).collectList();
-            }).flatMap(participants -> {
-                List<ParticipantDTO> participantDTOList = new ArrayList<>();
-                for(Participant participant : participants){
-                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                    participantDTOList.add(participantDTO);
-                }
-                participantDTOList = participantDTOList.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
-                subjectDTO.setParticipants(participantDTOList);
+            return schoolService.getAllByIdIn(subject.getSportSchoolIds()).flatMap(school -> {
+                SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                return Mono.just(sportSchoolDTO);
+            }).collectList().flatMap(schools -> {
+                subjectDTO.setSchools(schools);
                 return Mono.just(subjectDTO);
             });
         }).collectList().flatMapMany(l -> {
@@ -531,68 +720,116 @@ public class DataController {
         }).flatMapSequential(Mono::just);
     }
 
-    private Flux<TypeOfSportDTO> getCompletedTypeOfSport(String letter){
-        return sportService.getSportsByFirstLetter(letter).flatMap(sport -> {
-            TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-            return subjectService.getByIds(sport.getSubjectIds()).collectList().flatMap(subjects -> {
-                List<SubjectDTO> subjectDTOList = new ArrayList<>();
-                for(Subject subject : subjects){
-                    SubjectDTO subjectDTO = new SubjectDTO(subject);
-                    subjectDTOList.add(subjectDTO);
-                }
-                typeOfSportDTO.setSubjects(subjectDTOList);
-                return Mono.just(typeOfSportDTO);
-            }).flatMap(sportDTO -> disciplineService.getAllByIds(sport.getDisciplineIds()).collectList().flatMap(disciplines -> {
-                List<DisciplineDTO> disciplineDTOList = new ArrayList<>();
-                List<Integer> groupIds = new ArrayList<>();
-                for(Discipline discipline : disciplines){
-                    DisciplineDTO disciplineDTO = new DisciplineDTO(discipline);
-                    disciplineDTOList.add(disciplineDTO);
-                    groupIds.addAll(discipline.getAgeGroupIds());
-                }
-                sportDTO.setDisciplines(disciplineDTOList);
-                return groupService.getAllByIdsList(groupIds).collectList().flatMap(ageGroups -> {
-                    ageGroups = ageGroups.stream().sorted(Comparator.comparing(AgeGroup::getTitle)).collect(Collectors.toList());
-                    List<DisciplineDTO> disciplineDTOS = sportDTO.getDisciplines();
-                    for(DisciplineDTO disciplineDTO : disciplineDTOS){
-                        for(AgeGroup ageGroup : ageGroups){
-                            if(ageGroup.getDisciplineId() == disciplineDTO.getId()){
-                                AgeGroupDTO ageGroupDTO = new AgeGroupDTO();
-                                ageGroupDTO.setId(ageGroup.getId());
-                                ageGroupDTO.setTitle(ageGroup.getTitle());
-                                ageGroupDTO.setMinAge(ageGroup.getMinAge());
-                                ageGroupDTO.setMaxAge(ageGroup.getMaxAge());
-                                disciplineDTO.addAgeGroup(ageGroupDTO);
-                            }
-                        }
-                    }
-                    disciplineDTOS = disciplineDTOS.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
-                    sportDTO.setDisciplines(disciplineDTOS);
-                    return Mono.just(sportDTO);
+    private Flux<SubjectDTO> getCompletedSubjects(String letter){
+        return subjectService.getSubjectsByFirstLetter(letter).flatMap(subject -> {
+            SubjectDTO subjectDTO = new SubjectDTO(subject);
+            return baseSportService.getAllByIds(subject.getBaseSportIds()).flatMap(baseSport -> {
+                BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
+                return sportService.getById(baseSport.getTypeOfSportId()).flatMap(sport -> {
+                    TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                    baseSportDTO.setSport(typeOfSportDTO);
+                    return Mono.just(baseSportDTO);
                 });
-            }));
+            }).collectList().flatMap(baseSportDTOS -> {
+                subjectDTO.setBaseSports(baseSportDTOS);
+                return schoolService.getAllByIdIn(subject.getSportSchoolIds()).flatMap(school -> {
+                    SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                    return participantService.findByIds(school.getParticipantIds()).flatMap(participant -> {
+                        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                        return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                            QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                            return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
+                                TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                                qualificationDTO.setSport(typeOfSportDTO);
+                                return Mono.just(qualificationDTO);
+                            });
+                        }).collectList().flatMap(ql -> {
+                            participantDTO.setQualifications(ql);
+                            return Mono.just(participantDTO);
+                        });
+                    }).collectList().flatMap(participantDTOS -> {
+                        sportSchoolDTO.setParticipants(participantDTOS);
+                        return Mono.just(sportSchoolDTO);
+                    });
+                }).collectList().flatMap(sportSchoolDTOS -> {
+                    sportSchoolDTOS = sportSchoolDTOS.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                    subjectDTO.setSchools(sportSchoolDTOS);
+                    return Mono.just(subjectDTO);
+                });
+            });
         }).collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(TypeOfSportDTO::getTitle)).collect(Collectors.toList());
+            l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
     }
 
-    private Mono<FormDTO> getTotalStatistic(){
-        return Mono.just(new FormDTO()).flatMap(form -> sportService.getAll().collectList().flatMap(sportList -> {
-            form.setSportTotal(sportList.size());
-            return disciplineService.getAll().collectList();
-        }).flatMap(disciplines -> {
-            form.setDisciplineTotal(disciplines.size());
-            return groupService.getAll().collectList();
-        }).flatMap(groupList -> {
-            form.setGroupTotal(groupList.size());
-            return subjectService.getAll().collectList();
-        }).flatMap(subjects -> {
-            form.setSubjectTotal(subjects.size());
-            return participantService.getAll().collectList();
-        }).flatMap(participants -> {
-            form.setParticipantTotal(participants.size());
+    private Flux<TypeOfSportDTO> getCompletedTypeOfSport(String letter){
+        return sportService.getSportsByFirstLetter(letter).flatMapSequential(sport -> {
+            TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+            return disciplineService.getAllByIds(sport.getDisciplineIds()).collectList().flatMap(disciplines -> {
+                List<DisciplineDTO> dl = new ArrayList<>();
+                for(Discipline discipline : disciplines){
+                    dl.add(new DisciplineDTO(discipline));
+                }
+                dl = dl.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
+                typeOfSportDTO.setDisciplines(dl);
+                return groupService.getAllByIds(sport.getAgeGroupIds()).collectList();
+            }).flatMap(groups -> {
+                List<AgeGroupDTO> ag = new ArrayList<>();
+                for(AgeGroup ageGroup : groups){
+                    ag.add(new AgeGroupDTO(ageGroup));
+                }
+                ag = ag.stream().sorted(Comparator.comparing(AgeGroupDTO::getTitle)).collect(Collectors.toList());
+                typeOfSportDTO.setGroups(ag);
+                return Mono.just(typeOfSportDTO);
+            });
+        }).collectList().flatMapMany(sports -> {
+            sports = sports.stream().sorted(Comparator.comparing(TypeOfSportDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(sports);
+        }).flatMapSequential(Mono::just);
+    }
+
+    private Mono<TotalStatisticDTO> getTotalStatistic(){
+        return Mono.just(new TotalStatisticDTO()).flatMap(form -> sportService.getCount().flatMap(count -> {
+            form.setSportTotal(Math.toIntExact(count));
+            return disciplineService.getCount();
+        }).flatMap(count -> {
+            form.setDisciplineTotal(Math.toIntExact(count));
+            return groupService.getCount();
+        }).flatMap(count -> {
+            form.setGroupTotal(Math.toIntExact(count));
+            return subjectService.getCount();
+        }).flatMap(count -> {
+            form.setSubjectTotal(Math.toIntExact(count));
+            return schoolService.getCount();
+        }).flatMap(count -> {
+            form.setSchoolTotal(Math.toIntExact(count));
+            return participantService.getCount();
+        }).flatMap(count -> {
+            form.setParticipantTotal(Math.toIntExact(count));
+            return qualificationService.getCount();
+        }).flatMap(count -> {
+            form.setQualificationTotal(Math.toIntExact(count));
             return Mono.just(form);
         }));
+    }
+
+    private Mono<Rendering> getBaseSportErrorRendering(String letter, TypeOfSportDTO sportDTO){
+        List<SportFilterType> filters = new ArrayList<>(Arrays.asList(SportFilterType.OLYMPIC, SportFilterType.NO_OLYMPIC, SportFilterType.ADAPTIVE));
+        List<Season> seasons = new ArrayList<>(Arrays.asList(Season.ALL, Season.SUMMER, Season.WINTER));
+        return Mono.just(
+                Rendering.view("template")
+                        .modelAttribute("title", "Sport data")
+                        .modelAttribute("index", "sport-data-page")
+                        .modelAttribute("sports", getCompletedTypeOfSport(letter))
+                        .modelAttribute("sportForm", sportDTO)
+                        .modelAttribute("disciplineForm", new DisciplineDTO())
+                        .modelAttribute("groupForm", new AgeGroupDTO())
+                        .modelAttribute("filterForm", new FilterDTO())
+                        .modelAttribute("filters", filters)
+                        .modelAttribute("seasons", seasons)
+                        .modelAttribute("letter", letter)
+                        .build()
+        );
     }
 }

@@ -4,6 +4,7 @@ private int sportTotal;
 private int disciplineTotal;
 private int groupTotal;
 private int subjectTotal;
+private int schoolTotal;
 private int participantTotal;
 -->
 
@@ -28,7 +29,7 @@ private int participantTotal;
                         <div class="fw-bold">Виды спорта</div>
                         Информация по видам спорта
                     </div>
-                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getSportTotal()}"></span>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${dbStat.getSportTotal()}"></span>
                 </li>
                 <li id="subjectList" class="list-group-item d-flex justify-content-between align-items-start"
                     onclick="showSubject()">
@@ -36,7 +37,7 @@ private int participantTotal;
                         <div class="fw-bold">Субъекты</div>
                         Информация по субъектам
                     </div>
-                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getSubjectTotal()}"></span>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${dbStat.getSubjectTotal()}"></span>
                 </li>
                 <li id="personList" class="list-group-item d-flex justify-content-between align-items-start"
                     onclick="showPerson()">
@@ -44,7 +45,7 @@ private int participantTotal;
                         <div class="fw-bold">Участники</div>
                         Информация по участникам финалистам
                     </div>
-                    <span class="badge text-bg-primary rounded-pill" th:text="${form.getParticipantTotal()}"></span>
+                    <span class="badge text-bg-primary rounded-pill" th:text="${dbStat.getParticipantTotal()}"></span>
                 </li>
             </ol>
         </div>
@@ -58,10 +59,10 @@ private int participantTotal;
                                 <span>Видов спорта</span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${form.getSportTotal()}"></span>
+                                <span th:text="${dbStat.getSportTotal()}"></span>
                             </div>
                             <div class="col-4">
-                                <span class="muted">
+                                <span class="muted float-end">
                                      <span id="s-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
                                 </span>
                             </div>
@@ -73,10 +74,10 @@ private int participantTotal;
                                 <span>Дисциплин</span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${form.getDisciplineTotal()}"></span>
+                                <span th:text="${dbStat.getDisciplineTotal()}"></span>
                             </div>
                             <div class="col-4">
-                                <span class="muted">
+                                <span class="muted float-end">
                                      <span id="d-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
                                      <span id="d-w" data-bs-toggle="tooltip" data-bs-title="Дисциплин меньше чем видов спорта - неполнота базы данных" hidden><i class="bi bi-exclamation-square fs-4 text-warning"></i></span>
                                 </span>
@@ -89,12 +90,12 @@ private int participantTotal;
                                 <span>Возрастных групп</span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${form.getGroupTotal()}"></span>
+                                <span th:text="${dbStat.getGroupTotal()}"></span>
                             </div>
                             <div class="col-4">
-                                <span class="muted">
+                                <span class="muted float-end">
                                      <span id="g-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
-                                     <span id="g-w" data-bs-toggle="tooltip" data-bs-title="Возрастных групп меньше чем дисциплин - неполнота базы данных" hidden><i class="bi bi-exclamation-square fs-4 text-warning"></i></span>
+                                     <span id="g-w" data-bs-toggle="tooltip" data-bs-title="Возрастных групп меньше чем видов спорта - неполнота базы данных" hidden><i class="bi bi-exclamation-square fs-4 text-warning"></i></span>
                                 </span>
                             </div>
                         </div>
@@ -113,11 +114,26 @@ private int participantTotal;
                                 <span>Субъектов</span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${form.getSubjectTotal()}"></span>
+                                <span th:text="${dbStat.getSubjectTotal()}"></span>
                             </div>
                             <div class="col-4">
-                                <span class="muted">
+                                <span class="muted float-end">
                                      <span id="sub-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Школ</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${dbStat.getSchoolTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted float-end">
+                                     <span id="sch-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
                                 </span>
                             </div>
                         </div>
@@ -136,18 +152,33 @@ private int participantTotal;
                                 <span>Участников</span>
                             </div>
                             <div class="col-4">
-                                <span th:text="${form.getParticipantTotal()}"></span>
+                                <span th:text="${dbStat.getParticipantTotal()}"></span>
                             </div>
                             <div class="col-4">
-                                <span class="muted">
+                                <span class="muted float-end">
                                      <span id="p-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Квалификаций</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${dbStat.getQualificationTotal()}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted float-end">
+                                     <!--<span id="sch-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>-->
                                 </span>
                             </div>
                         </div>
                     </li>
                 </ul>
                 <div class="d-grid gap-2 p-2">
-                    <a th:href="@{/database/participant}" class="btn btn-primary" type="button">Управление записями - "Участники"</a>
+                    <a th:href="@{/database/participant/А}" class="btn btn-primary" type="button">Управление записями - "Участники"</a>
                 </div>
             </div>
         </div>
@@ -155,17 +186,19 @@ private int participantTotal;
 </div>
 
 <script th:inline="javascript">
-    let sportTotal = [[${form}]].sportTotal;
-    let disciplineTotal = [[${form}]].disciplineTotal;
-    let groupTotal = [[${form}]].groupTotal;
-    let subjectTotal = [[${form}]].subjectTotal;
-    let participantTotal = [[${form}]].participantTotal;
+    let sportTotal = [[${dbStat}]].sportTotal;
+    let disciplineTotal = [[${dbStat}]].disciplineTotal;
+    let groupTotal = [[${dbStat}]].groupTotal;
+    let subjectTotal = [[${dbStat}]].subjectTotal;
+    let schoolTotal = [[${dbStat}]].schoolTotal;
+    let participantTotal = [[${dbStat}]].participantTotal;
     document.getElementById('s-a').hidden = sportTotal !== 0;
     document.getElementById('d-a').hidden = disciplineTotal !== 0;
     document.getElementById('d-w').hidden = disciplineTotal > sportTotal;
     document.getElementById('g-a').hidden = groupTotal !== 0;
-    document.getElementById('g-w').hidden = groupTotal > disciplineTotal;
+    document.getElementById('g-w').hidden = groupTotal > sportTotal;
     document.getElementById('sub-a').hidden = subjectTotal !== 0
+    document.getElementById('sch-a').hidden = schoolTotal !== 0
     document.getElementById('p-a').hidden = participantTotal !== 0;
 
     function showSport() {

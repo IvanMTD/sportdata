@@ -10,7 +10,7 @@ import ru.fcpsr.sportdata.models.Qualification;
 public class QualificationDTO {
     private int id;
     private Category category;
-    private AgeGroupDTO group;
+    private TypeOfSportDTO sport;
     private ParticipantDTO participant;
 
     public QualificationDTO(Qualification qualification) {

@@ -27,6 +27,10 @@ public class AgeGroupService {
         return groupRepository.findAllByIdIn(ageGroupIds);
     }
 
+    public Flux<AgeGroup> getAllByIds(Set<Integer> ageGroupIds) {
+        return groupRepository.findAllById(ageGroupIds);
+    }
+
     public Flux<AgeGroup> getAll() {
         return groupRepository.findAll();
     }
@@ -34,10 +38,10 @@ public class AgeGroupService {
     // CREATE
     public Mono<AgeGroup> addNewGroup(AgeGroupDTO groupDTO) {
         return Mono.just(new AgeGroup()).flatMap(group -> {
-            group.setDisciplineId(groupDTO.getDisciplineId());
             group.setTitle(groupDTO.getTitle());
             group.setMinAge(groupDTO.getMinAge());
             group.setMaxAge(groupDTO.getMaxAge());
+            group.setTypeOfSportId(groupDTO.getSportId());
             return groupRepository.save(group);
         });
     }
@@ -56,5 +60,14 @@ public class AgeGroupService {
             group.setMaxAge(groupDTO.getMaxAge());
             return groupRepository.save(group);
         });
+    }
+
+    // DELETE
+    public Mono<AgeGroup> deleteGroup(int groupId) {
+        return groupRepository.findById(groupId).flatMap(group -> groupRepository.deleteById(group.getId()).then(Mono.just(group)));
+    }
+
+    public Mono<Long> getCount() {
+        return groupRepository.count();
     }
 }

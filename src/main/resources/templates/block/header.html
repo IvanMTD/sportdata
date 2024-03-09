@@ -12,7 +12,7 @@
             <li class="nav-item"><a th:href="@{/auth/user/profile}" class="nav-link link-body-emphasis px-2" th:if="${auth}">Профиль</a></li>
             <li class="nav-item"><a th:href="@{/auth/login}" class="nav-link link-body-emphasis px-2" th:if="${!auth}">Вход</a></li>
             <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2" th:if="${auth}" onclick="document.getElementById('logoutForm').submit()">Выход</a></li>
-            <li class="nav-item"><a th:href="@{/auth/user/reg}" class="nav-link link-body-emphasis px-2" th:if="${!auth}">Регистрация</a></li>
+            <!--<li class="nav-item"><a th:href="@{/auth/user/reg}" class="nav-link link-body-emphasis px-2" th:if="${!auth}">Регистрация</a></li>-->
         </ul>
     </div>
 </nav>

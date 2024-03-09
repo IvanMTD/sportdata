@@ -7,6 +7,18 @@
                     Детальное состояние базы данных "Субъекты"
                 </small>
             </h1>
+            <h4 th:object="${baseSportForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('expiration')}" th:errors="*{expiration}"></small>
+                <small class="text-danger" th:if="${#fields.hasErrors('issueDate')}" th:errors="*{issueDate}"></small>
+            </h4>
+            <h4 th:object="${schoolForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+                <small class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></small>
+            </h4>
+            <h4 th:object="${subjectForm}">
+                <small class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></small>
+                <small class="text-danger" th:if="${#fields.hasErrors('iso')}" th:errors="*{iso}"></small>
+            </h4>
         </div>
         <div class="col"></div>
     </div>
@@ -232,154 +244,425 @@
                                         <span th:text="${subject.getFederalDistrict().getTitle}"></span>
                                     </div>
                                     <div class="col">
-                                        <div class="float-end">
-                                            <span class="muted">
-                                                <span data-bs-toggle="tooltip" data-bs-title="Субъект не представляет ни какие виды спорта" th:if="${subject.getSports().size() == 0}"><i class="bi bi-exclamation-circle fs-4 text-danger"></i></span>
-                                                <span data-bs-toggle="tooltip" data-bs-title="Субъект не представляет ни каких участников" th:if="${subject.getParticipants().size() == 0}"><i class="bi bi-people-fill fs-4 text-danger"></i></i></span>
-                                            </span>
-                                        </div>
+                                        <span class="muted float-end">
+                                            <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют базовые виды спорта" th:if="${subject.getBaseSports().size() == 0}"><i class="bi bi-info-circle fs-4 text-warning"></i></span>
+                                            <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют спортивные организации" th:if="${subject.getSchools().size() == 0}"><i class="bi bi-building-dash fs-4 text-warning"></i></span>
+                                            <span th:id="'sub-w-' + ${subject_stat.index}" data-bs-toggle="tooltip" data-bs-title="У некоторых организаций отсутствуют спортсмены" hidden><i class="bi bi-person-exclamation fs-4 text-primary"></i></span>
+                                            <span data-bs-toggle="tooltip" data-bs-title="Отсутствует ISO! Обновите ISO согласно Википедии - ISO-3166-2:RU" th:if="${subject.getIso() == null}"><i class="bi bi-globe-central-south-asia fs-4 text-danger"></i></span>
+                                            <span th:id="'sub-w-2-' + ${subject_stat.index}" data-bs-toggle="tooltip" data-bs-title="У некоторых организаций отсутствует адрес" hidden><i class="bi bi-question-square fs-4 text-warning"></i></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </button>
                     </h2>
                     <div th:id="'collapse-0-' + ${subject_stat.index}" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <p class="fs-4">Виды спорта которые представляет регион</p>
-                            <div class="container">
-                                <div class="row">
-                                    <ul class="list-group">
-                                        <li class="list-group-item active fs-5" aria-current="true">Добавить вид спорта</li>
-                                        <li class="list-group-item">
-                                            <form th:method="POST" th:action="@{/database/{letter}/subject/sport/add(letter=${letter})}" th:object="${ssForm}">
-                                                <input type="number" th:id="'id-2-' + ${subject_stat.index}" th:field="*{subjectId}" hidden>
+                        <div class="accordion-body bg-secondary-subtle">
+                            <div class="container bg-success-subtle border border-success border-bottom-0">
+                                <p class="text-center fs-5">
+                                    Редактировать название
+                                </p>
+                                <form th:method="POST" th:action="@{/database/subject/{letter}/title/update(letter=${letter})}" th:object="${subjectForm}">
+                                    <input th:id="'sub-h-2-1-' + ${subject_stat.index}" type="number" th:field="*{id}" hidden>
+                                    <script th:inline="javascript">
+                                        document.getElementById('sub-h-2-1-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                    </script>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 100px">Название</span>
+                                                <input th:id="'sub-in-0-1-' + ${subject_stat.index}" type="text" class="form-control" th:field="*{title}">
                                                 <script th:inline="javascript">
-                                                    document.getElementById('id-2-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
-                                                </script>
-                                                <div class="row">
-                                                    <div class="col-8">
-                                                        <div class="input-group mb-3">
-                                                            <span class="input-group-text">Виды спорта</span>
-                                                            <select class="form-select" aria-label="Default select example" th:field="*{sportId}">
-                                                                <option th:each="s : ${sportList}" th:value="${s.getId()}" th:text="${s.getTitle()}"></option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <input class="btn btn-primary" type="submit" value="Добавить" style="width: 100%">
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="row row-cols-4 py-5">
-                                    <div class="col border border-dark m-1" th:each="sport, sport_stat : ${subject.getSports()}" style="width: 200px">
-                                        <div class="row bg-success-subtle">
-                                            <div class="col-10">
-                                                <p th:text="${sport.getTitle()}"></p>
-                                            </div>
-                                            <div class="col-2" style="padding: 5px">
-                                                <button th:id="'b-' + ${subject_stat.index} + '-' + ${sport_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
-                                                <div class="modal fade" th:id="'modal-' + ${subject_stat.index} + '-' + ${sport_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Внимание! Вы хотите удалить <span th:text="${sport.getTitle()}"></span>?</h1>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <p>
-                                                                    Это удалит <span th:text="${sport.getTitle()}"></span> из списка который представляет регион <span th:text="${subject.getTitle()}"></span>. Вы уверены?
-                                                                </p>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                                                <form th:method="GET" th:action="@{/database/{letter}/subject/{subjectId}/sport/delete/{sportId}(letter=${letter},subjectId=${subject.getId()},sportId=${sport.getId()})}">
-                                                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <script th:inline="javascript">
-                                                    document.getElementById('b-' + [[${subject_stat.index}]] + '-' + [[${sport_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${subject_stat.index}]] + '-' + [[${sport_stat.index}]])
+                                                    document.getElementById('sub-in-0-1-' + [[${subject_stat.index}]]).value = [[${subject}]].title;
                                                 </script>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <p th:text="${sport.getSeason().getTitle()}"></p>
-                                            <p th:text="${sport.getSportFilterType().getTitle()}"></p>
+                                        <div class="col-4">
+                                            <div class="d-grid gap-2">
+                                                <input class="btn btn-primary" type="submit" value="Обновить">
+                                            </div>
                                         </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="container bg-success-subtle border border-success border-top-0">
+                                <p class="text-center fs-5">
+                                    Редактировать ISO
+                                </p>
+                                <form th:method="POST" th:action="@{/database/subject/{letter}/iso/update(letter=${letter})}" th:object="${subjectForm}">
+                                    <input th:id="'sub-h-2-2-' + ${subject_stat.index}" type="number" th:field="*{id}" hidden>
+                                    <script th:inline="javascript">
+                                        document.getElementById('sub-h-2-2-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                    </script>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 100px">ISO</span>
+                                                <input th:id="'sub-in-1-1-' + ${subject_stat.index}" type="text" class="form-control" th:field="*{iso}">
+                                                <script th:inline="javascript">
+                                                    document.getElementById('sub-in-1-1-' + [[${subject_stat.index}]]).value = [[${subject}]].iso;
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="d-grid gap-2">
+                                                <input class="btn btn-primary" type="submit" value="Обновить">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="row">
+                                <p class="fs-4 text-center">Базовые виды спорта субъекта<span th:text="' | Всего: ' + ${subject.getBaseSports().size()}"></span></p>
+                                <p class="text-center" th:if="${subject.getBaseSports().size()} == 0">У данного субъекта отсутствуют базовые виды спорта</p>
+                            </div>
+                            <div class="row row-cols-4" style="padding-left: 30px">
+                                <div class="col border border-dark m-1" th:each="baseSport, bs_stat : ${subject.getBaseSports()}" style="width: 200px">
+                                    <div class="row bg-danger-subtle">
+                                        <div class="col-10">
+                                            <p th:text="${baseSport.getSport().getTitle()}"></p>
+                                        </div>
+                                        <div class="col-2" style="padding: 5px">
+                                            <button th:id="'b-' + ${subject_stat.index} + '-' + ${bs_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <div class="modal fade" th:id="'modal-' + ${subject_stat.index} + '-' + ${bs_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5">Внимание! Вы хотите удалить <span th:text="${baseSport.getSport().getTitle()}"></span>?</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                Вы собираетесь удалить базовый вид спорта <span th:text="${baseSport.getSport().getTitle()}"></span>! Вы уверены?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                            <form th:method="GET" th:action="@{/database/{letter}/delete/base/sport/{bSportId}(letter=${letter}, bSportId=${baseSport.getId()})}">
+                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script th:inline="javascript">
+                                                document.getElementById('b-' + [[${subject_stat.index}]] + '-' + [[${bs_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${subject_stat.index}]] + '-' + [[${bs_stat.index}]])
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="row bg-white">
+                                        <p th:text="${baseSport.getSport().getSeason().getTitle()}"></p>
+                                        <p th:text="${baseSport.getSport().getSportFilterType().getTitle()}"></p>
+                                        <p th:text="'С ' + ${baseSport.getDate()} + ' по конец ' + ${baseSport.getExpiration()}"></p>
                                     </div>
                                 </div>
                             </div>
-                            <p class="fs-4">Участники представляющие регион</p>
                             <div class="container">
                                 <div class="row">
-                                    <ul class="list-group">
-                                        <li class="list-group-item active fs-5" aria-current="true">Добавить участника</li>
+                                    <ul class="list-group p-2">
+                                        <li class="list-group-item active fs-4" aria-current="true">Добавить базовый вид спорта</li>
                                         <li class="list-group-item">
-                                            <form th:method="POST" th:action="@{/database/{letter}/subject/participant/add(letter=${letter})}" th:object="${ssForm}">
-                                                <input type="number" th:id="'user-add-' + ${subject_stat.index}" th:field="*{subjectId}" hidden>
+                                            <!--
+                                                private int subjectId;
+                                                private int sportId;
+                                                private LocalDate issueDate;
+                                                private int expiration;
+                                            -->
+                                            <form th:method="POST" th:action="@{/database/subject/{letter}/add/base/sport(letter=${letter})}" th:object="${baseSportForm}">
+                                                <input th:id="'h-i-1-' + ${subject_stat.index}" type="number" th:field="*{subjectId}" hidden>
                                                 <script th:inline="javascript">
-                                                    document.getElementById('user-add-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                                    document.getElementById('h-i-1-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
                                                 </script>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 100px">Виды спорта</span>
+                                                    <select class="form-select" th:field="*{sportId}">
+                                                        <option th:each="sport : ${sportList}" th:value="${sport.getId()}" th:text="${sport.getTitle()}"></option>
+                                                    </select>
+                                                </div>
                                                 <div class="row">
-                                                    <div class="col-8">
+                                                    <div class="col">
                                                         <div class="input-group mb-3">
-                                                            <span class="input-group-text">Поиск участника</span>
-                                                            <input class="form-control" list="datalistOptions" placeholder="Наберите для поиска ..." th:field="*{fullName}">
-                                                            <datalist id="datalistOptions">
-                                                                <option th:each="p : ${pList}" th:value="${p.getFullName()}" th:text="${p.getDate()} + ' | Возраст: ' + ${p.getAge()}">
-                                                            </datalist>
+                                                            <span class="input-group-text" style="width: 100px">Выдан с</span>
+                                                            <input type="date" class="form-control" th:field="*{issueDate}">
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
-                                                        <input class="btn btn-primary" type="submit" value="Добавить" style="width: 100%">
+                                                    <div class="col">
+                                                        <div class="input-group mb-3">
+                                                            <div class="input-group mb-3">
+                                                                <span class="input-group-text" style="width: 100px">Действует до</span>
+                                                                <input type="number" class="form-control" th:field="*{expiration}">
+                                                            </div>
+                                                        </div>
                                                     </div>
+                                                </div>
+                                                <div class="d-grid gap-2">
+                                                    <input class="btn btn-primary" type="submit" value="Добавить">
                                                 </div>
                                             </form>
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="row row-cols-4 py-5">
-                                    <div class="col border border-dark m-1" th:each="user, user_stat : ${subject.getParticipants()}" style="width: 200px">
-                                        <div class="row bg-warning-subtle">
-                                            <div class="col-10">
-                                                <p th:text="${user.getFullName()}"></p>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <p class="fs-4 text-center">Спортивные организации субъекта<span th:text="' | Всего: ' + ${subject.getSchools().size()}"></span></p>
+                                <p class="text-center" th:if="${subject.getSchools.size()} == 0">У данного субъекта отсутствуют спортивные организации</p>
+                            </div>
+                            <div class="accordion" th:id="'accordian-' + ${subject_stat.index}">
+                                <div class="accordion-item" th:each="school, school_stat : ${subject.getSchools()}">
+                                    <h2 class="accordion-header">
+                                        <button th:id="'btn-1-' + ${subject_stat.index} + '-' + ${school_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <span th:text="${school.getTitle()}"></span>
+                                                    </div>
+                                                    <div class="col">
+                                                        <span th:text="${school.getAddress()}"></span>
+                                                    </div>
+                                                    <div class="col">
+                                                    <span class="muted float-end">
+                                                        <span data-bs-toggle="tooltip" data-bs-title="У организации отсутствуют спортсмены" th:if="${school.getParticipants.size() == 0}"><i class="bi bi-person-exclamation fs-4 text-primary"></i></span>
+                                                        <span data-bs-toggle="tooltip" data-bs-title="У организации отсутствует адрес" th:if="${school.getAddress == null}"><i class="bi bi-question-square fs-4 text-warning"></i></span>
+                                                        <script th:inline="javascript">
+                                                            if([[${school}]].participants.length == 0){
+                                                                document.getElementById('sub-w-' + [[${subject_stat.index}]]).hidden = false;
+                                                            }
+                                                            if([[${school}]].address == null){
+                                                                document.getElementById('sub-w-2-' + [[${subject_stat.index}]]).hidden = false;
+                                                            }
+                                                        </script>
+                                                    </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-2" style="padding: 5px">
-                                                <button th:id="'b-0-' + ${subject_stat.index} + '-' + ${user_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
-                                                <div class="modal fade" th:id="'modal-0-' + ${subject_stat.index} + '-' + ${user_stat.index}" tabindex="-1" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h1 class="modal-title fs-5">Внимание!</span></h1>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </button>
+                                    </h2>
+                                    <div th:id="'collapse-1-' + ${subject_stat.index} + '-' + ${school_stat.index}" class="accordion-collapse collapse">
+                                        <div class="accordion-body bg-light">
+                                            <div class="container bg-success-subtle border border-success">
+                                                <div class="row">
+                                                    <p class="text-center fs-5">Редактор спортивной организации <span th:text="${school.getTitle()}"></span></p>
+                                                </div>
+                                                <form th:method="POST" th:action="@{/database/subject/{letter}/school/update(letter=${letter})}" th:object="${schoolForm}">
+                                                    <input th:id="'school-hidden-' + ${subject_stat.index} + '-' + ${school_stat.index}" type="number" th:field="*{id}" hidden>
+                                                    <script th:inline="javascript">
+                                                        document.getElementById('school-hidden-'  + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).value = [[${school}]].id;
+                                                    </script>
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" style="width: 100px">Название</span>
+                                                        <input th:id="'school-title-' + ${subject_stat.index} + '-' + ${school_stat.index}" type="text" class="form-control" th:field="*{title}">
+                                                        <script th:inline="javascript">
+                                                            document.getElementById('school-title-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).value = [[${school}]].title;
+                                                        </script>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" style="width: 100px">Адрес</span>
+                                                        <input th:id="'school-address-' + ${subject_stat.index} + '-' + ${school_stat.index}" type="text" class="form-control" th:field="*{address}">
+                                                        <script th:inline="javascript">
+                                                            document.getElementById('school-address-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).value = [[${school}]].address;
+                                                        </script>
+                                                    </div>
+                                                    <div class="d-grid gap-2 py-2">
+                                                        <input class="btn btn-primary" type="submit" value="Обновить">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="row">
+                                                <p class="fs-4 text-center">Спортсмены от организации<span th:text="' | Всего:' + ${school.getParticipants.size()}"></span></p>
+                                                <p class="text-center" th:if="${school.getParticipants.size()} == 0">У данной организации нет спортсменов которых она представляет</p>
+                                            </div>
+
+                                            <div class="row row-cols-3" style="padding-left: 30px">
+                                                <div class="col border border-dark m-1" th:each="p, p_stat : ${school.getParticipants()}" style="width: 270px">
+                                                    <div class="row bg-primary-subtle">
+                                                        <div class="col-10">
+                                                            <p th:text="${p.getFullName()}"></p>
+                                                        </div>
+                                                        <div class="col-2" style="padding: 5px">
+                                                            <button th:id="'b-1-' + ${subject_stat.index} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                                            <div class="modal fade" th:id="'modal-1-' + ${subject_stat.index} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h1 class="modal-title fs-5">Внимание! Вы хотите удалить <span th:text="${p.getFullName()}"></span>?</h1>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>
+                                                                                Вы собираетесь исключить участника <span th:text="${p.getFullName()}"></span> из списка спортивной организации. Участник не пропадет, его можно будет вернуть. Вы уверены?
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                                            <form th:method="GET" th:action="@{/database/subject/{letter}/school/{sid}/remove/participant/{pid}(letter=${letter},sid=${school.getId()},pid=${p.getId()})}">
+                                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div class="modal-body">
-                                                                Вы пытаетесь удалить <span th:text="${user.getFullName}"></span> из списка представителей региона <span th:text="${subject.getTitle()}">. Вы уверены?</span>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                                                <form th:method="GET" th:action="@{/database/{letter}/subject/{subjectId}/delete/patricipant/{pid}(letter=${letter}, subjectId = ${subject.getId}, pid = ${user.getId()})}">
-                                                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
-                                                                </form>
-                                                            </div>
+                                                            <script th:inline="javascript">
+                                                                document.getElementById('b-1-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]] + '-' + [[${p_stat.index}]]).setAttribute('data-bs-target','#modal-1-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]] + '-' + [[${p_stat.index}]])
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row bg-white">
+                                                        <p th:text="'Фамилия: ' + ${p.getLastname}"></p>
+                                                        <p th:text="'Имя: ' + ${p.getName()}"></p>
+                                                        <p th:text="'Отчество: ' + ${p.getMiddleName()}"></p>
+                                                        <p th:text="'Дата рождения: ' + ${p.getDate()}"></p>
+                                                        <p th:text="'Возраст: ' + ${p.getAge()}"></p>
+                                                        <hr>
+                                                        <div class="row" th:each="q : ${p.getQualifications}">
+                                                            <p th:text="'Вид спорта: ' + ${q.getSport().getTitle()} + ' - ' + ${q.getCategory().getTitle()}"></p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <script th:inline="javascript">
-                                                    document.getElementById('b-0-' + [[${subject_stat.index}]] + '-' + [[${user_stat.index}]]).setAttribute('data-bs-target','#modal-0-' + [[${subject_stat.index}]] + '-' + [[${user_stat.index}]])
-                                                </script>
+                                            </div>
+                                            <div class="container">
+                                                <div class="row">
+                                                    <ul class="list-group p-2">
+                                                        <li class="list-group-item active fs-4" aria-current="true">Найти и добавить спортсмена</li>
+                                                        <li class="list-group-item">
+                                                            <!--
+                                                                private int id;
+                                                                private int subjectId;
+                                                            -->
+                                                            <form th:method="GET" th:action="@{/database/{schoolId}/subject/{letter}/school/participant/add(schoolId=${school.getId()},letter=${letter})}">
+                                                                <div class="input-group mb-3">
+                                                                    <span class="input-group-text" style="width: 100px">Спортсмены</span>
+                                                                    <input type="search" class="form-control" th:id="'intro-0-' + ${subject_stat.index} + '-' + ${school_stat.index}" th:list="'dl-0-' + ${subject_stat.index} + '-' + ${school_stat.index}" placeholder="Начните вводить ... " name="search">
+                                                                    <datalist th:id="'dl-0-' + ${subject_stat.index} + '-' + ${school_stat.index}"></datalist>
+                                                                    <script th:inline="javascript">
+                                                                        $('#intro-0-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).on('input', function() {
+                                                                            var searchQuery = this.value;
+
+                                                                            $.ajax({
+                                                                                url: '/rest/database/participants',
+                                                                                type: 'get',
+                                                                                data: {
+                                                                                    query: searchQuery
+                                                                                },
+                                                                                success: function(response) {
+                                                                                    var dataList = $('#dl-0-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]);
+                                                                                    dataList.empty();
+
+                                                                                    response.forEach(function(item) {
+                                                                                        dataList.append(
+                                                                                            '<option value="' + item.lastname + ' ' + item.name + ' ' + item.middleName + '">' + item.birthday + '</option>'
+                                                                                        );
+                                                                                    });
+                                                                                }
+                                                                            });
+                                                                        });
+                                                                    </script>
+                                                                </div>
+                                                            </form>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <button th:id="'del-button-3-' + ${subject_stat.index} + '-' + ${school_stat.index}" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal" style="width: 100%">Удалить организацию</button>
+                                                            <div class="modal fade" th:id="'modal-3-' + ${subject_stat.index} + '-' + ${school_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h1 class="modal-title fs-5">Внимание! Вы собираетесь удалить <span th:text="${school.getTitle()}"></span>!</h1>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>
+                                                                                Вы собираетесь удалить <span th:text="${school.getTitle()}"></span>. Это удалит школу и открепит от нее всех спортсменов. Вы уверены?
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                                            <form th:method="GET" th:action="@{/database/{letter}/subject/{subjectId}/school/{schoolId}/delete(letter=${letter},subjectId=${subject.getId()},schoolId=${school.getId()})}">
+                                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <script th:inline="javascript">
+                                                                document.getElementById('del-button-3-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).setAttribute('data-bs-target','#modal-3-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]])
+                                                            </script>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <p th:text="'Дата рождения: ' + ${user.getDate()}"></p>
-                                            <p th:text="'Возраст: ' + ${user.getAge()}"></p>
+                                    </div>
+                                    <script th:inline="javascript">
+                                        document.getElementById('btn-1-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).setAttribute('data-bs-target','#collapse-1-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]])
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container bg-secondary-subtle">
+                            <div class="container">
+                                <ul class="list-group p-2">
+                                    <li class="list-group-item active fs-4" aria-current="true">Добавить спортивную организацию</li>
+                                    <li class="list-group-item">
+                                        <!--
+                                            private int id;
+                                            private String title;
+                                            private String address;
+                                            private int subjectId;
+                                        -->
+                                        <form th:method="POST" th:action="@{/database/subject/{letter}/add/school(letter = ${letter})}" th:object="${schoolForm}">
+                                            <input th:id="'sch-i-' + ${subject_stat.index}" type="number" th:field="*{subjectId}" hidden>
+                                            <script th:inline="javascript">
+                                                document.getElementById('sch-i-' + [[${subject_stat.index}]]).value = [[${subject}]].id;
+                                            </script>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 100px">Название</span>
+                                                    <input type="text" class="form-control" placeholder="Название спортивной организации" th:field="*{title}">
+                                                </div>
+                                            </div>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" style="width: 100px">Адрес</span>
+                                                    <input type="text" class="form-control" placeholder="Адрес спортивной организации" th:field="*{address}">
+                                                </div>
+                                            </div>
+                                            <div class="d-grid gap-2">
+                                                <input class="btn btn-primary" type="submit" value="Добавить">
+                                            </div>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="container">
+                            <div class="row">
+                                <div class="d-grid gap-2 my-2">
+                                    <button th:id="'subject-delete-button-' + ${subject_stat.index}" type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal">Удалить регион</button>
+                                    <div class="modal fade" th:id="'subject-delete-modal-' + ${subject_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5">Внимание! Вы хотите удалить <span th:text="${subject.getTitle()}"></span>?</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>
+                                                        Вы собираетесь удалить целый субъект <span th:text="${subject.getTitle()}"></span>! Это означает что так же будут удалены все спортивные организации региона и все базовые виды спорта. А участники окажутся без организации и субъекта. Вы уверены?
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                    <form th:method="GET" th:action="@{/database/subject/{letter}/delete/{subjectId}(letter=${letter},subjectId=${subject.getId()})}">
+                                                        <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
+                                    <script th:inline="javascript">
+                                        document.getElementById('subject-delete-button-' + [[${subject_stat.index}]]).setAttribute('data-bs-target','#subject-delete-modal-' + [[${subject_stat.index}]])
+                                    </script>
                                 </div>
                             </div>
                         </div>
@@ -389,6 +672,41 @@
                     </script>
                 </div>
             </div>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
+            <ul class="list-group p-2">
+                <li class="list-group-item active fs-4" aria-current="true">Добавить субъект</li>
+                <li class="list-group-item">
+                    <form th:method="POST" th:action="@{/database/subject/{letter}/add(letter = ${letter})}" th:object="${subjectForm}">
+                        <div class="row">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" style="width: 100px">Название</span>
+                                <input type="text" class="form-control" placeholder="Введите название субъекта" th:field="*{title}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" style="width: 100px">ISO</span>
+                                <input type="text" class="form-control" placeholder="Согласно справочнику ISO-3166" th:field="*{iso}">
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" style="width: 100px">Округ</span>
+                            <select class="form-select" th:field="*{federalDistrict}">
+                                <option th:each="f : ${federals}" th:value="${f}" th:text="${f.getTitle()}"></option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <input class="btn btn-primary" type="submit" value="Добавить">
+                        </div>
+                    </form>
+                </li>
+            </ul>
         </div>
         <div class="col"></div>
     </div>

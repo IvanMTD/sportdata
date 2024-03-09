@@ -26,4 +26,9 @@ public class QualificationService {
     // UPDATE
 
     // DELETE
+
+    // COUNT
+    public Mono<Long> getCount() {
+        return qualificationRepository.count();
+    }
 }

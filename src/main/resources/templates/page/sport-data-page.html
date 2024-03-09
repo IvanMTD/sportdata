@@ -227,9 +227,9 @@
         </div>
         <div class="col"></div>
     </div>
+
     <div class="row">
         <div class="col"></div>
-        <!--<div class="col-6 py-5 overflow-auto border" style="height: 450px">-->
         <div class="col-6 py-5">
             <div class="accordion m-2" id="accordion-0">
                 <div class="accordion-item" th:each="sport, sport_stat : ${sports}">
@@ -245,23 +245,74 @@
                                         <span th:text="${sport.getSportFilterType().getTitle()}"></span>
                                     </div>
                                     <div class="col">
-                                        <div class="float-end">
-                                            <span class="muted">
-                                                <span data-bs-toggle="tooltip" data-bs-title="Отсутствую дисциплины" th:if="${sport.getDisciplines().size() == 0}"><i class="bi bi-exclamation-square fs-4 text-danger"></i></span>
-                                                <span th:id="'w-0-' + ${sport_stat.index}" data-bs-toggle="tooltip" data-bs-title="Отсутствуют возрастные группы" hidden><i class="bi bi-exclamation-triangle fs-4 text-warning"></i></span>
-                                                <span data-bs-toggle="tooltip" data-bs-title="Не указан сезон" th:if="${sport.getSeason().getTitle()} == ''"><i class="bi bi-calendar-minus fs-4 text-primary"></i></span>
-                                                <span data-bs-toggle="tooltip" data-bs-title="Не указан олимпийский фильтр" th:if="${sport.getSportFilterType().getTitle()} == ''"><i class="bi bi-flag fs-4 text-info"></i></span>
-                                                <span th:id="'w-1-' + ${sport_stat.index}" data-bs-toggle="tooltip" data-bs-title="В некоторых группах отсутствует минимальный возраст участников" hidden><i class="bi bi-arrow-down-square fs-4 text-warning"></i></span>
-                                                <span th:id="'w-2-' + ${sport_stat.index}" data-bs-toggle="tooltip" data-bs-title="В некоторых группах отсутствует максимальный возраст участников" hidden><i class="bi bi-arrow-up-square fs-4 text-warning"></i></span>
-                                            </span>
-                                        </div>
+                                        <span class="muted float-end">
+                                            <span data-bs-toggle="tooltip" data-bs-title="Отсутствуют дисциплины" th:if="${sport.getDisciplines().size() == 0}"><i class="bi bi-exclamation-square fs-4 text-danger"></i></span>
+                                            <span data-bs-toggle="tooltip" data-bs-title="Не указан сезон" th:if="${sport.getSeason().getTitle()} == ''"><i class="bi bi-calendar-minus fs-4 text-primary"></i></span>
+                                            <span data-bs-toggle="tooltip" data-bs-title="Не указан олимпийский фильтр" th:if="${sport.getSportFilterType().getTitle()} == ''"><i class="bi bi-flag fs-4 text-info"></i></span>
+                                            <span data-bs-toggle="tooltip" data-bs-title="Отсутствуют возрастные группы" th:if="${sport.getGroups().size()} == 0"><i class="bi bi-person-fill-slash fs-4 text-warning"></i></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </button>
                     </h2>
                     <div th:id="'collapse-0-' + ${sport_stat.index}" class="accordion-collapse collapse">
-                        <div class="accordion-body bg-secondary-subtle">
+                        <div class="accordion-body">
+                            <!--<div class="container bg-success-subtle border border-success">
+                                <div class="row">
+                                    <p class="text-center fs-5">
+                                        Редактирование <span th:text="${sport.getTitle()}"></span>
+                                    </p>
+                                </div>
+                                <form th:object="${sportForm}">
+                                    <input th:id="'sport-update-id-' + ${sport_stat.index}" type="number" th:field="*{id}" hidden>
+                                    <script th:inline="javascript">
+                                        document.getElementById('sport-update-id-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
+                                    </script>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 100px">Название</span>
+                                                <input th:id="'sport-update-title-' + ${sport_stat.index}" type="text" class="form-control" th:field="*{title}">
+                                                <script th:inline="javascript">
+                                                    document.getElementById('sport-update-title-' + [[${sport_stat.index}]]).value = [[${sport}]].title;
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 100px">Сеозон</span>
+                                                <select th:id="'sport-update-season-' + ${sport_stat.index}" class="form-select" th:field="*{season}">
+                                                    <option th:each="s : ${seasons}" th:value="${s}" th:text="${s.getTitle()}"></option>
+                                                </select>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('sport-update-season-' + [[${sport_stat.index}]]).value = [[${sport}]].season;
+                                                </script>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text" style="width: 100px">Фильтр</span>
+                                                <select th:id="'sport-update-filter-' + ${sport_stat.index}" class="form-select" th:field="*{sportFilterType}">
+                                                    <option th:each="f : ${filters}" th:value="${f}" th:text="${f.getTitle()}"></option>
+                                                </select>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('sport-update-filter-' + [[${sport_stat.index}]]).value = [[${sport}]].sportFilterType;
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row py-2">
+                                        <div class="col">
+                                            <div class="d-grid gap-2">
+                                                <input class="btn btn-primary" type="submit" value="Обновить">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>-->
                             <!-- НАЧАЛО БЛОКА КАРТЫ ПО НАСТРОЙКЕ ВИДА СПОРТА -->
                             <div class="card m-2">
                                 <div class="card-header">
@@ -269,6 +320,7 @@
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-group">
+                                        <p class="text-center fs-5">Редактировать вид спорта</p>
                                         <li class="list-group-item">
                                             <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/title/update(letter = ${letter})}" th:object="${sportForm}">
                                                 <input th:id="'hidden3-0-' + ${sport_stat.index}" type="number" th:field="*{id}" hidden>
@@ -290,7 +342,7 @@
                                             </form>
                                         </li>
                                         <li class="list-group-item">
-                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/filter/update(letter = ${letter})}" th:object="${filterForm}">
+                                            <form class="row" th:method="POST" th:action="@{/database/sport/{letter}/filter/update(letter = ${letter})}" th:object="${filterForm}">
                                                 <input th:id="'hidden-0-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
                                                 <script th:inline="javascript">
                                                     document.getElementById('hidden-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
@@ -331,7 +383,8 @@
                                             </form>
                                         </li>
                                         <li class="list-group-item">
-                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/add(letter = ${letter})}" th:object="${disciplineForm}">
+                                            <p class="text-center fs-5">Добавить дисциплину</p>
+                                            <form class="row" th:method="POST" th:action="@{/database/sport/{letter}/discipline/add(letter = ${letter})}" th:object="${disciplineForm}">
                                                 <input th:id="'hidden2-0-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
                                                 <script th:inline="javascript">
                                                     document.getElementById('hidden2-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
@@ -344,223 +397,130 @@
                                                 </div>
                                             </form>
                                         </li>
+                                        <li class="list-group-item">
+                                            <p class="text-center fs-5">Добавить группу</p>
+                                            <form class="row" th:method="POST" th:action="@{/database/sport/{letter}/add/group(letter=${letter})}" th:object="${groupForm}">
+                                                <input th:id="'hidden3-1-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
+                                                <script th:inline="javascript">
+                                                    document.getElementById('hidden3-1-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
+                                                </script>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Мин</span>
+                                                            <input type="number" class="form-control" th:field="*{minAge}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Макс</span>
+                                                            <input type="number" class="form-control" th:field="*{maxAge}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <div class="input-group mb-3">
+                                                            <span class="input-group-text">Название группы</span>
+                                                            <input type="text" class="form-control" th:field="*{title}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input type="submit" class="btn btn-primary mb-3" value="Добавить" style="width: 100%">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                             <!-- КОНЕЦ БЛОКА НАСТРОЙКИ ВИДА СПОРТА -->
-                            <div class="accordion m-2" th:id="'accordion-0-' + ${sport_stat.index}">
-                                <div class="accordion-item" th:each="discipline, disciplines_stat : ${sport.getDisciplines()}">
-                                    <h2 class="accordion-header">
-                                        <button th:id="'btn-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                                            <div class="container">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <span th:text="${discipline.getTitle()}"></span>
-                                                    </div>
-                                                    <div class="col">
-                                                        <div class="float-end">
-                                                            <span class="muted">
-                                                                <span data-bs-toggle="tooltip" data-bs-title="Отсутствуют возрастные группы" th:if="${discipline.getAgeGroups().size() == 0}"><i class="bi bi-exclamation-triangle fs-4 text-warning"></i></span>
-                                                                <span th:id="'w-1-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" data-bs-toggle="tooltip" data-bs-title="В некоторых группах отсутствует минимальный возраст участников" hidden><i class="bi bi-arrow-down-square fs-4 text-warning"></i></span>
-                                                                <span th:id="'w-2-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" data-bs-toggle="tooltip" data-bs-title="В некоторых группах отсутствует максимальный возраст участников" hidden><i class="bi bi-arrow-up-square fs-4 text-warning"></i></span>
-                                                                <script th:inline="javascript">
-                                                                    if([[${discipline.getAgeGroups().size()}]] == 0){
-                                                                        document.getElementById('w-0-' + [[${sport_stat.index}]]).hidden = false;
-                                                                    }
-                                                                </script>
-                                                            </span>
+                            <div class="row">
+                                <p class="fs-4 text-center">Дисциплины<span th:text="' | Всего: ' + ${sport.getDisciplines().size()}"></span></p>
+                                <p class="text-center" th:if="${sport.getDisciplines().size()} == 0">Дисциплины отсутствуют</p>
+                            </div>
+                            <div class="row row-cols-4" style="padding-left: 30px">
+                                <div class="col border border-dark m-1" th:each="discipline, d_stat : ${sport.getDisciplines()}" style="width: 200px">
+                                    <div class="row bg-success-subtle">
+                                        <div class="col-10">
+                                            <p>Описание</p>
+                                        </div>
+                                        <div class="col-2" style="padding: 5px">
+                                            <button th:id="'b-' + ${sport_stat.index} + '-' + ${d_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <div class="modal fade" th:id="'modal-' + ${sport_stat.index} + '-' + ${d_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5">Внимание! Вы хотите удалить <span th:text="${discipline.getTitle()}"></span>?</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                Вы собираетесь удалить дисциплину <span th:text="${discipline.getTitle()}"></span>! Вы уверены?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                            <form th:method="GET" th:action="@{/database/{letter}/sport/{sportId}/discipline/{disciplineId}/delete(letter=${letter},sportId=${sport.getId()},disciplineId=${discipline.getId()})}">
+                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </button>
-                                    </h2>
-                                    <div th:id="'collapse-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" class="accordion-collapse collapse">
-                                        <div class="accordion-body bg-secondary-subtle">
-                                            <!-- НАЧАЛО БЛОКА ПО НАСТРОЙКЕ ДИСЦИПЛИНЫ -->
-                                            <div class="card m-2">
-                                                <div class="card-header">
-                                                    <span th:text="'Настройка ' + ${discipline.getTitle()}"></span>
-                                                </div>
-                                                <div class="card-body">
-                                                    <ul class="list-group">
-                                                        <li class="list-group-item">
-                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/title/update(letter = ${letter})}" th:object="${disciplineForm}">
-                                                                <input th:id="'hidden3-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="number" th:field="*{id}" hidden>
-                                                                <script th:inline="javascript">
-                                                                    document.getElementById('hidden3-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].id
-                                                                </script>
-                                                                <div class="col-8">
-                                                                    <div class="input-group mb-3">
-                                                                        <span class="input-group-text">Название</span>
-                                                                        <input th:id="'text-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="text" class="form-control" th:field="*{title}">
-                                                                    </div>
-                                                                    <script th:inline="javascript">
-                                                                        document.getElementById('text-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].title;
-                                                                    </script>
-                                                                </div>
-                                                                <div class="col-4">
-                                                                    <input type="submit" class="btn btn-primary mb-3" value="Обновить" style="width: 100%">
-                                                                </div>
-                                                            </form>
-                                                        </li>
-                                                        <li class="list-group-item">
-                                                            <form class="row" th:method="POST" th:action="@{/database/sport/{letter}/discipline/group/add(letter = ${letter})}" th:object="${groupForm}">
-                                                                <input th:id="'hidden2-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}" type="number" th:field="*{disciplineId}" hidden>
-                                                                <script th:inline="javascript">
-                                                                    document.getElementById('hidden2-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).value = [[${discipline}]].id;
-                                                                </script>
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <input type="text" class="form-control" placeholder="Название группы" th:field="*{title}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row py-2">
-                                                                    <div class="col-6">
-                                                                        <div class="input-group mb-3">
-                                                                            <span class="input-group-text" id="min2">min</span>
-                                                                            <input type="number" class="form-control" placeholder="Мин. возраст" aria-label="min" aria-describedby="min2" th:field="*{minAge}">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-6">
-                                                                        <div class="input-group mb-3">
-                                                                            <span class="input-group-text" id="max2">max</span>
-                                                                            <input type="number" class="form-control" placeholder="Макс. возраст" aria-label="max" aria-describedby="max2" th:field="*{maxAge}">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <input type="submit" class="btn btn-primary mb-3" value="Добавить" style="width: 100%">
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <!-- КОНЕЦ БЛОКА ПО НАСТРОЙКЕ ДИСЦИПЛИН -->
-                                            <div class="accordion m-2" th:id="'accordion-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index}">
-                                                <div class="accordion-item" th:each="group, group_stat : ${discipline.getAgeGroups()}">
-                                                    <h2 class="accordion-header">
-                                                        <button th:id="'btn-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                                                            <div class="container">
-                                                                <div class="row">
-                                                                    <div class="col">
-                                                                        <span th:text="${group.getTitle()}"></span>
-                                                                    </div>
-                                                                    <div class="col">
-                                                                        <span th:if="${group.getMinAge()} == 0">Возраст от неуказан </span>
-                                                                        <span th:text="'Возраст участников от ' + ${group.getMinAge()}" th:if="${group.getMinAge()} != 0"></span>
-                                                                        <span th:if="${group.getMaxAge()} == 0">до неуказан </span>
-                                                                        <span th:text="'до ' + ${group.getMaxAge()}" th:if="${group.getMaxAge()} != 0"></span>
-                                                                    </div>
-                                                                    <div class="col">
-                                                                        <div class="float-end">
-                                                                            <span class="muted">
-                                                                                <span data-bs-toggle="tooltip" data-bs-title="В возрастной группе отсутствует минимальный возраст участников" th:if="${group.getMinAge == 0}"><i class="bi bi-arrow-down-square fs-4 text-warning"></i></span>
-                                                                                <span data-bs-toggle="tooltip" data-bs-title="В возрастной группе отсутствует максимальный возраст участников" th:if="${group.getMinAge == 0}"><i class="bi bi-arrow-up-square fs-4 text-warning"></i></span>
-                                                                                <script th:inline="javascript">
-                                                                                    if([[${group.getMinAge()}]] == 0){
-                                                                                        document.getElementById('w-1-' + [[${sport_stat.index}]]).hidden = false;
-                                                                                        document.getElementById('w-1-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).hidden = false;
-                                                                                    }
-                                                                                    if([[${group.getMaxAge()}]] == 0){
-                                                                                        document.getElementById('w-2-' + [[${sport_stat.index}]]).hidden = false;
-                                                                                        document.getElementById('w-2-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).hidden = false;
-                                                                                    }
-                                                                                </script>
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                    </h2>
-                                                    <div th:id="'collapse-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" class="accordion-collapse collapse">
-                                                        <div class="accordion-body">
-                                                            <!-- БЛОК УПРАВЛЕНИЯ ГРУПАМИ - ОБНОВЛЕНИЕ УДАЛЕНИЕ -->
-                                                            <div class="card m-2">
-                                                                <div class="card-header">
-                                                                    <span th:text="'Настройка ' + ${group.getTitle()}"></span>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <ul class="list-group">
-                                                                        <li class="list-group-item">
-                                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/group/title/update(letter = ${letter})}" th:object="${groupForm}">
-                                                                                <input th:id="'hidden3-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="number" th:field="*{id}" hidden>
-                                                                                <input th:id="'hidden3-1-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="number" th:field="*{minAge}" hidden>
-                                                                                <input th:id="'hidden3-2-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="number" th:field="*{maxAge}" hidden>
-                                                                                <script th:inline="javascript">
-                                                                                    document.getElementById('hidden3-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].id;
-                                                                                    document.getElementById('hidden3-1-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = 5;
-                                                                                    document.getElementById('hidden3-2-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = 5;
-                                                                                </script>
-                                                                                <div class="col-8">
-                                                                                    <div class="input-group mb-3">
-                                                                                        <span class="input-group-text">Название</span>
-                                                                                        <input th:id="'text-0-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="text" class="form-control" th:field="*{title}">
-                                                                                    </div>
-                                                                                    <script th:inline="javascript">
-                                                                                        document.getElementById('text-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].title;
-                                                                                    </script>
-                                                                                </div>
-                                                                                <div class="col-4">
-                                                                                    <input type="submit" class="btn btn-primary mb-3" value="Обновить" style="width: 100%">
-                                                                                </div>
-                                                                            </form>
-                                                                        </li>
-                                                                        <li class="list-group-item">
-                                                                            <form class="row g-3" th:method="POST" th:action="@{/database/sport/{letter}/discipline/group/age/setup(letter = ${letter})}" th:object="${groupForm}">
-                                                                                <input th:id="'hidden3-3-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="number" th:field="*{id}" hidden>
-                                                                                <input th:id="'hidden3-4-' + ${sport_stat.index} + '-' + ${disciplines_stat.index} + '-' + ${group_stat.index}" type="text" th:field="*{title}" hidden>
-                                                                                <script th:inline="javascript">
-                                                                                    document.getElementById('hidden3-3-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].id;
-                                                                                    document.getElementById('hidden3-4-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).value = [[${group}]].title;
-                                                                                </script>
-                                                                                <div class="col-8">
-                                                                                    <div class="row">
-                                                                                        <div class="col-6">
-                                                                                            <div class="input-group mb-3">
-                                                                                                <span class="input-group-text" id="min">min</span>
-                                                                                                <input th:id="'min-0-' + ${group_stat.index}" type="number" class="form-control" placeholder="Мин. возраст" aria-label="min" aria-describedby="min" th:field="*{minAge}">
-                                                                                                <script th:inline="javascript">
-                                                                                                    document.getElementById('min-0-' + [[${group_stat.index}]]).value = [[${group}]].minAge;
-                                                                                                </script>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="col-6">
-                                                                                            <div class="input-group mb-3">
-                                                                                                <span class="input-group-text" id="max">max</span>
-                                                                                                <input th:id="'max-0-' + ${group_stat.index}" type="number" class="form-control" placeholder="Макс. возраст" aria-label="max" aria-describedby="max" th:field="*{maxAge}">
-                                                                                                <script th:inline="javascript">
-                                                                                                    document.getElementById('max-0-' + [[${group_stat.index}]]).value = [[${group}]].maxAge;
-                                                                                                </script>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div class="col-4">
-                                                                                    <input type="submit" class="btn btn-primary mb-3" value="Установить" style="width: 100%">
-                                                                                </div>
-                                                                            </form>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                            <!-- КОНЕЦ БЛОКА УПРАВЛЕНИЯ ГРУПАМИ -->
-                                                        </div>
-                                                    </div>
-                                                    <script th:inline="javascript">
-                                                        document.getElementById('btn-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]] + '-' + [[${group_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]  + '-' + [[${group_stat.index}]]);
-                                                    </script>
-                                                </div>
-                                            </div>
+                                            <script th:inline="javascript">
+                                                document.getElementById('b-' + [[${sport_stat.index}]] + '-' + [[${d_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${sport_stat.index}]] + '-' + [[${d_stat.index}]])
+                                            </script>
                                         </div>
                                     </div>
-                                    <script th:inline="javascript">
-                                        document.getElementById('btn-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]).setAttribute('data-bs-target','#collapse-0-' + [[${sport_stat.index}]] + '-' + [[${disciplines_stat.index}]]);
-                                    </script>
+                                    <div class="row">
+                                        <p th:text="${sport.getTitle()}"></p>
+                                        <p th:text="${discipline.getTitle()}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p class="fs-4 text-center">Возрастные группы<span th:text="' | Всего: ' + ${sport.getGroups().size()}"></span></p>
+                                <p class="text-center" th:if="${sport.getGroups().size()} == 0">Группы отсутствуют</p>
+                            </div>
+                            <div class="row row-cols-4" style="padding-left: 30px">
+                                <div class="col border border-dark m-1" th:each="group, g_stat : ${sport.getGroups()}" style="width: 200px">
+                                    <div class="row bg-warning-subtle">
+                                        <div class="col-10">
+                                            <p th:text="${group.getTitle()}"></p>
+                                        </div>
+                                        <div class="col-2" style="padding: 5px">
+                                            <button th:id="'b-1-' + ${sport_stat.index} + '-' + ${g_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <div class="modal fade" th:id="'modal-1-' + ${sport_stat.index} + '-' + ${g_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5">Внимание! Вы хотите удалить <span th:text="${group.getTitle()}"></span>?</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                Вы собираетесь удалить возрастную группу <span th:text="${group.getTitle()}"></span>! Вы уверены?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                            <form th:method="GET" th:action="@{/database/{letter}/sport/{sportId}/group/{groupId}/delete(letter=${letter},sportId=${sport.getId()},groupId=${group.getId()})}">
+                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script th:inline="javascript">
+                                                document.getElementById('b-1-' + [[${sport_stat.index}]] + '-' + [[${g_stat.index}]]).setAttribute('data-bs-target','#modal-1-' + [[${sport_stat.index}]] + '-' + [[${g_stat.index}]])
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p th:text="'Минимальный возраст: ' + ${group.getMinAge()}">
+                                        <p th:text="'Максимальный возраст: ' + ${group.getMaxAge()}"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -573,6 +533,7 @@
         </div>
         <div class="col"></div>
     </div>
+
     <div class="row">
         <div class="col"></div>
         <div class="col-6">

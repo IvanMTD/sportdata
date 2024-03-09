@@ -19,4 +19,7 @@ public interface TypeOfSportRepository extends ReactiveCrudRepository<TypeOfSpor
     Flux<TypeOfSport> findAllWhereFirstLetterIs(@Param("letter") String letter);
 
     Flux<TypeOfSport> findByIdIn(Set<Integer> ids);
+
+    @Query("SELECT COUNT(*) FROM type_of_sport")
+    Mono<Long> getCount();
 }

@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +18,11 @@ public class TypeOfSportDTO {
     private String title;
     private Season season;
     private SportFilterType sportFilterType;
-    List<SubjectDTO> subjects = new ArrayList<>();
+    List<BaseSportDTO> baseSports = new ArrayList<>();
     List<DisciplineDTO> disciplines = new ArrayList<>();
+    List<AgeGroupDTO> groups = new ArrayList<>();
+    List<QualificationDTO> qualifications = new ArrayList<>();
+
 
     public TypeOfSportDTO(TypeOfSport sport){
         setId(sport.getId());
