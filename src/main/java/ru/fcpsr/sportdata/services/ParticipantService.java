@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ParticipantDTO;
 import ru.fcpsr.sportdata.models.Participant;
+import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.models.SportSchool;
 import ru.fcpsr.sportdata.repositories.ParticipantRepository;
 
@@ -87,6 +88,12 @@ public class ParticipantService {
     }
 
     // CREATE
+    public Mono<Participant> addQualificationToParticipant(Qualification qualification) {
+        return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
+            participant.addQualification(qualification);
+            return participantRepository.save(participant);
+        });
+    }
     public Mono<Participant> saveParticipant(Participant participant) {
         return participantRepository.save(participant);
     }
@@ -117,11 +124,34 @@ public class ParticipantService {
         });
     }
 
+    public Mono<Participant> updateParticipantData(ParticipantDTO participantDTO) {
+        return participantRepository.findById(participantDTO.getId()).flatMap(participant -> {
+            participant.setLastname(participantDTO.getLastname());
+            participant.setName(participantDTO.getName());
+            participant.setMiddleName(participantDTO.getMiddleName());
+            participant.setBirthday(participantDTO.getBirthday());
+            return participantRepository.save(participant);
+        });
+    }
+
     public Mono<Participant> updateSchool(int id, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.addSportSchoolId(schoolId);
             return participantRepository.save(participant);
         });
+    }
+
+    public Mono<Participant> removeQualificationFromParticipant(Qualification qualification) {
+        return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
+            participant.getQualificationIds().remove(qualification.getId());
+            return participantRepository.save(participant);
+        });
+    }
+
+    // DELETE
+
+    public Mono<Participant> deleteParticipant(int pid) {
+        return participantRepository.findById(pid).flatMap(participant -> participantRepository.delete(participant).then(Mono.just(participant)));
     }
 
     // COUNT

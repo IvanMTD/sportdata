@@ -9,6 +9,8 @@ import ru.fcpsr.sportdata.models.Qualification;
 @NoArgsConstructor
 public class QualificationDTO {
     private int id;
+    private int sportId;
+    private int participantId;
     private Category category;
     private TypeOfSportDTO sport;
     private ParticipantDTO participant;

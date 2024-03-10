@@ -79,7 +79,22 @@ public class SportSchoolService {
         });
     }
 
+    public Mono<SportSchool> updateSchoolParticipant(int pid, int oldSchoolId, int schoolId) {
+        return schoolRepository.findById(oldSchoolId).flatMap(school -> {
+            school.getParticipantIds().remove(pid);
+            return schoolRepository.save(school);
+        }).flatMap(sportSchool -> schoolRepository.findById(schoolId).flatMap(school -> {
+            school.addParticipantId(pid);
+            return schoolRepository.save(school);
+        }));
+    }
 
+    public Flux<SportSchool> removeParticipantFromSchools(Participant participant) {
+        return schoolRepository.findAllByIdIn(participant.getSportSchoolIds()).flatMap(sportSchool -> {
+            sportSchool.getParticipantIds().remove(participant.getId());
+            return schoolRepository.save(sportSchool);
+        });
+    }
 
     /**
      * DELETE
@@ -101,13 +116,5 @@ public class SportSchoolService {
         return schoolRepository.count();
     }
 
-    public Mono<SportSchool> updateSchoolParticipant(int pid, int oldSchoolId, int schoolId) {
-        return schoolRepository.findById(oldSchoolId).flatMap(school -> {
-            school.getParticipantIds().remove(pid);
-            return schoolRepository.save(school);
-        }).flatMap(sportSchool -> schoolRepository.findById(schoolId).flatMap(school -> {
-            school.addParticipantId(pid);
-            return schoolRepository.save(school);
-        }));
-    }
+
 }

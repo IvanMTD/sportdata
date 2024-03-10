@@ -250,6 +250,7 @@
                                             <span th:id="'sub-w-' + ${subject_stat.index}" data-bs-toggle="tooltip" data-bs-title="У некоторых организаций отсутствуют спортсмены" hidden><i class="bi bi-person-exclamation fs-4 text-primary"></i></span>
                                             <span data-bs-toggle="tooltip" data-bs-title="Отсутствует ISO! Обновите ISO согласно Википедии - ISO-3166-2:RU" th:if="${subject.getIso() == null}"><i class="bi bi-globe-central-south-asia fs-4 text-danger"></i></span>
                                             <span th:id="'sub-w-2-' + ${subject_stat.index}" data-bs-toggle="tooltip" data-bs-title="У некоторых организаций отсутствует адрес" hidden><i class="bi bi-question-square fs-4 text-warning"></i></span>
+                                            <span th:id="'subject-school-danger-' + ${subject_stat.index}" data-bs-toggle="tooltip" data-bs-title="У некоторых организаций есть спортсмены у которых отсутствуют важные данные такие как Фамилия или Имя" hidden><i class="bi bi-person-vcard fs-4 text-danger"></i></span>
                                         </span>
                                     </div>
                                 </div>
@@ -424,6 +425,7 @@
                                                     <span class="muted float-end">
                                                         <span data-bs-toggle="tooltip" data-bs-title="У организации отсутствуют спортсмены" th:if="${school.getParticipants.size() == 0}"><i class="bi bi-person-exclamation fs-4 text-primary"></i></span>
                                                         <span data-bs-toggle="tooltip" data-bs-title="У организации отсутствует адрес" th:if="${school.getAddress == null}"><i class="bi bi-question-square fs-4 text-warning"></i></span>
+                                                        <span th:id="'school-danger-' + ${subject_stat.index} + '-' + ${school_stat.index}" data-bs-toggle="tooltip" data-bs-title="В этой организации есть спортсмены у которых отсутствуют важные данные такие как Фамилия или Имя" hidden><i class="bi bi-person-vcard fs-4 text-danger"></i></span>
                                                         <script th:inline="javascript">
                                                             if([[${school}]].participants.length == 0){
                                                                 document.getElementById('sub-w-' + [[${subject_stat.index}]]).hidden = false;
@@ -475,7 +477,7 @@
 
                                             <div class="row row-cols-3" style="padding-left: 30px">
                                                 <div class="col border border-dark m-1" th:each="p, p_stat : ${school.getParticipants()}" style="width: 270px">
-                                                    <div class="row bg-primary-subtle">
+                                                    <div th:id="'h-' + ${subject_stat.index} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" class="row bg-primary-subtle">
                                                         <div class="col-10">
                                                             <p th:text="${p.getFullName()}"></p>
                                                         </div>
@@ -507,7 +509,12 @@
                                                             </script>
                                                         </div>
                                                     </div>
-                                                    <div class="row bg-white">
+                                                    <script th:inline="javascript">
+                                                        if([[${p.getName()}]] == '' || [[${p.getLastname()}]] == ''){
+                                                            document.getElementById('h-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]] + '-' + [[${p_stat.index}]]).setAttribute('class','row bg-danger text-white');
+                                                        }
+                                                    </script>
+                                                    <div class="container bg-white">
                                                         <p th:text="'Фамилия: ' + ${p.getLastname}"></p>
                                                         <p th:text="'Имя: ' + ${p.getName()}"></p>
                                                         <p th:text="'Отчество: ' + ${p.getMiddleName()}"></p>
@@ -517,6 +524,15 @@
                                                         <div class="row" th:each="q : ${p.getQualifications}">
                                                             <p th:text="'Вид спорта: ' + ${q.getSport().getTitle()} + ' - ' + ${q.getCategory().getTitle()}"></p>
                                                         </div>
+                                                        <div class="row py-2">
+                                                            <a class="btn btn-primary" th:href="@{/database/participant/{pid}/show(pid=${p.getId()})}" role="button">Открыть карточку спортсмена</a>
+                                                        </div>
+                                                        <script th:inline="javascript">
+                                                            if([[${p.getName()}]] == '' || [[${p.getLastname()}]] == ''){
+                                                                document.getElementById('subject-school-danger-' + [[${subject_stat.index}]]).hidden = false
+                                                                document.getElementById('school-danger-' + [[${subject_stat.index}]] + '-' + [[${school_stat.index}]]).hidden = false;
+                                                            }
+                                                        </script>
                                                     </div>
                                                 </div>
                                             </div>

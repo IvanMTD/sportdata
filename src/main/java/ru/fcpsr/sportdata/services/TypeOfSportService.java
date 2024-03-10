@@ -5,14 +5,15 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.FilterDTO;
+import ru.fcpsr.sportdata.dto.QualificationDTO;
+import ru.fcpsr.sportdata.dto.SubjectDTO;
 import ru.fcpsr.sportdata.dto.TypeOfSportDTO;
-import ru.fcpsr.sportdata.models.AgeGroup;
-import ru.fcpsr.sportdata.models.BaseSport;
-import ru.fcpsr.sportdata.models.Discipline;
-import ru.fcpsr.sportdata.models.TypeOfSport;
+import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.repositories.TypeOfSportRepository;
 
+import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,10 @@ public class TypeOfSportService {
     }
     // FIND FLUX
     public Flux<TypeOfSport> getAll(){
-        return sportRepository.findAll();
+        return sportRepository.findAll().collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
     }
     public Flux<TypeOfSport> getSportsByFirstLetter(String letter) {
         return sportRepository.findAllWhereFirstLetterIs(letter);
@@ -92,6 +96,20 @@ public class TypeOfSportService {
         });
     }
 
+    public Mono<TypeOfSport> addQualificationInSport(QualificationDTO qualificationDTO) {
+        return sportRepository.findById(qualificationDTO.getSportId()).flatMap(sport -> {
+            sport.addQualificationId(qualificationDTO.getId());
+            return sportRepository.save(sport);
+        });
+    }
+
+    public Mono<TypeOfSport> addQualificationInSport(Qualification qualification) {
+        return sportRepository.findById(qualification.getTypeOfSportId()).flatMap(sport -> {
+            sport.addQualification(qualification);
+            return sportRepository.save(sport);
+        });
+    }
+
     // DELETE
     public Mono<TypeOfSport> deleteGroupFromSport(AgeGroup group) {
         return sportRepository.findById(group.getTypeOfSportId()).flatMap(sport -> {
@@ -105,6 +123,13 @@ public class TypeOfSportService {
             sport.getBaseSportIds().remove(baseSport.getId());
             return sportRepository.save(sport);
         }).defaultIfEmpty(new TypeOfSport());
+    }
+
+    public Mono<TypeOfSport> removeQualificationFromSport(Qualification qualification) {
+        return sportRepository.findById(qualification.getTypeOfSportId()).flatMap(sport -> {
+            sport.getQualificationIds().remove(qualification.getId());
+            return sportRepository.save(sport);
+        });
     }
 
     // COUNT

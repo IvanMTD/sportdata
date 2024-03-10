@@ -574,6 +574,11 @@ public class DataController {
         });
     }
 
+    @GetMapping("/participant/search")
+    public Mono<Rendering> searchParticipant(@RequestParam(name = "search") String search){
+        return participantService.findByFullName(search).flatMap(participant -> Mono.just(Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build()));
+    }
+
     @GetMapping("/participant/{id}/show")
     public Mono<Rendering> showParticipant(@PathVariable int id){
         return Mono.just(
@@ -581,9 +586,42 @@ public class DataController {
                         .modelAttribute("title","Participant page")
                         .modelAttribute("index","participant-page")
                         .modelAttribute("participant", getCompletedParticipant(id))
+                        .modelAttribute("participantForm", new ParticipantDTO())
                         .modelAttribute("subjects", getCompletedSubjects())
+                        .modelAttribute("qualificationForm", new QualificationDTO())
+                        .modelAttribute("sports", sportService.getAll())
+                        .modelAttribute("category", Category.values())
+                        .modelAttribute("dataEdit",false)
                         .build()
         );
+    }
+
+    @PostMapping("/participant/data/update")
+    public Mono<Rendering> participantDataUpdate(@ModelAttribute(name = "participantForm") @Valid ParticipantDTO participantDTO, Errors errors){
+        return participantService.getById(participantDTO.getId()).flatMap(participant -> {
+            participantValidation.setParticipant(participant);
+            participantValidation.validate(participantDTO,errors);
+            if(errors.hasErrors()){
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Participant page")
+                                .modelAttribute("index","participant-page")
+                                .modelAttribute("participant", getCompletedParticipant(participantDTO.getId()))
+                                .modelAttribute("participantForm", participantDTO)
+                                .modelAttribute("subjects", getCompletedSubjects())
+                                .modelAttribute("qualificationForm", new QualificationDTO())
+                                .modelAttribute("sports", sportService.getAll())
+                                .modelAttribute("category", Category.values())
+                                .modelAttribute("dataEdit",true)
+                                .build()
+                );
+            }
+
+            return participantService.updateParticipantData(participantDTO).flatMap(part -> {
+                log.info("participant updated " + part.toString());
+                return Mono.just(Rendering.redirectTo("/database/participant/" + part.getId() + "/show").build());
+            });
+        });
     }
 
     @PostMapping("/participant/subject/school/update")
@@ -604,6 +642,90 @@ public class DataController {
             return schoolService.addParticipantInSchool(participantDTO.getSchoolId(),participant).flatMap(school -> {
                 log.info("participant added in new school " + school.getParticipantIds());
                 return Mono.just(Rendering.redirectTo("/database/participant/" + participantDTO.getId() + "/show").build());
+            });
+        });
+    }
+
+    @GetMapping("/participant/{pid}/subject/school/{schoolId}/delete")
+    public Mono<Rendering> deleteSchoolFromParticipant(@PathVariable int pid, @PathVariable int schoolId){
+        return participantService.removeSchoolFromParticipant(pid,schoolId).flatMap(participant -> {
+            log.info("school has been removed from participant " + participant.getSportSchoolIds());
+            return schoolService.removeParticipantFromSchool(schoolId,pid).flatMap(school -> {
+                log.info("partcipant has been removed from school " + school.getParticipantIds());
+                return Mono.just(Rendering.redirectTo("/database/participant/" + pid + "/show").build());
+            });
+        });
+    }
+
+    @PostMapping("/participant/{pid}/qualification/update")
+    public Mono<Rendering> updateQualificationParticipant(@PathVariable int pid, @ModelAttribute(name = "qualificationForm") QualificationDTO qualificationDTO){
+        return qualificationService.getById(qualificationDTO.getId()).flatMap(qualification -> {
+            log.info("took original qualification " + qualification.toString());
+            return qualificationService.updateQualification(qualificationDTO).flatMap(updatedQualification -> {
+                log.info("qualification updated " + updatedQualification.toString());
+                return sportService.removeQualificationFromSport(qualification).flatMap(sport -> {
+                    log.info("old qualification has been removed from sport " + sport.getQualificationIds());
+                    return sportService.addQualificationInSport(qualificationDTO).flatMap(updatedSport -> {
+                        log.info("new qualification added in sport " + updatedSport.getQualificationIds());
+                        return Mono.just(Rendering.redirectTo("/database/participant/" + pid + "/show").build());
+                    });
+                });
+            });
+        });
+    }
+
+    @GetMapping("/participant/{pid}/qualification/{qid}/delete")
+    public Mono<Rendering> deleteQualificationFromParticipant(@PathVariable int pid, @PathVariable int qid){
+        return qualificationService.deleteQualification(qid).flatMap(qualification -> {
+            log.info("qualification has been deleted " + qualification.toString());
+            return sportService.removeQualificationFromSport(qualification).flatMap(sport -> {
+                log.info("qualification has been removed from sport " + sport.getQualificationIds());
+                return participantService.removeQualificationFromParticipant(qualification).flatMap(participant -> {
+                    log.info("qualification has been removed from participant " + participant.getQualificationIds());
+                    return Mono.just(Rendering.redirectTo("/database/participant/" + pid + "/show").build());
+                });
+            });
+        });
+    }
+
+    @PostMapping("/participant/qualification/add")
+    public Mono<Rendering> addQualification(@ModelAttribute(name = "qualificationForm") QualificationDTO qualificationDTO){
+        return qualificationService.createNewQualification(qualificationDTO).flatMap(qualification -> {
+            log.info("created new qualification " + qualification.toString());
+            return participantService.addQualificationToParticipant(qualification).flatMap(participant -> {
+                log.info("qualification added to participant " + participant.getQualificationIds());
+                return sportService.addQualificationInSport(qualification).flatMap(sport -> {
+                    log.info("qualification added in sport " + sport.getQualificationIds());
+                    return Mono.just(Rendering.redirectTo("/database/participant/" + qualificationDTO.getParticipantId() + "/show").build());
+                });
+            });
+        });
+    }
+
+    @GetMapping("/participant/{pid}/delete")
+    public Mono<Rendering> deleteParticipant(@PathVariable int pid){
+        return participantService.deleteParticipant(pid).flatMap(participant -> {
+            log.info("participant has been deleted! - " + participant.toString());
+            log.info("STEP 1");
+            /*
+            * 1. Удалить все Квалификации и записи о них в Спорте
+            * 2. Удалить все записи об участнике в школах
+            * */
+            return qualificationService.deleteQualifications(participant.getQualificationIds()).flatMap(qualification -> {
+                log.info("qualification has been deleted! - " + qualification.toString());
+                return sportService.removeQualificationFromSport(qualification).flatMap(sport -> {
+                    log.info("qualification has been removed from sport " + sport.getQualificationIds());
+                    return Mono.just(qualification);
+                });
+            }).collectList().flatMap(ql -> {
+                log.info("STEP 2");
+                return schoolService.removeParticipantFromSchools(participant).flatMap(school -> {
+                    log.info("participant has been removed from school " + school.getParticipantIds());
+                    return Mono.just(school);
+                }).collectList().flatMap(sl -> {
+                    log.info("delete completed");
+                    return Mono.just(Rendering.redirectTo("/database/participant/А").build());
+                });
             });
         });
     }

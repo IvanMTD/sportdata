@@ -1,55 +1,165 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col"></div>
-        <div class="col-6 border broder-primary">
-            <div>
-                <div class="row bg-primary text-center">
+        <div class="col-6">
+            <div class="container border border-2 border-dark rounded-4">
+                <div class="row bg-dark text-center rounded-top-3">
                     <h1>
                         <small class="text-white">
                             Карточка спортсмена<span th:text="' ' + ${participant.getFullName()}"></span>
                         </small>
                     </h1>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Фамилия</span>
-                            <input type="text" class="form-control" th:value="${participant.getLastname()}" disabled>
+
+                <!-- КАРТОЧКА СПОРТСМЕНА! ФИО ДАТА -->
+
+                <div id="data-i">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Фамилия</span>
+                                <input type="text" class="form-control" th:value="${participant.getLastname()}" disabled>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Имя</span>
+                                <input type="text" class="form-control" th:value="${participant.getName()}" disabled>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Отчество</span>
+                                <input type="text" class="form-control" th:value="${participant.getMiddleName()}" disabled>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Имя</span>
-                            <input type="text" class="form-control" th:value="${participant.getName()}" disabled>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Дата рождения</span>
+                                <input type="text" class="form-control" th:value="${participant.getDate()}" disabled>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Отчество</span>
-                            <input type="text" class="form-control" th:value="${participant.getMiddleName()}" disabled>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Возраст</span>
+                                <input type="text" class="form-control" th:value="${participant.getAge()}" disabled>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Дата рождения</span>
-                            <input type="text" class="form-control" th:value="${participant.getDate()}" disabled>
+
+                <div id="data-e" hidden>
+                    <form th:method="POST" th:action="@{/database/participant/data/update}" th:object="${participantForm}">
+                        <input id="pid" type="number" th:field="*{id}" hidden>
+                        <script th:inline="javascript">
+                            document.getElementById('pid').value = [[${participant}]].id;
+                        </script>
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group py-2">
+                                    <span class="input-group-text">Фамилия</span>
+                                    <input id="lastname" type="text" class="form-control" th:field="*{lastname}">
+                                    <script th:inline="javascript">
+                                        document.getElementById('lastname').value = [[${participant}]].lastname;
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                    <span class="input-group-text">Имя</span>
+                                    <input id="name" type="text" class="form-control" th:field="*{name}">
+                                    <script th:inline="javascript">
+                                        document.getElementById('name').value = [[${participant}]].name;
+                                    </script>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Возраст</span>
-                            <input type="text" class="form-control" th:value="${participant.getAge()}" disabled>
+                        <div class="row">
+                            <div class="col">
+                                <small class="text-danger" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"></small>
+                            </div>
+                            <div class="col">
+                                <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                            </div>
                         </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group py-2">
+                                    <span class="input-group-text">Отчество</span>
+                                    <input id="middleName" type="text" class="form-control" th:field="*{middleName}">
+                                    <script th:inline="javascript">
+                                        document.getElementById('middleName').value = [[${participant}]].middleName;
+                                    </script>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                    <span class="input-group-text">Дата рождения</span>
+                                    <input id="birthday" type="date" class="form-control" th:field="*{birthday}">
+                                    <script th:inline="javascript">
+                                        document.getElementById('birthday').value = [[${participant}]].birthday;
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col">
+                                <small class="text-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="d-grid py-2">
+                                <input class="btn btn-primary" type="submit" value="Обновить">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="fio-edit" class="row">
+                    <div class="d-grid py-2">
+                        <button class="btn btn-primary" type="button" onclick="fioEdit()">Редактировать</button>
                     </div>
                 </div>
+                <div id="fio-back" class="row" hidden>
+                    <div class="d-grid py-2">
+                        <button class="btn btn-primary" type="button" onclick="fioBack()">Назад</button>
+                    </div>
+                </div>
+                <script th:inline="javascript">
+                    if([[${dataEdit}]]){
+                        document.getElementById('fio-edit').hidden = true;
+                        document.getElementById('fio-back').hidden = false;
+                        document.getElementById('data-i').hidden = true;
+                        document.getElementById('data-e').hidden = false;
+                    }
+                    function fioEdit(){
+                        document.getElementById('fio-edit').hidden = true;
+                        document.getElementById('fio-back').hidden = false;
+                        document.getElementById('data-i').hidden = true;
+                        document.getElementById('data-e').hidden = false;
+                    }
+                    function fioBack(){
+                        document.getElementById('fio-edit').hidden = false;
+                        document.getElementById('fio-back').hidden = true;
+                        document.getElementById('data-i').hidden = false;
+                        document.getElementById('data-e').hidden = true;
+                    }
+                </script>
+
+                <!-- КАРТОЧКА СПОРТСМЕНА! ФИО ДАТА -->
+
                 <div class="row">
                     <p class="text-center fs-5 bg-warning-subtle">
                         Спортивные организации и регионы в которых состоит спортсмен
                     </p>
+                    <p class="text-center" th:if="${participant.getSchools().size() == 0}">
+                        Организации отсутствуют, что бы добавить нажмите кнопку редактировать.
+                    </p>
                 </div>
-                <div id="subject-school" class="row">
+                <div id="subject-school">
                     <div class="row" th:each="school : ${participant.getSchools()}">
                         <div class="col">
                             <div class="input-group py-2">
@@ -65,7 +175,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="subject-school-edit" class="row" hidden>
+                <div id="subject-school-edit" hidden>
                     <form th:each="school, stat : ${participant.getSchools()}" class="row" th:method="POST" th:action="@{/database/participant/subject/school/update}" th:object="${participant}">
                         <input th:id="'pid' + ${stat.index}" type="number" th:field="*{id}" hidden>
                         <script th:inline="javascript">
@@ -123,13 +233,22 @@
                             </div>
                         </div>
                         <div class="col">
-                            <div class="d-grid py-2">
-                                <input class="btn btn-primary" type="submit" value="Обновить">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-grid py-2">
+                                        <input class="btn btn-primary" type="submit" value="Обновить">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-grid py-2">
+                                        <a class="btn btn-primary" th:href="@{/database/participant/{pid}/subject/school/{schoolId}/delete(pid=${participant.getId}, schoolId=${school.getId()})}">Удалить</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div id="subject-school-edit-2" class="row" hidden>
+                <div id="subject-school-edit-2" hidden>
                     <form class="row" th:method="POST" th:action="@{/database/participant/subject/school/add}" th:object="${participant}">
                         <input id="pid-2" type="number" th:field="*{id}" hidden>
                         <script th:inline="javascript">
@@ -217,24 +336,149 @@
                     <p class="text-center fs-5 bg-success-subtle">
                         Квалификации спортсмена
                     </p>
+                    <p class="text-center" th:if="${participant.getQualifications().size() == 0}">
+                        У спортсмена отсутствуют квалификации, что бы настроить квалификации нажмите кнопку редактировать.
+                    </p>
                 </div>
-                <div class="row" th:each="q : ${participant.getQualifications()}">
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Разряд</span>
-                            <input type="text" class="form-control" th:value="${q.getCategory.getTitle()}" disabled>
+                <div id="qi">
+                    <div class="row" th:each="q : ${participant.getQualifications()}">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Разряд</span>
+                                <input type="text" class="form-control" th:value="${q.getCategory.getTitle()}" disabled>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Вид спорта</span>
+                                <input type="text" class="form-control" th:value="${q.getSport().getTitle()}" disabled>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text">Вид спорта</span>
-                            <input type="text" class="form-control" th:value="${q.getSport().getTitle()}" disabled>
-                        </div>
-                    </div>
                 </div>
-                <div class="row">
+                <div id="qi-edit" hidden>
+                    <form th:method="POST" th:action="@{/database/participant/{pid}/qualification/update(pid=${participant.getId()})}" th:each="q, qs : ${participant.getQualifications()}" class="row" th:object="${qualificationForm}">
+                        <input th:id="'id-q-' + ${qs.index}" type="number" th:field="*{id}" hidden>
+                        <script th:inline="javascript">
+                            document.getElementById('id-q-' + [[${qs.index}]]).value = [[${q.getId()}]];
+                        </script>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Разряд</span>
+                                <select th:id="'select-q-' + ${qs.index}" class="form-select" th:field="*{category}">
+                                    <option th:each="c, cs : ${category}" th:value="${c}" th:text="${c.getTitle()}"></option>
+                                </select>
+                                <script th:inline="javascript">
+                                    document.getElementById('select-q-' + [[${qs.index}]]).value = [[${q}]].category;
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Вид спорта</span>
+                                <select th:id="'select-s-' + ${qs.index}" class="form-select" th:field="*{sportId}">
+                                    <option th:each="s, ss : ${sports}" th:value="${s.getId()}" th:text="${s.getTitle()}"></option>
+                                </select>
+                                <script th:inline="javascript">
+                                    document.getElementById('select-s-' + [[${qs.index}]]).value = [[${q}]].sport.id;
+                                </script>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-grid py-2">
+                                        <input class="btn btn-primary" type="submit" value="Обновить">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-grid py-2">
+                                        <a class="btn btn-primary" th:href="@{/database/participant/{pid}/qualification/{qid}/delete(pid=${participant.getId()}, qid=${q.getId()})}" role="button">Удалить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="qi-add" hidden>
+                    <form class="row" th:method="POST" th:action="@{/database/participant/qualification/add}" th:object="${qualificationForm}">
+                        <input id="pid-control" type="number" th:field="*{participantId}" hidden>
+                        <script th:inline="javascript">
+                            document.getElementById('pid-control').value = [[${participant.getId()}]];
+                        </script>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Разряд</span>
+                                <select class="form-select" th:field="*{category}">
+                                    <option th:each="c : ${category}" th:value="${c}" th:text="${c.getTitle()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text">Вид спорта</span>
+                                <select class="form-select" th:field="*{sportId}">
+                                    <option th:each="s : ${sports}" th:value="${s.getId()}" th:text="${s.getTitle()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="d-grid py-2">
+                                <input class="btn btn-primary" type="submit" value="Добавить">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div id="qe" class="row">
                     <div class="d-grid py-2">
-                        <button class="btn btn-success" type="button">Редактировать</button>
+                        <button class="btn btn-success" type="button" onclick="qe()">Редактировать</button>
+                    </div>
+                </div>
+                <div id="qb" class="row" hidden>
+                    <div class="d-grid py-2">
+                        <button class="btn btn-success" type="button" onclick="qb()">Назад</button>
+                    </div>
+                </div>
+                <script>
+                    function qe(){
+                        document.getElementById('qe').hidden = true;
+                        document.getElementById('qb').hidden = false;
+                        document.getElementById('qi').hidden = true;
+                        document.getElementById('qi-edit').hidden = false;
+                        document.getElementById('qi-add').hidden = false;
+                    }
+                    function qb(){
+                        document.getElementById('qe').hidden = false;
+                        document.getElementById('qb').hidden = true;
+                        document.getElementById('qi').hidden = false;
+                        document.getElementById('qi-edit').hidden = true;
+                        document.getElementById('qi-add').hidden = true;
+                    }
+                </script>
+                <div class="container">
+                    <div class="row py-2">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal">Удалить спортсмена</button>
+                        <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5">Внимание! Вы собираетесь удалить спортсмена.</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>
+                                            Вы собираетесь безвозвратно удалить <span th:text="' ' + ${participant.getFullName()} + ' '"></span> из базы данных. Это приведет к удалению всех результатов связанных с этим спортсменом. Вы уверены?
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <form th:method="GET" th:action="@{/database/participant/{pid}/delete(pid=${participant.getId()})}">
+                                            <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -224,6 +224,42 @@
     <div class="row">
         <div class="col"></div>
         <div class="col-6">
+            <form class="py-5" th:method="GET" th:action="@{/database/participant/search}">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Поиск</span>
+                    <input type="search" class="form-control" id="search-form" list="datalist-form" placeholder="Начните вводить ... " name="search">
+                    <datalist id="datalist-form"></datalist>
+                    <script th:inline="javascript">
+                        $('#search-form').on('input', function() {
+                            var searchQuery = this.value;
+
+                            $.ajax({
+                                url: '/rest/database/participants',
+                                type: 'get',
+                                data: {
+                                    query: searchQuery
+                                },
+                                success: function(response) {
+                                    var dataList = $('#datalist-form');
+                                    dataList.empty();
+
+                                    response.forEach(function(item) {
+                                        dataList.append(
+                                            '<option value="' + item.lastname + ' ' + item.name + ' ' + item.middleName + '">' + item.birthday + '</option>'
+                                        );
+                                    });
+                                }
+                            });
+                        });
+                    </script>
+                </div>
+            </form>
+        </div>
+        <div class="col"></div>
+    </div>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-6">
             <div class="accordion" id="main-accordion">
                 <div class="accordion-item" th:each="p, p_stat : ${participants}">
                     <h2 class="accordion-header">
