@@ -11,6 +11,7 @@ import ru.fcpsr.sportdata.dto.SubjectDTO;
 import ru.fcpsr.sportdata.models.BaseSport;
 import ru.fcpsr.sportdata.repositories.BaseSportRepository;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Service
@@ -27,6 +28,16 @@ public class BaseSportService {
      */
     public Flux<BaseSport> getAllByIds(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds);
+    }
+
+    public Flux<BaseSport> getAllByIdsWhereNotErrors(Set<Integer> baseSportIds) {
+        return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> {
+            if(baseSport.getExpiration() > LocalDate.now().getYear()){
+                return Mono.just(baseSport);
+            }else{
+                return Mono.empty();
+            }
+        });
     }
 
     /**

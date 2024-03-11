@@ -71,7 +71,7 @@ public class ParticipantService {
                         return Mono.just(participant);
                     }
                 }
-                return Mono.empty();
+                return Mono.just(new Participant());
             });
         }
         if(part.length == 2){
@@ -81,10 +81,11 @@ public class ParticipantService {
                         return Mono.just(participant);
                     }
                 }
-                return Mono.empty();
+                return Mono.just(new Participant());
             });
         }
-        return Mono.empty();
+
+        return Mono.just(new Participant());
     }
 
     // CREATE

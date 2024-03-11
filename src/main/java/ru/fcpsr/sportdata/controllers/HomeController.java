@@ -40,7 +40,7 @@ public class HomeController {
     private Flux<SubjectDTO> getCompletedSubjects(){
         return subjectService.getAll().flatMap(subject -> {
             SubjectDTO subjectDTO = new SubjectDTO(subject);
-            return baseSportService.getAllByIds(subject.getBaseSportIds()).flatMap(baseSport -> {
+            return baseSportService.getAllByIdsWhereNotErrors(subject.getBaseSportIds()).flatMap(baseSport -> {
                 BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
                 return sportService.getById(baseSport.getTypeOfSportId()).flatMap(sport -> {
                     TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);

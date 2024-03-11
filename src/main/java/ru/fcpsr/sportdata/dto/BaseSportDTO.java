@@ -21,14 +21,21 @@ public class BaseSportDTO {
     @Past(message = "Дата начала не может быть текущей или датой из будущего!")
     private LocalDate issueDate;
     private int expiration;
+    private boolean issueDateError;
 
     public BaseSportDTO(BaseSport baseSport) {
         setId(baseSport.getId());
         setIssueDate(baseSport.getIssueDate());
         setExpiration(baseSport.getExpiration());
+        int year = LocalDate.now().getYear();
+        issueDateError = expiration <= year;
     }
 
     public String getDate(){
         return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(issueDate);
+    }
+
+    public int getDateYear(){
+        return issueDate.getYear();
     }
 }

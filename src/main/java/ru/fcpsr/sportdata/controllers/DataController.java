@@ -464,13 +464,21 @@ public class DataController {
     public Mono<Rendering> addParticipantInSchool(@PathVariable int schoolId, @PathVariable String letter, @RequestParam(name = "search") String search){
         return participantService.findByFullName(search).flatMap(participant -> {
             participant.addSportSchoolId(schoolId);
-            return participantService.saveParticipant(participant);
+            if(participant.getId() == 0){
+                return Mono.just(participant);
+            }else {
+                return participantService.saveParticipant(participant);
+            }
         }).flatMap(participant -> {
-            log.info("school info added in participant: " + participant.getSportSchoolIds());
-            return schoolService.addParticipantInSchool(schoolId, participant).flatMap(school -> {
-                log.info("participant added in school " + school.getParticipantIds());
-                return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
-            });
+            if(participant.getId() == 0){
+                return Mono.just(Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build());
+            }else {
+                log.info("school info added in participant: " + participant.getSportSchoolIds());
+                return schoolService.addParticipantInSchool(schoolId, participant).flatMap(school -> {
+                    log.info("participant added in school " + school.getParticipantIds());
+                    return Mono.just(Rendering.redirectTo("/database/subject/" + letter).build());
+                });
+            }
         });
     }
 
@@ -581,19 +589,35 @@ public class DataController {
 
     @GetMapping("/participant/{id}/show")
     public Mono<Rendering> showParticipant(@PathVariable int id){
-        return Mono.just(
-                Rendering.view("template")
-                        .modelAttribute("title","Participant page")
-                        .modelAttribute("index","participant-page")
-                        .modelAttribute("participant", getCompletedParticipant(id))
-                        .modelAttribute("participantForm", new ParticipantDTO())
-                        .modelAttribute("subjects", getCompletedSubjects())
-                        .modelAttribute("qualificationForm", new QualificationDTO())
-                        .modelAttribute("sports", sportService.getAll())
-                        .modelAttribute("category", Category.values())
-                        .modelAttribute("dataEdit",false)
-                        .build()
-        );
+        if(id == 0){
+            return Mono.just(
+                    Rendering.view("template")
+                            .modelAttribute("title","Participant page")
+                            .modelAttribute("index","participant-page")
+                            .modelAttribute("participant", new Participant())
+                            .modelAttribute("participantForm", new ParticipantDTO())
+                            .modelAttribute("subjects", getCompletedSubjects())
+                            .modelAttribute("qualificationForm", new QualificationDTO())
+                            .modelAttribute("sports", sportService.getAll())
+                            .modelAttribute("category", Category.values())
+                            .modelAttribute("dataEdit",false)
+                            .build()
+            );
+        }else{
+            return Mono.just(
+                    Rendering.view("template")
+                            .modelAttribute("title","Participant page")
+                            .modelAttribute("index","participant-page")
+                            .modelAttribute("participant", getCompletedParticipant(id))
+                            .modelAttribute("participantForm", new ParticipantDTO())
+                            .modelAttribute("subjects", getCompletedSubjects())
+                            .modelAttribute("qualificationForm", new QualificationDTO())
+                            .modelAttribute("sports", sportService.getAll())
+                            .modelAttribute("category", Category.values())
+                            .modelAttribute("dataEdit",false)
+                            .build()
+            );
+        }
     }
 
     @PostMapping("/participant/data/update")
@@ -853,6 +877,7 @@ public class DataController {
                     return Mono.just(baseSportDTO);
                 });
             }).collectList().flatMap(baseSportDTOS -> {
+                baseSportDTOS = baseSportDTOS.stream().sorted(Comparator.comparing(baseSportDTO -> baseSportDTO.getSport().getTitle())).collect(Collectors.toList());
                 subjectDTO.setBaseSports(baseSportDTOS);
                 return schoolService.getAllByIdIn(subject.getSportSchoolIds()).flatMap(school -> {
                     SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);

@@ -10,7 +10,7 @@
     </div>
     <div class="row py-5">
         <div class="col"></div>
-        <div class="col-10">
+        <div class="col-8">
             <script th:inline="javascript">
                 let subjects = [[${subjects}]];
                 google.charts.load('current', {
@@ -42,11 +42,51 @@
                         colorAxis: {colors: ['red', 'yellow', 'green']}, // цвета
                     };
 
-                    var chart = new google.visualization.GeoChart(document.getElementById('geochart_div'));
+                    var chart = new google.visualization.GeoChart(document.getElementById('geochart_ru'));
                     chart.draw(dataTable, options);
                 }
             </script>
-            <div id="geochart_div" style="width: 100%; height: auto;"></div>
+            <div class="container border border-bottom-0 border-2">
+                <div id="geochart_ru" style="width: 100%; height: auto"></div>
+            </div>
+            <script th:inline="javascript">
+                let subjectsUA = [[${subjects}]];
+                google.charts.load('current', {
+                    'packages':['geochart'],
+                    // Note: you will need to get a mapsApiKey for your project.
+                    // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+                    'mapsApiKey': 'YOUR_KEY'
+                });
+                google.charts.setOnLoadCallback(drawRegionsMap);
+
+                function drawRegionsMap(){
+                    let dataTableUA = new google.visualization.DataTable();
+                    dataTableUA.addColumn('string','Субъект');
+                    dataTableUA.addColumn('number','Количество базовых видов спорта>');
+                    dataTableUA.addColumn({type: 'string', role: 'tooltip'});
+
+                    for(let i=0; i<subjectsUA.length; i++){
+                        let row = [];
+                        row[0] = subjectsUA[i].iso;
+                        row[1] = subjectsUA[i].baseSports.length
+                        row[2] = subjectsUA[i].title + '\n' + 'Всего базовых видов спорта: ' + subjectsUA[i].baseSports.length;
+                        dataTableUA.addRows([row]);
+                    }
+
+                    var optionsUA = {
+                        region: 'UA', // Россия
+                        resolution: 'provinces', // регионы
+                        colorAxis: {colors: ['red', 'yellow', 'green']}, // цвета
+                    };
+
+                    var chart = new google.visualization.GeoChart(document.getElementById('geochart_ua'));
+                    chart.draw(dataTableUA, optionsUA);
+                }
+            </script>
+            <div class="container border border-top-0 border-2">
+                <div id="geochart_ua" style="width: 30%; height: auto"></div>
+                <p>Новые территории</p>
+            </div>
         </div>
         <div class="col"></div>
     </div>
