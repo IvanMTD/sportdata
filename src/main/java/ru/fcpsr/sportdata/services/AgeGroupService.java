@@ -28,7 +28,7 @@ public class AgeGroupService {
     }
 
     public Flux<AgeGroup> getAllByIds(Set<Integer> ageGroupIds) {
-        return groupRepository.findAllById(ageGroupIds).defaultIfEmpty(new AgeGroup());
+        return groupRepository.findAllById(ageGroupIds);
     }
 
     public Flux<AgeGroup> getAll() {
