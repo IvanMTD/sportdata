@@ -12,6 +12,7 @@ public class QualificationDTO {
     private int sportId;
     private int participantId;
     private Category category;
+    private String categoryTitle;
     private TypeOfSportDTO sport;
     private ParticipantDTO participant;
 
@@ -20,5 +21,10 @@ public class QualificationDTO {
         if(qualification.getCategory() != null) {
             setCategory(qualification.getCategory());
         }
+    }
+
+    public void setCategory(Category category){
+        this.category = category;
+        this.categoryTitle = category.getTitle();
     }
 }

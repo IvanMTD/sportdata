@@ -9,4 +9,6 @@ import java.util.Set;
 public interface QualificationRepository extends ReactiveCrudRepository<Qualification,Integer> {
 
     Flux<Qualification> findAllByIdIn(Set<Integer> qualificationIds);
+
+    Flux<Qualification> findAllByTypeOfSportId(int sportId);
 }

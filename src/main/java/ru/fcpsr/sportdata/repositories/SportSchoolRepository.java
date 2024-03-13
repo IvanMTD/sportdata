@@ -1,5 +1,7 @@
 package ru.fcpsr.sportdata.repositories;
 
+import org.springframework.data.r2dbc.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -11,4 +13,6 @@ public interface SportSchoolRepository extends ReactiveCrudRepository<SportSchoo
     Flux<SportSchool> findAllByIdIn(Set<Integer> sportSchoolIds);
 
     Mono<SportSchool> findByTitle(String title);
+    @Query("select * from sport_school where :pid = any(participant_ids)")
+    Flux<SportSchool> findAllWhereParticipantIdAny(@Param("pid") int pid);
 }

@@ -14,9 +14,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -41,28 +39,37 @@ public class ParticipantDTO {
     private LocalDate birthday;
     private String fullName;
 
+    private Set<Integer> schoolIds = new HashSet<>();
     private List<SubjectDTO> subjects = new ArrayList<>();
     private List<SportSchoolDTO> schools = new ArrayList<>();
     private List<QualificationDTO> qualifications = new ArrayList<>();
 
     public ParticipantDTO(Participant participant) {
-        setId(participant.getId());
-        if(participant.getLastname().equals("")){
+        if(participant.getLastname() == null){
+            setId(0);
             setLastname("");
-        }else {
-            setLastname(participant.getLastname());
-        }
-        if(participant.getName().equals("")){
             setName("");
-        }else {
-            setName(participant.getName());
-        }
-        if(participant.getMiddleName().equals("")){
             setMiddleName("");
-        }else {
-            setMiddleName(participant.getMiddleName());
+            setBirthday(LocalDate.now());
+        }else{
+            setId(participant.getId());
+            if(participant.getLastname().equals("")){
+                setLastname("");
+            }else {
+                setLastname(participant.getLastname());
+            }
+            if(participant.getName().equals("")){
+                setName("");
+            }else {
+                setName(participant.getName());
+            }
+            if(participant.getMiddleName().equals("")){
+                setMiddleName("");
+            }else {
+                setMiddleName(participant.getMiddleName());
+            }
+            setBirthday(participant.getBirthday());
         }
-        setBirthday(participant.getBirthday());
     }
 
     public String getFullName(){

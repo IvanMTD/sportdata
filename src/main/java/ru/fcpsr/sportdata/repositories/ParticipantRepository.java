@@ -6,6 +6,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.fcpsr.sportdata.dto.ParticipantDTO;
 import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.models.TypeOfSport;
 

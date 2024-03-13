@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container">
     <div class="row">
         <div class="col"></div>
         <div class="col-6 text-center py-5">
@@ -258,8 +258,7 @@
         <div class="col"></div>
     </div>
     <div class="row">
-        <div class="col"></div>
-        <div class="col-6">
+        <div class="col">
             <div class="accordion" id="main-accordion">
                 <div class="accordion-item" th:each="p, p_stat : ${participants}">
                     <h2 class="accordion-header">
@@ -333,25 +332,23 @@
                 </div>
             </div>
         </div>
-        <div class="col"></div>
     </div>
     <div class="row py-5">
-        <div class="col"></div>
-        <div class="col-6 border border-primary">
-            <div class="row text-center bg-primary text-white">
-                <span class="fs-5">Добавить участника</span>
+        <div class="col border border border-2 border-dark rounded-4">
+            <div class="row bg-dark text-center rounded-top-3">
+                <span class="text-white fs-5">Добавить участника</span>
             </div>
             <form th:method="POST" th:action="@{/database/participant/{letter}/add(letter=${letter})}" th:object="${participantForm}">
                 <div class="row">
                     <div class="col">
                         <div class="input-group py-2">
-                            <span class="input-group-text">Фамилия<span class="align-top text-danger">*</span></span>
+                            <span class="input-group-text bg-secondary text-white">Фамилия<span class="align-top text-danger">*</span></span>
                             <input type="text" class="form-control" th:field="*{lastname}">
                         </div>
                     </div>
                     <div class="col">
                         <div class="input-group py-2">
-                            <span class="input-group-text">Имя<span class="align-top text-danger">*</span></span>
+                            <span class="input-group-text bg-secondary text-white">Имя<span class="align-top text-danger">*</span></span>
                             <input type="text" class="form-control" th:field="*{name}">
                         </div>
                     </div>
@@ -359,20 +356,20 @@
                 <div class="row">
                     <div class="col">
                         <div class="input-group py-2">
-                            <span class="input-group-text">Отчество</span>
+                            <span class="input-group-text bg-secondary text-white">Отчество</span>
                             <input type="text" class="form-control" th:field="*{middleName}">
                         </div>
                     </div>
                     <div class="col">
                         <div class="input-group py-2">
-                            <span class="input-group-text">Дата рождения<span class="align-top text-danger">*</span></span>
+                            <span class="input-group-text bg-secondary text-white">Дата рождения<span class="align-top text-danger">*</span></span>
                             <input type="date" class="form-control" th:field="*{birthday}">
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="d-grid py-2">
-                        <input class="btn btn-primary" type="submit" value="Добавить">
+                        <input class="btn btn-secondary" type="submit" value="Добавить">
                     </div>
                 </div>
                 <div class="row">
@@ -380,6 +377,5 @@
                 </div>
             </form>
         </div>
-        <div class="col"></div>
     </div>
 </div>

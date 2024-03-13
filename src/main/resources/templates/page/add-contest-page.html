@@ -1,0 +1,285 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="container border border-2 border-dark rounded-4">
+                <div class="row bg-dark text-center rounded-top-3">
+                    <h1>
+                        <small class="text-white">
+                            Зарегистрировать соревнование
+                        </small>
+                    </h1>
+                </div>
+                <form class="row" th:method="POST" th:action="@{/contest/add}" th:object="${contestForm}">
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white" style="width: 100px">ЕКП</span>
+                                <input type="text" class="form-control" placeholder="Укажите ЕКП" th:field="*{ekp}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Название</span>
+                                <input type="text" class="form-control" placeholder="Название мероприятия"
+                                       th:field="*{title}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('ekp')}" th:errors="*{ekp}"></small>
+                        </div>
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('title')}"
+                                   th:errors="*{title}"></small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Начало</span>
+                                <input type="date" class="form-control" th:field="*{beginning}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white" style="width: 100px">Конец</span>
+                                <input type="date" class="form-control" th:field="*{ending}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('ekp')}"
+                                   th:errors="*{beginning}"></small>
+                        </div>
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('title')}"
+                                   th:errors="*{ending}"></small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white" style="width: 100px">Город</span>
+                                <input type="text" class="form-control" placeholder="Город проведения"
+                                       th:field="*{city}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Объект</span>
+                                <input type="text" class="form-control" placeholder="Спортивный объект"
+                                       th:field="*{location}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('ekp')}" th:errors="*{city}"></small>
+                        </div>
+                        <div class="col">
+                            <small class="text-danger" th:if="${#fields.hasErrors('title')}"
+                                   th:errors="*{location}"></small>
+                        </div>
+                    </div>
+                    <div id="script_container" style="padding-right: 3.5vh">
+
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-grid py-2">
+                                <button class="btn btn-secondary" type="button" onclick="addSportForm()">Добавить вид
+                                    спорта
+                                </button>
+                                <script th:inline="javascript">
+                                    let count = 0;
+                                    let pCount = 0;
+                                    let sports = [[${sports}]];
+
+                                    function addSportForm() {
+                                        $('#script_container').append(
+                                            '<hr>' +
+                                            '<div class="row">' +
+                                            '   <div class="col">' +
+                                            '       <div class="input-group py-2">' +
+                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Вид спорта</span>' +
+                                            '           <select name="sports[' + count + '].sportId" id="' + count + '" class="form-select" onchange="rebuildDisciplineAndGroup(this.id)"></select>' +
+                                            '       </div>' +
+                                            '   </div>' +
+                                            '   <div class="col">' +
+                                            '       <div class="input-group py-2">' +
+                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Дисциплина</span>' +
+                                            '           <select name="sports[' + count + '].disciplineId" id="discipline-' + count + '-select" class="form-select"></select>' +
+                                            '       </div>' +
+                                            '   </div>' +
+                                            '   <div class="col">' +
+                                            '       <div class="input-group py-2">' +
+                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Группа</span>' +
+                                            '           <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
+                                            '       </div>' +
+                                            '   </div>' +
+                                            '</div>' +
+                                            '<div id="participant-div-' + count + '"></div>' +
+                                            '<div class="row">' +
+                                            '   <div class="d-grid py-2">\n' +
+                                            '       <button id="add-button-' + count + '" class="btn btn-secondary" type="button" onclick="addParticipantForm(this.id)">Добавить спортсмена и его результат</button>' +
+                                            '   </div>' +
+                                            '</div>' +
+                                            '<hr>'
+                                        );
+
+                                        sports.forEach(function (sport) {
+                                            $('#' + count).append(
+                                                '<option value="' + sport.id + '">' + sport.title + '</option>'
+                                            );
+                                        });
+                                        let disciplines = [[${sports}]][0].disciplines;
+                                        disciplines.forEach(function (discipline) {
+                                            $('#discipline-' + count + '-select').append(
+                                                '<option value="' + discipline.id + '">' + discipline.title + '</option>'
+                                            );
+                                        });
+                                        let groups = [[${sports}]][0].groups;
+                                        groups.forEach(function (group) {
+                                            $('#group-' + count + '-select').append(
+                                                '<option value="' + group.id + '">' + group.title + '</option>'
+                                            );
+                                        });
+                                        count++;
+                                    }
+
+                                    function addParticipantForm(buttonId) {
+                                        let parts = buttonId.split('-');
+                                        let index = parseInt(parts[parts.length - 1]);
+
+                                        let searchQuery = document.getElementById(index).value;
+
+                                        $.ajax({
+                                            url: '/rest/database/sport/participants',
+                                            type: 'get',
+                                            data: {
+                                                query: searchQuery
+                                            },
+                                            success: function (participants) {
+                                                ;
+                                                let participantContainer = $('#participant-div-' + index);
+                                                participantContainer.append(
+                                                    '<hr>' +
+                                                    '<div class="row">' +
+                                                    '   <div class="col">' +
+                                                    '       <div class="input-group py-2">' +
+                                                    '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Спортсмен</span>' +
+                                                    '           <select name="sports[' + index + '].places[' + pCount + '].participantId" id="participant-' + pCount + '" class="form-select" onchange="rebuildCategory(this.id)"></select>' +
+                                                    '       </div>' +
+                                                    '   </div>' +
+                                                    '   <div class="col">' +
+                                                    '       <div class="input-group py-2">' +
+                                                    '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Разряд</span>' +
+                                                    '           <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
+                                                    '       </div>' +
+                                                    '   </div>' +
+                                                    '</div>' +
+                                                    '<div class="row">' +
+                                                    '   <div class="col">' +
+                                                    '       <div class="input-group py-2">' +
+                                                    '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Организация</span>' +
+                                                    '           <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + pCount + '" class="form-select"></select>' +
+                                                    '       </div>' +
+                                                    '   </div>' +
+                                                    '   <div class="col">' +
+                                                    '       <div class="input-group py-2">' +
+                                                    '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Занял место</span>' +
+                                                    '           <select name="sports[' + index + '].places[' + pCount + '].place" id="qualification-' + pCount + '" class="form-select">' +
+                                                    '               <option value="1" selected>1</option>' +
+                                                    '               <option value="2">2</option>' +
+                                                    '               <option value="3">3</option>' +
+                                                    '           </select>' +
+                                                    '       </div>' +
+                                                    '   </div>' +
+                                                    '</div>' +
+                                                    '<hr>'
+                                                );
+
+                                                participants.forEach(function (participant) {
+                                                    $('#participant-' + pCount).append(
+                                                        '<option data-item="' + JSON.stringify(participant).replace(/"/g, '&quot;') + '" value="' + participant.id + '">' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Возраст: ' + participant.age + '</option>'
+                                                    );
+                                                });
+
+                                                participants[0].qualifications.forEach(function (qualification) {
+                                                    $('#qualification-' + pCount).append(
+                                                        '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
+                                                    );
+                                                });
+
+                                                participants[0].schools.forEach(function (school) {
+                                                    $('#school-' + pCount).append(
+                                                        '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
+                                                    );
+                                                });
+                                                pCount++;
+                                            }
+                                        });
+                                    }
+
+                                    function rebuildDisciplineAndGroup(index) {
+                                        let sportId = document.getElementById(index).value;
+                                        for (let i = 0; i < sports.length; i++) {
+                                            if (sports[i].id == sportId) {
+                                                let disciplines = sports[i].disciplines;
+                                                $('#discipline-' + index + '-select').empty();
+                                                disciplines.forEach(function (discipline) {
+                                                    $('#discipline-' + index + '-select').append(
+                                                        '<option value="' + discipline.id + '">' + discipline.title + '</option>'
+                                                    );
+                                                });
+                                                let groups = sports[i].groups;
+                                                $('#group-' + count + '-select').empty();
+                                                groups.forEach(function (group) {
+                                                    $('#group-' + count + '-select').append(
+                                                        '<option value="' + group.id + '">' + group.title + '</option>'
+                                                    );
+                                                });
+                                            }
+                                        }
+                                    }
+
+                                    function rebuildCategory(selectId) {
+                                        let parts = selectId.split('-');
+                                        let index = parseInt(parts[parts.length - 1]);
+                                        let select = document.getElementById(selectId);
+                                        let option = select.options[select.selectedIndex];
+                                        let participant = JSON.parse(option.getAttribute('data-item').replace(/&quot;/g, '"'));
+                                        let qualifications = participant.qualifications;
+                                        let schools = participant.schools;
+                                        $('#qualification-' + index).empty();
+                                        qualifications.forEach(function (qualification) {
+                                            $('#qualification-' + index).append(
+                                                '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
+                                            );
+                                        });
+                                        $('#school-' + index).empty();
+                                        schools.forEach(function (school) {
+                                            $('#school-' + index).append(
+                                                '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
+                                            );
+                                        });
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="d-grid py-2">
+                            <input class="btn btn-secondary" type="submit" value="Сохранить">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

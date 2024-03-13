@@ -1,10 +1,12 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.fcpsr.sportdata.dto.ParticipantDTO;
 import ru.fcpsr.sportdata.dto.SportSchoolDTO;
 import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.models.SportSchool;
@@ -116,5 +118,7 @@ public class SportSchoolService {
         return schoolRepository.count();
     }
 
-
+    public Mono<SportSchool> getById(int sportSchoolId) {
+        return schoolRepository.findById(sportSchoolId);
+    }
 }

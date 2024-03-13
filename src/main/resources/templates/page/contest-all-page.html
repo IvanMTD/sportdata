@@ -1,0 +1,157 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="container border border-2 border-dark rounded-4" th:each="contest : ${contests}">
+                <div class="row bg-dark text-center rounded-top-3">
+                    <h1>
+                        <small class="text-white">
+                            <span th:text="${contest.getTitle()}"></span>
+                        </small>
+                    </h1>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">ЕКП</span>
+                            <input type="text" class="form-control" th:value="${contest.getEkp()}" disabled>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Город</span>
+                            <input type="text" class="form-control" th:value="${contest.getCity()}" disabled>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Объект</span>
+                            <input type="text" class="form-control" th:value="${contest.getLocation()}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Начало</span>
+                            <input type="text" class="form-control" th:value="${contest.getBeginningDate()}" disabled>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Конец</span>
+                            <input type="text" class="form-control" th:value="${contest.getEndingDate()}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div th:each="sport, stat : ${contest.getSports()}">
+                    <div class="container bg-primary-subtle">
+                        <div class="row">
+                            <div class="col-1">
+                                <div class="container d-flex justify-content-center align-items-center" style="height: 100%">
+                                    <div class="bg-white mx-auto text-center fs-5 px-2 rounded-circle" th:text="${stat.index} + 1"></div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white">ВС</span>
+                                    <input type="text" class="form-control" th:value="${sport.getSport().getTitle()}"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Дисциплина</span>
+                                    <input type="text" class="form-control" th:value="${sport.getDiscipline().getTitle()}"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Группа</span>
+                                    <input type="text" class="form-control" th:value="${sport.getGroup().getTitle()}"
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div th:each="place : ${sport.getPlaces()}" class="container border border-secondary border-2 rounded-4 my-2">
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">ФИО</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${place.getParticipant().getFullName()}"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Возраст</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${place.getParticipant().getAge()}"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">ДР</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${place.getParticipant().getDate()}"
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Организация</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${place.getSchool().getTitle()}"
+                                           disabled>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Субъект</span>
+                                    <input type="text" class="form-control"
+                                           th:value="${place.getSchool().getSubject().getTitle()}"
+                                           disabled>
+                                </div>
+                            </div>
+                        </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Разряд</span>
+                            <input type="text" class="form-control"
+                                   th:value="${place.getQualification().getCategory().getTitle()}"
+                                   disabled>
+                          </div>
+                        </div>
+                        <div class="col">
+                          <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Место</span>
+                            <input type="text" class="form-control"
+                                   th:value="${place.getPlace()}"
+                                   disabled>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

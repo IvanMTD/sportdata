@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.fcpsr.sportdata.dto.ParticipantDTO;
 import ru.fcpsr.sportdata.dto.QualificationDTO;
 import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Qualification;
@@ -25,6 +26,10 @@ public class QualificationService {
     // FIND FLUX
     public Flux<Qualification> getAllByIds(Set<Integer> qualificationIds) {
         return qualificationRepository.findAllByIdIn(qualificationIds).defaultIfEmpty(new Qualification(Category.BR));
+    }
+
+    public Flux<Qualification> getAllBySportId(int sportId) {
+        return qualificationRepository.findAllByTypeOfSportId(sportId);
     }
     // CREATE
     public Mono<Qualification> createNewQualification(QualificationDTO qualificationDTO) {
@@ -57,6 +62,4 @@ public class QualificationService {
     public Mono<Long> getCount() {
         return qualificationRepository.count();
     }
-
-
 }
