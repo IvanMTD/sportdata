@@ -52,44 +52,66 @@ public class ContestController {
 
     @PostMapping("/add")
     public Mono<Rendering> addContest(@ModelAttribute(name = "contestForm") @Valid ContestDTO contestDTO, Errors errors){
-        if(errors.hasErrors()){
-            return Mono.just(
-                    Rendering.view("template")
-                            .modelAttribute("title","Add contest page")
-                            .modelAttribute("index","add-contest-page")
-                            .modelAttribute("contestForm", contestDTO)
-                            .modelAttribute("sports", getSports())
-                            .build()
-            );
-        }
-
-        return contestService.addContest(contestDTO).flatMap(contest -> {
-            log.info("contest saved: " + contest.toString());
-            return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
-                ArchiveSport archiveSport = new ArchiveSport(sport);
-                archiveSport.setContestId(contest.getId());
-                return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
-                    log.info("aSport saved: " + as.toString());
-                    return Flux.fromIterable(sport.getPlaces()).flatMap(placeDTO -> {
-                        Place place = new Place(placeDTO);
-                        place.setASportId(as.getId());
-                        return placeService.addPlace(place);
-                    }).collectList().flatMap(pl -> {
-                        for(Place place : pl){
-                            as.addPlace(place);
-                        }
-                        return archiveSportService.saveArchiveSport(as);
-                    });
-                });
-            }).collectList().flatMap(sl -> {
-                for(ArchiveSport archiveSport : sl){
-                    contest.addArchiveSport(archiveSport);
+        return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(c -> {
+            if(errors.hasErrors()){
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Add contest page")
+                                .modelAttribute("index","add-contest-page")
+                                .modelAttribute("contestForm", contestDTO)
+                                .modelAttribute("sports", getSports())
+                                .build()
+                );
+            }
+            if(c.getId() != 0){
+                if(c.getEkp().equals(contestDTO.getEkp())){
+                    int year1 = c.getBeginning().getYear();
+                    int year2 = contestDTO.getBeginning().getYear();
+                    if(year1 == year2){
+                        errors.rejectValue("ekp","","Такой номер ЕКП и год проведения уже зарегистрирован. Это ошибка!");
+                        return Mono.just(
+                                Rendering.view("template")
+                                        .modelAttribute("title","Add contest page")
+                                        .modelAttribute("index","add-contest-page")
+                                        .modelAttribute("contestForm", contestDTO)
+                                        .modelAttribute("sports", getSports())
+                                        .build()
+                        );
+                    }
                 }
-                return contestService.saveContest(contest);
+            }
+            return contestService.addContest(contestDTO).flatMap(contest -> {
+                log.info("contest saved: " + contest.toString());
+                return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
+                    ArchiveSport archiveSport = new ArchiveSport(sport);
+                    archiveSport.setContestId(contest.getId());
+                    return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
+                        log.info("aSport saved: " + as.toString());
+                        return Flux.fromIterable(sport.getPlaces()).flatMap(placeDTO -> {
+                            if(placeDTO.getParticipantId() == 0){
+                                return Mono.empty();
+                            }else {
+                                Place place = new Place(placeDTO);
+                                place.setASportId(as.getId());
+                                return placeService.addPlace(place);
+                            }
+                        }).collectList().flatMap(pl -> {
+                            for(Place place : pl){
+                                as.addPlace(place);
+                            }
+                            return archiveSportService.saveArchiveSport(as);
+                        });
+                    });
+                }).collectList().flatMap(sl -> {
+                    for(ArchiveSport archiveSport : sl){
+                        contest.addArchiveSport(archiveSport);
+                    }
+                    return contestService.saveContest(contest);
+                });
+            }).flatMap(contest -> {
+                log.info("contest fullish created " + contest.toString());
+                return Mono.just(Rendering.redirectTo("/contest/new").build());
             });
-        }).flatMap(contest -> {
-            log.info("contest fullish created " + contest.toString());
-            return Mono.just(Rendering.redirectTo("/contest/new").build());
         });
     }
 

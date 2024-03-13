@@ -2,6 +2,7 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
@@ -28,5 +29,9 @@ public class ContestService {
 
     public Flux<Contest> getAll() {
         return contestRepository.findAll();
+    }
+
+    public Mono<Contest> getContestByEkp(String ekp) {
+        return contestRepository.findByEkp(ekp).defaultIfEmpty(new Contest());
     }
 }
