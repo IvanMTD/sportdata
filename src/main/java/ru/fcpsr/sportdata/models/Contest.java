@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import ru.fcpsr.sportdata.dto.ContestDTO;
-import ru.fcpsr.sportdata.dto.SportDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +15,7 @@ import java.util.Set;
 public class Contest {
     @Id
     private int id;
+    private int subjectId;
     private String ekp;
     private String title;
     private String city;
@@ -28,6 +28,7 @@ public class Contest {
     private Set<Integer> aSportIds = new HashSet<>();
 
     public Contest(ContestDTO contestDTO){
+        setSubjectId(contestDTO.getSubjectId());
         setEkp(contestDTO.getEkp());
         setTitle(contestDTO.getTitle());
         setCity(contestDTO.getCity());

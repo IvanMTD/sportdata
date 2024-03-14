@@ -83,6 +83,7 @@ create table if not exists contest(
     federal_rule text,
     beginning date,
     ending date,
+    subject_id int,
     a_sport_ids integer[]
 );
 

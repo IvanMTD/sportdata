@@ -63,6 +63,16 @@
                     <div class="row">
                         <div class="col">
                             <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white"
+                                      style="width: 100px">Субъект</span>
+                                <select class="form-select" th:field="*{subjectId}">
+                                    <option th:each="subject : ${subjects}" th:text="${subject.getTitle()}"
+                                            th:value="${subject.getId()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="input-group py-2">
                                 <span class="input-group-text bg-secondary text-white" style="width: 100px">Город</span>
                                 <input type="text" class="form-control" placeholder="Город проведения"
                                        th:field="*{city}">
@@ -102,34 +112,41 @@
 
                                     function addSportForm() {
                                         $('#script_container').append(
-                                            '<hr>' +
-                                            '<div class="row">' +
-                                            '   <div class="col">' +
-                                            '       <div class="input-group py-2">' +
-                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Вид спорта</span>' +
-                                            '           <select name="sports[' + count + '].sportId" id="' + count + '" class="form-select" onchange="rebuildDisciplineAndGroup(this.id)"></select>' +
+                                            '<div id="container-' + count + '">' +
+                                            '   <hr>' +
+                                            '   <div class="row">' +
+                                            '       <div class="col">' +
+                                            '           <div class="input-group py-2">' +
+                                            '               <span class="input-group-text bg-secondary text-white" style="width: 100px">Вид спорта</span>' +
+                                            '               <select name="sports[' + count + '].sportId" id="' + count + '" class="form-select" onchange="rebuildDisciplineAndGroup(this.id)"></select>' +
+                                            '           </div>' +
                                             '       </div>' +
-                                            '   </div>' +
-                                            '   <div class="col">' +
-                                            '       <div class="input-group py-2">' +
-                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Дисциплина</span>' +
-                                            '           <select name="sports[' + count + '].disciplineId" id="discipline-' + count + '-select" class="form-select"></select>' +
+                                            '       <div class="col">' +
+                                            '           <div class="input-group py-2">' +
+                                            '               <span class="input-group-text bg-secondary text-white" style="width: 100px">Дисциплина</span>' +
+                                            '               <select name="sports[' + count + '].disciplineId" id="discipline-' + count + '-select" class="form-select"></select>' +
+                                            '           </div>' +
                                             '       </div>' +
-                                            '   </div>' +
-                                            '   <div class="col">' +
-                                            '       <div class="input-group py-2">' +
-                                            '           <span class="input-group-text bg-secondary text-white" style="width: 100px">Группа</span>' +
-                                            '           <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
+                                            '       <div class="col">' +
+                                            '          <div class="input-group py-2">' +
+                                            '               <span class="input-group-text bg-secondary text-white">Возростная группа</span>' +
+                                            '               <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
+                                            '           </div>' +
                                             '       </div>' +
+                                            /*'       <div class="col-1">' +
+                                            '           <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                                            '               <button id="del-' + count + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="deleteSport(this.id)"></button>' +
+                                            '           </div>' +
+                                            '      </div>' +*/
                                             '   </div>' +
-                                            '</div>' +
-                                            '<div id="participant-div-' + count + '"></div>' +
-                                            '<div class="row">' +
-                                            '   <div class="d-grid py-2">\n' +
-                                            '       <button id="add-button-' + count + '" class="btn btn-secondary" type="button" onclick="addParticipantForm(this.id)">Добавить спортсмена и его результат</button>' +
+                                            '   <div id="participant-div-' + count + '"></div>' +
+                                            '   <div class="row">' +
+                                            '      <div class="d-grid py-2">\n' +
+                                            '           <button id="add-button-' + count + '" class="btn btn-secondary" type="button" onclick="addParticipantForm(this.id)">Добавить спортсмена и его результат</button>' +
+                                            '      </div>' +
                                             '   </div>' +
-                                            '</div>' +
-                                            '<hr>'
+                                            '   <hr>' +
+                                            '</div>'
                                         );
 
                                         sports.forEach(function (sport) {
@@ -268,6 +285,13 @@
                                                 '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
                                             );
                                         });
+                                    }
+
+                                    function deleteSport(delId) {
+                                        let parts = delId.split('-');
+                                        let index = parseInt(parts[parts.length - 1]);
+                                        let container = $('#container-' + index);
+                                        container.empty();
                                     }
                                 </script>
                             </div>

@@ -1,6 +1,5 @@
 package ru.fcpsr.sportdata.dto;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -25,12 +24,14 @@ public class ContestDTO {
     private String city;
     @NotBlank(message = "Укажите спортивный объект проведения соревнования!")
     private String location;
+    private int subjectId;
     @NotNull(message = "Укажите начало соревнования")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate beginning;
     @NotNull(message = "Укажите завершение соревнования")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ending;
+    private SubjectDTO subject;
     private List<SportDTO> sports = new ArrayList<>();
 
     public ContestDTO(Contest contest) {

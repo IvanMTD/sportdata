@@ -18,20 +18,6 @@
                     </div>
                     <div class="col">
                         <div class="input-group py-2">
-                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Город</span>
-                            <input type="text" class="form-control" th:value="${contest.getCity()}" disabled>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="input-group py-2">
-                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Объект</span>
-                            <input type="text" class="form-control" th:value="${contest.getLocation()}" disabled>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="input-group py-2">
                             <span class="input-group-text bg-secondary text-white" style="width: 100px">Начало</span>
                             <input type="text" class="form-control" th:value="${contest.getBeginningDate()}" disabled>
                         </div>
@@ -40,6 +26,26 @@
                         <div class="input-group py-2">
                             <span class="input-group-text bg-secondary text-white" style="width: 100px">Конец</span>
                             <input type="text" class="form-control" th:value="${contest.getEndingDate()}" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Субъект</span>
+                            <input type="text" class="form-control" th:value="${contest.getSubject().getTitle()}" disabled>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Город</span>
+                            <input type="text" class="form-control" th:value="${contest.getCity()}" disabled>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="input-group py-2">
+                            <span class="input-group-text bg-secondary text-white" style="width: 100px">Объект</span>
+                            <input type="text" class="form-control" th:value="${contest.getLocation()}" disabled>
                         </div>
                     </div>
                 </div>
