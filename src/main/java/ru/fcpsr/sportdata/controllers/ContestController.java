@@ -85,25 +85,29 @@ public class ContestController {
             return contestService.addContest(contestDTO).flatMap(contest -> {
                 log.info("contest saved: " + contest.toString());
                 return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
-                    ArchiveSport archiveSport = new ArchiveSport(sport);
-                    archiveSport.setContestId(contest.getId());
-                    return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
-                        log.info("aSport saved: " + as.toString());
-                        return Flux.fromIterable(sport.getPlaces()).flatMap(placeDTO -> {
-                            if(placeDTO.getParticipantId() == 0){
-                                return Mono.empty();
-                            }else {
-                                Place place = new Place(placeDTO);
-                                place.setASportId(as.getId());
-                                return placeService.addPlace(place);
-                            }
-                        }).collectList().flatMap(pl -> {
-                            for(Place place : pl){
-                                as.addPlace(place);
-                            }
-                            return archiveSportService.saveArchiveSport(as);
+                    if(sport.getSportId() == 0){
+                        return Mono.empty();
+                    }else {
+                        ArchiveSport archiveSport = new ArchiveSport(sport);
+                        archiveSport.setContestId(contest.getId());
+                        return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
+                            log.info("aSport saved: " + as.toString());
+                            return Flux.fromIterable(sport.getPlaces()).flatMap(placeDTO -> {
+                                if (placeDTO.getParticipantId() == 0) {
+                                    return Mono.empty();
+                                } else {
+                                    Place place = new Place(placeDTO);
+                                    place.setASportId(as.getId());
+                                    return placeService.addPlace(place);
+                                }
+                            }).collectList().flatMap(pl -> {
+                                for (Place place : pl) {
+                                    as.addPlace(place);
+                                }
+                                return archiveSportService.saveArchiveSport(as);
+                            });
                         });
-                    });
+                    }
                 }).collectList().flatMap(sl -> {
                     for(ArchiveSport archiveSport : sl){
                         contest.addArchiveSport(archiveSport);

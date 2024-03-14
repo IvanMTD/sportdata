@@ -163,7 +163,7 @@
                                         let groups = [[${sports}]][0].groups;
                                         groups.forEach(function (group) {
                                             $('#group-' + count + '-select').append(
-                                                '<option value="' + group.id + '">' + group.title + '</option>'
+                                                '<option value="' + group.id + '">' + group.title + ' | ' + group.minAge + '-' + group.maxAge + '</option>'
                                             );
                                         });
                                         count++;
@@ -258,7 +258,7 @@
                                                 $('#group-' + count + '-select').empty();
                                                 groups.forEach(function (group) {
                                                     $('#group-' + index + '-select').append(
-                                                        '<option value="' + group.id + '">' + group.title + '</option>'
+                                                        '<option value="' + group.id + '">' + group.title + ' | ' + group.minAge + '-' + group.maxAge + '</option>'
                                                     );
                                                 });
                                             }
