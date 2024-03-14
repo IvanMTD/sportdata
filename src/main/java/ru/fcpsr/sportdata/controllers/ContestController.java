@@ -14,7 +14,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.ArchiveSport;
-import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.services.*;
 

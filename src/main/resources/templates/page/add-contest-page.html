@@ -133,11 +133,11 @@
                                             '               <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
                                             '           </div>' +
                                             '       </div>' +
-                                            /*'       <div class="col-1">' +
+                                            '       <div class="col-1">' +
                                             '           <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
                                             '               <button id="del-' + count + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="deleteSport(this.id)"></button>' +
                                             '           </div>' +
-                                            '      </div>' +*/
+                                            '      </div>' +
                                             '   </div>' +
                                             '   <div id="participant-div-' + count + '"></div>' +
                                             '   <div class="row">' +
@@ -257,7 +257,7 @@
                                                 let groups = sports[i].groups;
                                                 $('#group-' + count + '-select').empty();
                                                 groups.forEach(function (group) {
-                                                    $('#group-' + count + '-select').append(
+                                                    $('#group-' + index + '-select').append(
                                                         '<option value="' + group.id + '">' + group.title + '</option>'
                                                     );
                                                 });
