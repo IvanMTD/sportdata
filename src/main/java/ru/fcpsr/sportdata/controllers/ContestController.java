@@ -13,11 +13,12 @@ import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
-import ru.fcpsr.sportdata.models.ArchiveSport;
-import ru.fcpsr.sportdata.models.Place;
+import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -46,6 +47,9 @@ public class ContestController {
                         .modelAttribute("contestForm", new ContestDTO())
                         .modelAttribute("sports", getSports())
                         .modelAttribute("subjects", subjectService.getAll())
+                        .modelAttribute("categories", getCategories())
+                        .modelAttribute("federalStandards", getFedStandards())
+                        .modelAttribute("conditions", getConditions())
                         .build()
         );
     }
@@ -53,6 +57,9 @@ public class ContestController {
     @PostMapping("/add")
     public Mono<Rendering> addContest(@ModelAttribute(name = "contestForm") @Valid ContestDTO contestDTO, Errors errors){
         return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(c -> {
+            if(contestDTO.getBoyTotal() + contestDTO.getGirlTotal() != contestDTO.getParticipantTotal()){
+                errors.rejectValue("participantTotal","","Количество М и Ж в сумме не соответствуют количество принявших участия спортсменов!");
+            }
             if(errors.hasErrors()){
                 return Mono.just(
                         Rendering.view("template")
@@ -61,6 +68,9 @@ public class ContestController {
                                 .modelAttribute("contestForm", contestDTO)
                                 .modelAttribute("sports", getSports())
                                 .modelAttribute("subjects", subjectService.getAll())
+                                .modelAttribute("categories", getCategories())
+                                .modelAttribute("federalStandards", getFedStandards())
+                                .modelAttribute("conditions", getConditions())
                                 .build()
                 );
             }
@@ -77,11 +87,15 @@ public class ContestController {
                                         .modelAttribute("contestForm", contestDTO)
                                         .modelAttribute("sports", getSports())
                                         .modelAttribute("subjects", subjectService.getAll())
+                                        .modelAttribute("categories", getCategories())
+                                        .modelAttribute("federalStandards", getFedStandards())
+                                        .modelAttribute("conditions", getConditions())
                                         .build()
                         );
                     }
                 }
             }
+
             return contestService.addContest(contestDTO).flatMap(contest -> {
                 log.info("contest saved: " + contest.toString());
                 return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
@@ -135,9 +149,29 @@ public class ContestController {
     private Flux<ContestDTO> getAllCompletedContest(){
         return contestService.getAll().flatMap(contest -> {
             ContestDTO contestDTO = new ContestDTO(contest);
-            return subjectService.getById(contest.getSubjectId()).flatMap(subject -> {
-                SubjectDTO subjectDTO = new SubjectDTO(subject);
-                contestDTO.setSubject(subjectDTO);
+            return subjectService.getAll().collectList().flatMap(subjects -> {
+                for(Subject subject : subjects){
+                    if(subject.getId() == contest.getSubjectId()){
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        contestDTO.setSubject(subjectDTO);
+                    }
+                    if(contest.getTotalSubjects().stream().anyMatch(sid -> sid == subject.getId())){
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        contestDTO.addSubjectInTotal(subjectDTO);
+                    }
+                    if(contest.getFirstPlace().stream().anyMatch(sid -> sid == subject.getId())){
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        contestDTO.addSubjectInFirst(subjectDTO);
+                    }
+                    if(contest.getSecondPlace().stream().anyMatch(sid -> sid == subject.getId())){
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        contestDTO.addSubjectInSecond(subjectDTO);
+                    }
+                    if(contest.getLastPlace().stream().anyMatch(sid -> sid == subject.getId())){
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        contestDTO.addSubjectInLast(subjectDTO);
+                    }
+                }
                 return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
                     SportDTO sportDTO = new SportDTO();
                     return sportService.getById(archiveSport.getTypeOfSportId()).flatMap(sport -> {
@@ -178,7 +212,7 @@ public class ContestController {
                         });
                     });
                 }).collectList().flatMap(sportDTOS -> {
-                    sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getSport().getTitle())).collect(Collectors.toList());
+                    sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
                     contestDTO.setSports(sportDTOS);
                     return Mono.just(contestDTO);
                 });
@@ -187,6 +221,30 @@ public class ContestController {
             l = l.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
+    }
+
+    private List<ConditionDTO> getConditions(){
+        List<ConditionDTO> cl = new ArrayList<>();
+        for(Condition condition : Condition.values()){
+            cl.add(new ConditionDTO(condition));
+        }
+        return cl;
+    }
+
+    private List<FederalStandardDTO> getFedStandards(){
+        List<FederalStandardDTO> fsl = new ArrayList<>();
+        for(FederalStandard federalStandard : FederalStandard.values()){
+            fsl.add(new FederalStandardDTO(federalStandard));
+        }
+        return fsl;
+    }
+
+    private List<CategoryDTO> getCategories(){
+        List<CategoryDTO> cl = new ArrayList<>();
+        for(Category category : Category.values()){
+            cl.add(new CategoryDTO(category));
+        }
+        return cl;
     }
 
     private Flux<TypeOfSportDTO> getSports(){

@@ -44,7 +44,10 @@ public class SubjectService {
     }
 
     public Flux<Subject> getAll() {
-        return subjectRepository.findAll();
+        return subjectRepository.findAll().collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(Subject::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
     }
 
     // CREATE

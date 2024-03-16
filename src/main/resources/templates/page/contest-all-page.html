@@ -49,6 +49,47 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="accordion" id="accordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-subject-total" aria-expanded="false" aria-controls="collapse-subject-total">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col text-center">
+                                                <span class="fs-5">Субъекты принявшие участие в соревнованиях</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse-subject-total" class="accordion-collapse collapse" data-bs-parent="#accordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="row">
+                                                <p class="fs-5">
+                                                    Всего субъектов принявших участие:<span th:text="' ' + ${contest.getSubjects().size()}"></span>
+                                                </p>
+                                            </div>
+                                            <div class="row">
+                                                <p th:each="subject : ${contest.getSubjects()}">
+                                                    <span th:text="${subject.getTitle()}"></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+
+                                        </div>
+                                        <div class="col">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <hr>
                 <div th:each="sport, stat : ${contest.getSports()}">
                     <div class="container bg-primary-subtle">

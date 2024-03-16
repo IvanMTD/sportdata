@@ -5,11 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Contest;
+import ru.fcpsr.sportdata.models.FederalStandard;
+import ru.fcpsr.sportdata.models.Subject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -25,13 +29,41 @@ public class ContestDTO {
     @NotBlank(message = "Укажите спортивный объект проведения соревнования!")
     private String location;
     private int subjectId;
+    private SubjectDTO subject;
+
+    private List<Integer> totalSubjects = new ArrayList<>(Collections.nCopies(100, null));
+    private List<SubjectDTO> subjects = new ArrayList<>();
+    private List<SubjectDTO> baseSubjectTotal = new ArrayList<>();
+    private List<SubjectDTO> baseSubjectIn = new ArrayList<>();
+    private List<Integer> firstPlace = new ArrayList<>(Collections.nCopies(10, null));
+    private List<SubjectDTO> firstSubjects = new ArrayList<>();
+    private List<Integer> secondPlace = new ArrayList<>(Collections.nCopies(10, null));
+    private List<SubjectDTO> secondSubjects = new ArrayList<>();
+    private List<Integer> lastPlace = new ArrayList<>(Collections.nCopies(10, null));
+    private List<SubjectDTO> lastSubjects = new ArrayList<>();
+    private int participantTotal;
+    private int boyTotal;
+    private int girlTotal;
+
+    // total
+    private int br;
+    private int yn1;
+    private int yn2;
+    private int yn3;
+    private int r1;
+    private int r2;
+    private int r3;
+    private int kms;
+    private int ms;
+    private int msmk;
+    private int zms;
+
     @NotNull(message = "Укажите начало соревнования")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate beginning;
     @NotNull(message = "Укажите завершение соревнования")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ending;
-    private SubjectDTO subject;
     private List<SportDTO> sports = new ArrayList<>();
 
     public ContestDTO(Contest contest) {
@@ -42,6 +74,39 @@ public class ContestDTO {
         setLocation(contest.getLocation());
         setBeginning(contest.getBeginning());
         setEnding(contest.getEnding());
+        setBr(contest.getBr());
+        setYn1(contest.getYn1());
+        setYn2(contest.getYn2());
+        setYn3(contest.getYn3());
+        setR1(contest.getR1());
+        setR2(contest.getR2());
+        setR3(contest.getR3());
+        setKms(contest.getKms());
+        setMs(contest.getMs());
+        setMsmk(contest.getMsmk());
+        setZms(contest.getZms());
+        setParticipantTotal(contest.getParticipantTotal());
+        setBoyTotal(contest.getBoyTotal());
+        setGirlTotal(contest.getGirlTotal());
+    }
+
+    public void addSubjectInTotal(SubjectDTO subject){
+        subjects.add(subject);
+    }
+    public void addSubjectInFirst(SubjectDTO subject){
+        firstSubjects.add(subject);
+    }
+    public void addSubjectInSecond(SubjectDTO subject){
+        secondSubjects.add(subject);
+    }
+    public void addSubjectInLast(SubjectDTO subject){
+        lastSubjects.add(subject);
+    }
+    public void addSubjectInBaseTotal(SubjectDTO subject){
+        baseSubjectTotal.add(subject);
+    }
+    public void addSubjectInBaseIn(SubjectDTO subject){
+        baseSubjectIn.add(subject);
     }
 
     public void addSport(SportDTO sportDTO){

@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import ru.fcpsr.sportdata.dto.SportDTO;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /*
 create table if not exists archive_sport(
@@ -28,15 +27,26 @@ public class ArchiveSport {
     private int typeOfSportId;
     private int disciplineId;
     private int ageGroupId;
+    private FederalStandard federalStandard;
+    private Set<Category> allowed = new HashSet<>();
     private Set<Integer> placeIds = new HashSet<>();
 
     public ArchiveSport(SportDTO sportDTO){
         setTypeOfSportId(sportDTO.getSportId());
         setDisciplineId(sportDTO.getDisciplineId());
         setAgeGroupId(sportDTO.getGroupId());
+        setFederalStandard(sportDTO.getStandard());
+        for(Category category : sportDTO.getAllowed()){
+            if(category != null){
+                allowed.add(category);
+            }
+        }
     }
 
     public void addPlace(Place place){
         placeIds.add(place.getId());
+    }
+    public void addAllow(Category category){
+        allowed.add(category);
     }
 }

@@ -26,11 +26,13 @@ public class Place {
     private int qualificationId;
     private int sportSchoolId;
     private int place;
+    private Condition condition;
 
     public Place(PlaceDTO placeDTO){
         setParticipantId(placeDTO.getParticipantId());
         setQualificationId(placeDTO.getQualificationId());
         setSportSchoolId(placeDTO.getSchoolId());
         setPlace(placeDTO.getPlace());
+        setCondition(placeDTO.getCondition());
     }
 }

@@ -7,8 +7,7 @@ import ru.fcpsr.sportdata.dto.ContestDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -25,6 +24,27 @@ public class Contest {
     private LocalDate beginning;
     private LocalDate ending;
 
+    private Set<Integer> totalSubjects = new HashSet<>();
+    private Set<Integer> firstPlace = new HashSet<>();
+    private Set<Integer> secondPlace = new HashSet<>();
+    private Set<Integer> lastPlace = new HashSet<>();
+
+    private int participantTotal;
+    private int boyTotal;
+    private int girlTotal;
+
+    private int br;
+    private int yn1;
+    private int yn2;
+    private int yn3;
+    private int r1;
+    private int r2;
+    private int r3;
+    private int kms;
+    private int ms;
+    private int msmk;
+    private int zms;
+
     private Set<Integer> aSportIds = new HashSet<>();
 
     public Contest(ContestDTO contestDTO){
@@ -35,6 +55,51 @@ public class Contest {
         setLocation(contestDTO.getLocation());
         setBeginning(contestDTO.getBeginning());
         setEnding(contestDTO.getEnding());
+        for(Integer subjectId : contestDTO.getTotalSubjects()){
+            if(subjectId != null){
+                totalSubjects.add(subjectId);
+            }
+        }
+        for(Integer id : contestDTO.getFirstPlace()){
+            if(id != null){
+                firstPlace.add(id);
+            }
+        }
+        for(Integer id : contestDTO.getSecondPlace()){
+            if(id != null){
+                secondPlace.add(id);
+            }
+        }
+        for(Integer id : contestDTO.getLastPlace()){
+            if(id != null){
+                lastPlace.add(id);
+            }
+        }
+
+        setParticipantTotal(contestDTO.getParticipantTotal());
+        setBoyTotal(contestDTO.getBoyTotal());
+        setGirlTotal(contestDTO.getGirlTotal());
+
+        setYn1(contestDTO.getYn1());
+        setYn2(contestDTO.getYn2());
+        setYn3(contestDTO.getYn3());
+        setR1(contestDTO.getR1());
+        setR2(contestDTO.getR2());
+        setR3(contestDTO.getR3());
+        setKms(contestDTO.getKms());
+        setMs(contestDTO.getMs());
+        setMsmk(contestDTO.getMsmk());
+        setZms(contestDTO.getZms());
+        setBr(calculateBr());
+    }
+
+    private int calculateBr(){
+        if(participantTotal != 0){
+            br = participantTotal - (yn1 + yn2 + yn3 + r1 + r2 + r3 + kms + ms + msmk + zms);
+            return br;
+        }else{
+            return 0;
+        }
     }
 
     public void addArchiveSport(ArchiveSport archiveSport){
