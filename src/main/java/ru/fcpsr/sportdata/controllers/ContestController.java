@@ -38,6 +38,8 @@ public class ContestController {
     private final SubjectService subjectService;
     private final PlaceService placeService;
 
+    private final BaseSportService baseSportService;
+
     @GetMapping("/new")
     public Mono<Rendering> addContestPage(){
         return Mono.just(
@@ -174,6 +176,9 @@ public class ContestController {
                 }
                 return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
                     SportDTO sportDTO = new SportDTO();
+                    sportDTO.setStandard(archiveSport.getFederalStandard());
+                    List<Category> categories = new ArrayList<>(archiveSport.getAllowed());
+                    sportDTO.setAllowed(categories);
                     return sportService.getById(archiveSport.getTypeOfSportId()).flatMap(sport -> {
                         TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
                         sportDTO.setSport(typeOfSportDTO);
@@ -186,6 +191,7 @@ public class ContestController {
                                 return placeService.getAllByIdIn(archiveSport.getPlaceIds()).flatMap(place -> {
                                     PlaceDTO placeDTO = new PlaceDTO();
                                     placeDTO.setPlace(place.getPlace());
+                                    placeDTO.setCondition(place.getCondition());
                                     return participantService.getById(place.getParticipantId()).flatMap(participant -> {
                                         ParticipantDTO participantDTO = new ParticipantDTO(participant);
                                         placeDTO.setParticipant(participantDTO);
@@ -214,7 +220,14 @@ public class ContestController {
                 }).collectList().flatMap(sportDTOS -> {
                     sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
                     contestDTO.setSports(sportDTOS);
-                    return Mono.just(contestDTO);
+                    return sportService.getById(sportDTOS.get(0).getSport().getId()).flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(bs -> subjectService.getById(bs.getSubjectId()).flatMap(s -> {
+                        SubjectDTO subjectDTO = new SubjectDTO(s);
+                        return Mono.just(subjectDTO);
+                    })).collectList().flatMap(sl -> {
+                        contestDTO.setBaseSubjectTotal(sl);
+                        contestDTO.calcBaseIn();
+                        return Mono.just(contestDTO);
+                    }));
                 });
             });
         }).collectList().flatMapMany(l -> {

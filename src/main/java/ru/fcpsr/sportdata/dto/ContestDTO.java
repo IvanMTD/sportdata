@@ -109,6 +109,16 @@ public class ContestDTO {
         baseSubjectIn.add(subject);
     }
 
+    public void calcBaseIn(){
+        for(SubjectDTO subject : subjects){
+            for(SubjectDTO base : baseSubjectTotal){
+                if(subject.getId() == base.getId()){
+                    baseSubjectIn.add(base);
+                }
+            }
+        }
+    }
+
     public void addSport(SportDTO sportDTO){
         if(sports == null){
             sports = new ArrayList<>();
