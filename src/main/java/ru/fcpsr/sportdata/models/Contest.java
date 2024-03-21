@@ -15,6 +15,7 @@ public class Contest {
     @Id
     private int id;
     private int subjectId;
+    private int typeOfSportId;
     private String ekp;
     private String title;
     private String city;
@@ -49,6 +50,7 @@ public class Contest {
 
     public Contest(ContestDTO contestDTO){
         setSubjectId(contestDTO.getSubjectId());
+        setTypeOfSportId(contestDTO.getSportId());
         setEkp(contestDTO.getEkp());
         setTitle(contestDTO.getTitle());
         setCity(contestDTO.getCity());
@@ -90,16 +92,7 @@ public class Contest {
         setMs(contestDTO.getMs());
         setMsmk(contestDTO.getMsmk());
         setZms(contestDTO.getZms());
-        setBr(calculateBr());
-    }
-
-    private int calculateBr(){
-        if(participantTotal != 0){
-            br = participantTotal - (yn1 + yn2 + yn3 + r1 + r2 + r3 + kms + ms + msmk + zms);
-            return br;
-        }else{
-            return 0;
-        }
+        setBr(contestDTO.getBr());
     }
 
     public void addArchiveSport(ArchiveSport archiveSport){

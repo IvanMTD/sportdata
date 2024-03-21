@@ -84,6 +84,7 @@ create table if not exists contest(
     beginning date,
     ending date,
     subject_id int,
+    type_of_sport_id int,
 
     total_subjects integer[],
     first_place integer[],
@@ -114,7 +115,7 @@ create table if not exists archive_sport(
     discipline_id int,
     age_group_id int,
     place_ids integer[],
-    federal_standard text,
+    federal_standards text[],
     allowed text[]
 );
 
@@ -123,6 +124,7 @@ create table if not exists place(
     a_sport_id int,
     participant_id int,
     qualification_id int,
+    new_qualification_id int,
     sport_school_id int,
     place int,
     condition text

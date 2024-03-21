@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Contest;
-import ru.fcpsr.sportdata.models.FederalStandard;
-import ru.fcpsr.sportdata.models.Subject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +27,8 @@ public class ContestDTO {
     private String location;
     private int subjectId;
     private SubjectDTO subject;
+    private int sportId;
+    private TypeOfSportDTO sport;
 
     private List<Integer> totalSubjects = new ArrayList<>(Collections.nCopies(100, null));
     private List<SubjectDTO> subjects = new ArrayList<>();

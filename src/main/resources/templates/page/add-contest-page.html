@@ -25,6 +25,14 @@
                                        th:field="*{title}">
                             </div>
                         </div>
+                        <div class="col">
+                            <div class="input-group py-2">
+                                <span class="input-group-text bg-secondary text-white" style="width: 100px">Вид спорта</span>
+                                <select id="sport-id-data" type="text" class="form-select" th:field="*{sportId}">
+                                    <option th:each="sport, sp : ${sports}" th:data-index="${sp.index}" th:text="${sport.getTitle()}" th:value="${sport.getId()}"></option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -118,16 +126,33 @@
                                                         aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col" th:each="subject, s_stat : ${subjects}">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox"
-                                                                   role="switch" id="flexSwitchCheckChecked"
-                                                                   th:field="*{totalSubjects[__${s_stat.index}__]}"
-                                                                   th:value="${subject.getId()}">
-                                                            <label class="form-check-label" for="flexSwitchCheckChecked"
-                                                                   th:text="${subject.getTitle()}"></label>
-                                                        </div>
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div id="col-1" class="col"></div>
+                                                        <div id="col-2" class="col"></div>
+                                                        <script th:inline="javascript">
+                                                            let sl = [[${subjects}]];
+                                                            let c1 = $('#col-1');
+                                                            let c2 = $('#col-2');
+                                                            let d = sl.length / 2;
+                                                            for(let i=0; i<sl.length; i++){
+                                                                if(i <= d){
+                                                                    c1.append(
+                                                                        '<div class="form-check">\n' +
+                                                                        '   <input class="form-check-input" type="checkbox" name="totalSubjects[' + i + ']" value="' + sl[i].id + '">\n' +
+                                                                        '   <label class="form-check-label" th:text="${subject.getTitle()}">' + sl[i].title + '</label>\n' +
+                                                                        '</div>'
+                                                                    );
+                                                                }else{
+                                                                    c2.append(
+                                                                        '<div class="form-check">\n' +
+                                                                        '   <input class="form-check-input" type="checkbox" name="totalSubjects[' + i + ']" value="' + sl[i].id + '">\n' +
+                                                                        '   <label class="form-check-label" th:text="${subject.getTitle()}">' + sl[i].title + '</label>\n' +
+                                                                        '</div>'
+                                                                    );
+                                                                }
+                                                            }
+                                                        </script>
                                                     </div>
                                                 </div>
                                             </div>
@@ -135,7 +160,6 @@
                                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                                     Вернуться
                                                 </button>
-                                                <!--<button type="button" class="btn btn-primary">Подтвердить</button>-->
                                             </div>
                                         </div>
                                     </div>
@@ -165,20 +189,19 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col">
-
-                        </div>
-                        <div class="col-9 text-center">
-                            <small class="text-danger" th:if="${#fields.hasErrors('participantTotal')}" th:errors="*{participantTotal}"></small>
-                        </div>
-                    </div>
-                    <div class="row">
                         <hr>
                         <p class="text-center fs-5">Общая оценка квалификаций спортсменов принявших участие в
                             соревновании, всего из них:</p>
                     </div>
                     <div class="row">
                         <div class="row">
+                            <div class="col">
+                                <div class="input-group py-2">
+                                    <span class="input-group-text bg-secondary text-white">БР</span>
+                                    <input type="number" class="form-control" placeholder="Укажите количество"
+                                           th:field="*{br}">
+                                </div>
+                            </div>
                             <div class="col">
                                 <div class="input-group py-2">
                                     <span class="input-group-text bg-secondary text-white">Ю1</span>
@@ -261,130 +284,151 @@
                         <div class="col">
                             <div class="d-grid py-2">
                                 <button class="btn btn-dark" type="button" onclick="addSportForm()">
-                                    Добавить вид спорта
+                                    Добавить дисциплину
                                 </button>
                                 <script th:inline="javascript">
                                     let count = 0;
                                     let pCount = 0;
-                                    let sports = [[${sports}]];
                                     let categories = [[${categories}]];
                                     let standards = [[${federalStandards}]];
                                     let conditions = [[${conditions}]];
 
                                     function addSportForm() {
-                                        $('#script_container').append(
-                                            '<div id="container-' + count + '">' +
-                                            '   <hr>' +
-                                            '   <div class="row">' +
-                                            '       <div class="row">' +
-                                            '           <div class="col">' +
-                                            '               <div class="row">' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="input-group py-2">' +
-                                            '                           <span class="input-group-text bg-secondary text-white" style="width: 100px">Вид спорта</span>' +
-                                            '                           <select name="sports[' + count + '].sportId" id="' + count + '" class="form-select" onchange="rebuildDisciplineAndGroup(this.id)"></select>' +
-                                            '                       </div>' +
-                                            '                   </div>' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="input-group py-2">' +
-                                            '                           <span class="input-group-text bg-secondary text-white" style="width: 100px">Дисциплина</span>' +
-                                            '                           <select name="sports[' + count + '].disciplineId" id="discipline-' + count + '-select" class="form-select"></select>' +
-                                            '                       </div>' +
-                                            '                   </div>' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="input-group py-2">' +
-                                            '                           <span class="input-group-text bg-secondary text-white">Возростная группа</span>' +
-                                            '                           <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
-                                            '                       </div>' +
-                                            '                   </div>' +
-                                            '               </div>' +
-                                            '               <div class="row">' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="d-grid py-2">\n' +
-                                            '                           <button id="total-subjects-button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#category-modal-' + count + '">\n' +
-                                            '                               Допуски\n' +
-                                            '                           </button>\n' +
-                                            '                           <div class="modal fade" id="category-modal-' + count + '" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
-                                            '                               <div class="modal-dialog">\n' +
-                                            '                                   <div class="modal-content">\n' +
-                                            '                                       <div class="modal-header">\n' +
-                                            '                                           <h1 class="modal-title fs-5" id="exampleModalLabel">Укажите допуски</h1>\n' +
-                                            '                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
-                                            '                                       </div>\n' +
-                                            '                                       <div class="modal-body">\n' +
-                                            '                                           <div class="row">\n' +
-                                            '                                               <div class="col" id="categories-' + count + '">\n' +
-                                            '                                               </div>\n' +
-                                            '                                           </div>\n' +
-                                            '                                       </div>\n' +
-                                            '                                       <div class="modal-footer">\n' +
-                                            '                                           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Вернуться</button>\n' +
-                                            '                                       </div>\n' +
-                                            '                                   </div>\n' +
-                                            '                               </div>\n' +
-                                            '                           </div>\n' +
-                                            '                       </div>' +
-                                            '                   </div>' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="input-group py-2">' +
-                                            '                           <span class="input-group-text bg-secondary text-white">Укажите ФССП</span>' +
-                                            '                           <select name="sports[' + count + '].standard" id="standatd-' + count + '-select" class="form-select"></select>' +
-                                            '                       </div>' +
-                                            '                   </div>' +
-                                            '               </div>' +
-                                            '           </div>' +
-                                            '           <div class="col-1">' +
-                                            '               <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
-                                            '                   <button id="del-' + count + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="deleteSport(this.id)"></button>' +
-                                            '               </div>' +
-                                            '           </div>' +
-                                            '       </div>' +
-                                            '   </div>' +
-                                            '   <div id="participant-div-' + count + '" style="padding-right: 25px"></div>' +
-                                            '   <div class="row">' +
-                                            '      <div class="d-grid py-2">\n' +
-                                            '           <button id="add-button-' + count + '" class="btn btn-dark" type="button" onclick="addParticipantForm(this.id)">Добавить финалиста</button>' +
-                                            '      </div>' +
-                                            '   </div>' +
-                                            '   <hr>' +
-                                            '</div>'
-                                        );
+                                        let sportId = document.getElementById('sport-id-data').value;
 
-                                        standards.forEach(function (standard){
-                                            $('#standatd-' + count + '-select').append(
-                                                '<option value="' + standard.federalStandard + '">' + standard.title + '</option>'
-                                            );
-                                        });
+                                        $.ajax({
+                                            url: '/rest/database/get/sport',
+                                            type: 'get',
+                                            data: {
+                                                query: sportId
+                                            },
+                                            success: function (sport) {
+                                                $('#script_container').append(
+                                                    '<div id="container-' + count + '">' +
+                                                    '   <hr>' +
+                                                    '   <div class="row">' +
+                                                    '       <div class="row">' +
+                                                    '           <div class="col">' +
+                                                    '               <div class="row">' +
+                                                    '                   <div class="col">' +
+                                                    '                       <div class="input-group py-2">' +
+                                                    '                           <span class="input-group-text bg-secondary text-white" style="width: 100px">Дисциплина</span>' +
+                                                    '                           <select name="sports[' + count + '].disciplineId" id="discipline-' + count + '-select" class="form-select"></select>' +
+                                                    '                       </div>' +
+                                                    '                   </div>' +
+                                                    '                   <div class="col">' +
+                                                    '                       <div class="input-group py-2">' +
+                                                    '                           <span class="input-group-text bg-secondary text-white">Возростная группа</span>' +
+                                                    '                           <select name="sports[' + count + '].groupId" id="group-' + count + '-select" class="form-select"></select>' +
+                                                    '                       </div>' +
+                                                    '                   </div>' +
+                                                    '               </div>' +
+                                                    '               <div class="row">' +
+                                                    '                   <div class="col">' +
+                                                    '                       <div class="d-grid py-2">\n' +
+                                                    '                           <button id="total-subjects-button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#category-modal-' + count + '">\n' +
+                                                    '                               Допуски\n' +
+                                                    '                           </button>\n' +
+                                                    '                           <div class="modal fade" id="category-modal-' + count + '" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
+                                                    '                               <div class="modal-dialog">\n' +
+                                                    '                                   <div class="modal-content">\n' +
+                                                    '                                       <div class="modal-header">\n' +
+                                                    '                                           <h1 class="modal-title fs-5" id="exampleModalLabel">Укажите допуски</h1>\n' +
+                                                    '                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                       <div class="modal-body">\n' +
+                                                    '                                           <div class="row">\n' +
+                                                    '                                               <div class="col" id="categories-' + count + '">\n' +
+                                                    '                                               </div>\n' +
+                                                    '                                           </div>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                       <div class="modal-footer">\n' +
+                                                    '                                           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Вернуться</button>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                   </div>\n' +
+                                                    '                               </div>\n' +
+                                                    '                           </div>\n' +
+                                                    '                       </div>' +
+                                                    '                   </div>' +
+                                                    '                   <div class="col">' +
+                                                    '                       <div class="d-grid py-2">\n' +
+                                                    '                           <button id="total-subjects-button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#category-modal-2-' + count + '">\n' +
+                                                    '                               Укажите ФССП\n' +
+                                                    '                           </button>\n' +
+                                                    '                           <div class="modal fade" id="category-modal-2-' + count + '" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">\n' +
+                                                    '                               <div class="modal-dialog">\n' +
+                                                    '                                   <div class="modal-content">\n' +
+                                                    '                                       <div class="modal-header">\n' +
+                                                    '                                           <h1 class="modal-title fs-5" id="exampleModalLabel">Укажите ФССП</h1>\n' +
+                                                    '                                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                       <div class="modal-body">\n' +
+                                                    '                                           <div class="row">\n' +
+                                                    '                                               <div class="col" id="fssp-' + count + '">\n' +
+                                                    '                                               </div>\n' +
+                                                    '                                           </div>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                       <div class="modal-footer">\n' +
+                                                    '                                           <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Вернуться</button>\n' +
+                                                    '                                       </div>\n' +
+                                                    '                                   </div>\n' +
+                                                    '                               </div>\n' +
+                                                    '                           </div>\n' +
+                                                    '                       </div>' +
+                                                    '                   </div>' +
+                                                    '               </div>' +
+                                                    '           </div>' +
+                                                    '           <div class="col-1">' +
+                                                    '               <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                                                    '                   <button id="del-' + count + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="deleteSport(this.id)"></button>' +
+                                                    '               </div>' +
+                                                    '           </div>' +
+                                                    '       </div>' +
+                                                    '   </div>' +
+                                                    '   <div id="participant-div-' + count + '" style="padding-right: 25px"></div>' +
+                                                    '   <div class="row">' +
+                                                    '      <div class="d-grid py-2">\n' +
+                                                    '           <button id="add-button-' + count + '" class="btn btn-dark" type="button" onclick="addParticipantForm(this.id)">Добавить финалиста</button>' +
+                                                    '      </div>' +
+                                                    '   </div>' +
+                                                    '   <hr>' +
+                                                    '</div>'
+                                                );
+                                                sport.disciplines.forEach(function (discipline) {
+                                                    $('#discipline-' + count + '-select').append(
+                                                        '<option value="' + discipline.id + '">' + discipline.title + '</option>'
+                                                    );
+                                                });
+                                                sport.groups.forEach(function (group) {
+                                                    $('#group-' + count + '-select').append(
+                                                        '<option value="' + group.id + '">' + group.title + ' | ' + group.minAge + '-' + group.maxAge + '</option>'
+                                                    );
+                                                });
 
-                                        let c = 0;
-                                        categories.forEach(function (category){
-                                            $('#categories-' + count).append(
-                                                '<div class="col">' +
-                                                '   <div class="form-check form-switch">' +
-                                                '       <input name="sports[' + count + '].allowed[' + c + ']" value="' + category.category + '" class="form-check-input" type="checkbox" role="switch">' +
-                                                '       <label class="form-check-label">' + category.title + '</label>' +
-                                                '   </div>' +
-                                                '</div>'
-                                            );
-                                            c++;
-                                        });
+                                                let f = 0;
+                                                standards.forEach(function (standard){
+                                                    $('#fssp-' + count).append(
+                                                        '   <div class="form-check">' +
+                                                        '       <input name="sports[' + count + '].standards[' + f + ']" value="' + standard.federalStandard + '" class="form-check-input" type="checkbox"">' +
+                                                        '       <label class="form-check-label">' + standard.title + '</label>' +
+                                                        '   </div>'
+                                                    );
+                                                    f++;
+                                                });
 
-                                        sports.forEach(function (sport) {
-                                            $('#' + count).append(
-                                                '<option value="' + sport.id + '">' + sport.title + '</option>'
-                                            );
-                                        });
-                                        let disciplines = [[${sports}]][0].disciplines;
-                                        disciplines.forEach(function (discipline) {
-                                            $('#discipline-' + count + '-select').append(
-                                                '<option value="' + discipline.id + '">' + discipline.title + '</option>'
-                                            );
-                                        });
-                                        let groups = [[${sports}]][0].groups;
-                                        groups.forEach(function (group) {
-                                            $('#group-' + count + '-select').append(
-                                                '<option value="' + group.id + '">' + group.title + ' | ' + group.minAge + '-' + group.maxAge + '</option>'
-                                            );
+                                                let c = 0;
+                                                categories.forEach(function (category){
+                                                    $('#categories-' + count).append(
+                                                        '<div class="col">' +
+                                                        '   <div class="form-check">' +
+                                                        '       <input name="sports[' + count + '].allowed[' + c + ']" value="' + category.category + '" class="form-check-input" type="checkbox"">' +
+                                                        '       <label class="form-check-label">' + category.title + '</label>' +
+                                                        '   </div>' +
+                                                        '</div>'
+                                                    );
+                                                    c++;
+                                                });
+                                            }
                                         });
                                         count++;
                                     }
@@ -393,7 +437,7 @@
                                         let parts = buttonId.split('-');
                                         let index = parseInt(parts[parts.length - 1]);
 
-                                        let searchQuery = document.getElementById(index).value;
+                                        let searchQuery = document.getElementById('sport-id-data').value;
 
                                         $.ajax({
                                             url: '/rest/database/sport/participants',
@@ -417,39 +461,42 @@
                                                     '          </div>' +
                                                     '          <div class="col">' +
                                                     '              <div class="input-group py-2">' +
-                                                    '                  <span class="input-group-text bg-secondary text-white" style="width: 100px">Разряд</span>' +
-                                                    '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
+                                                    '                  <span class="input-group-text bg-secondary text-white" style="width: 100px">Организация</span>' +
+                                                    '                  <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + pCount + '" class="form-select"></select>' +
                                                     '              </div>' +
                                                     '          </div>' +
                                                     '       </div>' +
                                                     '       <div class="row">' +
                                                     '          <div class="col">' +
                                                     '              <div class="input-group py-2">' +
-                                                    '                  <span class="input-group-text bg-secondary text-white" style="width: 100px">Организация</span>' +
-                                                    '                  <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + pCount + '" class="form-select"></select>' +
+                                                    '                  <span class="input-group-text bg-secondary text-white" style="width: 100px">Разряд</span>' +
+                                                    '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
                                                     '              </div>' +
                                                     '          </div>' +
-                                                    '          <div class="col">' +
-                                                    '              <div class="row">' +
-                                                    '                   <div class="col">' +
-                                                    '                       <div class="input-group py-2">' +
-                                                    '                           <span class="input-group-text bg-secondary text-white" style="width: 100px">Занял место</span>' +
-                                                    '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="qualification-' + pCount + '" class="form-select">' +
-                                                    '                               <option value="1" selected>1</option>' +
-                                                    '                               <option value="2">2</option>' +
-                                                    '                               <option value="3">3</option>' +
-                                                    '                           </select>' +
-                                                    '                       </div>' +
-                                                    '                   </div>' +
-                                                    '                   <div class="col">' +
-                                                    '                       <div class="input-group py-2">' +
-                                                    '                           <span class="input-group-text bg-secondary text-white" style="width: 100px">ЕВСК</span>' +
-                                                    '                           <select name="sports[' + index + '].places[' + pCount + '].condition" id="condition-' + pCount + '" class="form-select">' +
-                                                    '                           </select>' +
-                                                    '                       </div>' +
-                                                    '                   </div>' +
-                                                    '              </div>' +
-                                                    '          </div>' +
+                                            '                   <div class="col">' +
+                                            '                       <div class="input-group py-2">' +
+                                            '                           <span class="input-group-text bg-secondary text-white">Занял место</span>' +
+                                            '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="qualification-' + pCount + '" class="form-select">' +
+                                            '                               <option value="1" selected>1</option>' +
+                                            '                               <option value="2">2</option>' +
+                                            '                               <option value="3">3</option>' +
+                                            '                           </select>' +
+                                            '                       </div>' +
+                                            '                   </div>' +
+                                            '                   <div class="col">' +
+                                            '                       <div class="input-group py-2">' +
+                                            '                           <span class="input-group-text bg-secondary text-white">ЕВСК</span>' +
+                                            '                           <select name="sports[' + index + '].places[' + pCount + '].condition" id="condition-' + pCount + '" class="form-select">' +
+                                            '                           </select>' +
+                                            '                       </div>' +
+                                            '                   </div>' +
+                                            '                   <div class="col">' +
+                                            '                       <div class="input-group py-2">' +
+                                            '                           <span class="input-group-text bg-secondary text-white">Состояние</span>' +
+                                            '                           <select name="sports[' + index + '].places[' + pCount + '].newQualificationData" id="nq-' + pCount + '" class="form-select">' +
+                                            '                           </select>' +
+                                                    '               </div>' +
+                                                    '           </div>' +
                                                     '       </div>' +
                                                     '   </div>' +
                                                     '   <div class="col-1">' +
@@ -461,6 +508,12 @@
                                                     '<hr>' +
                                                     '</div>'
                                                 );
+
+                                                categories.forEach(function (category){
+                                                    $('#nq-' + pCount).append(
+                                                        '<option value="' + category.category + '">' + category.title + '</option>'
+                                                    );
+                                                });
 
                                                 conditions.forEach(function (condition){
                                                     $('#condition-' + pCount).append(
@@ -490,7 +543,7 @@
                                         pCount++;
                                     }
 
-                                    function rebuildDisciplineAndGroup(index) {
+                                    /*function rebuildDisciplineAndGroup(index) {
                                         let sportId = document.getElementById(index).value;
                                         for (let i = 0; i < sports.length; i++) {
                                             if (sports[i].id == sportId) {
@@ -510,7 +563,7 @@
                                                 });
                                             }
                                         }
-                                    }
+                                    }*/
 
                                     function rebuildCategory(selectId) {
                                         let parts = selectId.split('-');
@@ -561,7 +614,11 @@
                         <div class="row mx-auto">
                             <div class="col">
                                 <div class="row" style="background-color: gold">
-                                    <p class="text-center fs-5">1 место</p>
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">1 место</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" id="col-first-place">
@@ -585,7 +642,11 @@
                             </div>
                             <div class="col">
                                 <div class="row" style="background-color: silver">
-                                    <p class="text-center fs-5">2 место</p>
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">2 место</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" id="col-second-place">
@@ -609,7 +670,11 @@
                             </div>
                             <div class="col">
                                 <div class="row" style="background-color: darkgoldenrod">
-                                    <p class="text-center fs-5">3 место</p>
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">3 место</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col" id="col-last-place">

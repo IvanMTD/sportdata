@@ -19,6 +19,6 @@ public class SportDTO {
     private int groupId;
     private AgeGroupDTO group;
     private List<Category> allowed = new ArrayList<>(Collections.nCopies(Category.values().length, null));
-    private FederalStandard standard;
+    private List<FederalStandard> standards = new ArrayList<>(Collections.nCopies(FederalStandard.values().length, null));
     List<PlaceDTO> places = new ArrayList<>();
 }

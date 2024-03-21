@@ -24,6 +24,7 @@ public class Place {
     private int aSportId;
     private int participantId;
     private int qualificationId;
+    private int newQualificationId;
     private int sportSchoolId;
     private int place;
     private Condition condition;

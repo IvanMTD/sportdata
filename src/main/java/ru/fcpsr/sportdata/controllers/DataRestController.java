@@ -24,9 +24,34 @@ public class DataRestController {
     private final ParticipantService participantService;
     private final QualificationService qualificationService;
     private final TypeOfSportService sportService;
+    private final DisciplineService disciplineService;
+    private final AgeGroupService groupService;
     private final SportSchoolService schoolService;
     private final SubjectService subjectService;
 
+
+    @GetMapping("/get/sport")
+    public Mono<TypeOfSportDTO> getSport(@RequestParam(name = "query") String query){
+        int id = Integer.parseInt(query);
+        return sportService.getById(id).flatMap(sport -> {
+            TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+            return disciplineService.getAllByIds(sport.getDisciplineIds()).flatMap(discipline -> {
+                DisciplineDTO disciplineDTO = new DisciplineDTO(discipline);
+                return Mono.just(disciplineDTO);
+            }).collectList().flatMap(dl -> {
+                dl = dl.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
+                typeOfSportDTO.setDisciplines(dl);
+                return groupService.getAllByIds(sport.getAgeGroupIds()).flatMap(group -> {
+                    AgeGroupDTO ageGroupDTO = new AgeGroupDTO(group);
+                    return Mono.just(ageGroupDTO);
+                }).collectList().flatMap(gl -> {
+                    gl = gl.stream().sorted(Comparator.comparing(AgeGroupDTO::getTitle)).collect(Collectors.toList());
+                    typeOfSportDTO.setGroups(gl);
+                    return Mono.just(typeOfSportDTO);
+                });
+            });
+        });
+    }
     @GetMapping("/participant")
     public Mono<ParticipantDTO> getParticipant(@RequestParam(name = "query") String query){
         return getCompletedParticipant(query);

@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ParticipantDTO;
 import ru.fcpsr.sportdata.dto.QualificationDTO;
 import ru.fcpsr.sportdata.models.Category;
+import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.repositories.QualificationRepository;
 
@@ -39,6 +40,10 @@ public class QualificationService {
             qualification.setParticipantId(qualificationDTO.getParticipantId());
             return qualificationRepository.save(qualification);
         });
+    }
+
+    public Mono<Qualification> save(Qualification qualification) {
+        return qualificationRepository.save(qualification);
     }
     // UPDATE
     public Mono<Qualification> updateQualification(QualificationDTO qualificationDTO) {

@@ -58,10 +58,9 @@ public class ContestController {
 
     @PostMapping("/add")
     public Mono<Rendering> addContest(@ModelAttribute(name = "contestForm") @Valid ContestDTO contestDTO, Errors errors){
+        System.out.println(contestDTO.toString());
+        /*return Mono.just(Rendering.redirectTo("/contest/new").build());*/
         return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(c -> {
-            if(contestDTO.getBoyTotal() + contestDTO.getGirlTotal() != contestDTO.getParticipantTotal()){
-                errors.rejectValue("participantTotal","","Количество М и Ж в сумме не соответствуют количество принявших участия спортсменов!");
-            }
             if(errors.hasErrors()){
                 return Mono.just(
                         Rendering.view("template")
@@ -101,9 +100,10 @@ public class ContestController {
             return contestService.addContest(contestDTO).flatMap(contest -> {
                 log.info("contest saved: " + contest.toString());
                 return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
-                    if(sport.getSportId() == 0){
+                    if(sport.getDisciplineId() == 0){
                         return Mono.empty();
                     }else {
+                        System.out.println(sport);
                         ArchiveSport archiveSport = new ArchiveSport(sport);
                         archiveSport.setContestId(contest.getId());
                         return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
@@ -112,9 +112,24 @@ public class ContestController {
                                 if (placeDTO.getParticipantId() == 0) {
                                     return Mono.empty();
                                 } else {
+                                    System.out.println(placeDTO.toString());
                                     Place place = new Place(placeDTO);
                                     place.setASportId(as.getId());
-                                    return placeService.addPlace(place);
+                                    return qualificationService.getById(placeDTO.getQualificationId()).flatMap(q -> {
+                                        System.out.println(q.toString());
+                                        if(!q.getCategory().equals(placeDTO.getNewQualificationData())){
+                                            Qualification qualification = new Qualification();
+                                            qualification.setCategory(placeDTO.getNewQualificationData());
+                                            qualification.setTypeOfSportId(contestDTO.getSportId());
+                                            qualification.setParticipantId(placeDTO.getParticipantId());
+                                            return qualificationService.save(qualification).flatMap(newQualification -> {
+                                                place.setNewQualificationId(qualification.getId());
+                                                return placeService.addPlace(place);
+                                            });
+                                        }
+                                        place.setNewQualificationId(q.getId());
+                                        return placeService.addPlace(place);
+                                    });
                                 }
                             }).collectList().flatMap(pl -> {
                                 for (Place place : pl) {
@@ -176,7 +191,7 @@ public class ContestController {
                 }
                 return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
                     SportDTO sportDTO = new SportDTO();
-                    sportDTO.setStandard(archiveSport.getFederalStandard());
+                    /*sportDTO.setStandard(archiveSport.getFederalStandard());*/
                     List<Category> categories = new ArrayList<>(archiveSport.getAllowed());
                     sportDTO.setAllowed(categories);
                     return sportService.getById(archiveSport.getTypeOfSportId()).flatMap(sport -> {
