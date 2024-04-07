@@ -1,0 +1,22 @@
+.img-ratio-control {
+    object-fit: cover;
+}
+
+.img-special-settings {
+    height: 100%;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.rotate-icon {
+    animation: rotation 0.5s infinite linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}

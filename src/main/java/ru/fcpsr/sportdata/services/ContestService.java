@@ -34,4 +34,44 @@ public class ContestService {
     public Mono<Contest> getContestByEkp(String ekp) {
         return contestRepository.findByEkp(ekp).defaultIfEmpty(new Contest());
     }
+
+    public Mono<Contest> createContestFirstStep(ContestDTO contestDTO) {
+        return Mono.just(new Contest()).flatMap(contest -> {
+            contest.setTitle(contestDTO.getTitle());
+            contest.setEkp(contestDTO.getEkp());
+            contest.setTypeOfSportId(contestDTO.getSportId());
+            contest.setBeginning(contestDTO.getBeginning());
+            contest.setEnding(contestDTO.getEnding());
+            contest.setSubjectId(contestDTO.getSubjectId());
+            contest.setCity(contestDTO.getCity());
+            contest.setLocation(contestDTO.getLocation());
+            return contestRepository.save(contest);
+        });
+    }
+
+    public Mono<Contest> getById(int contestId) {
+        return contestRepository.findById(contestId).defaultIfEmpty(new Contest());
+    }
+
+    public Mono<Contest> updateContestSecondStep(ContestDTO contestDTO) {
+        return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
+            contest.replaceSubjectIds(contestDTO);
+            contest.updateContestData(contestDTO);
+            return contestRepository.save(contest);
+        });
+    }
+
+    public Mono<Contest> updateContestFirstStep(ContestDTO contestDTO) {
+        return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
+            contest.setTitle(contestDTO.getTitle());
+            contest.setEkp(contestDTO.getEkp());
+            contest.setTypeOfSportId(contestDTO.getSportId());
+            contest.setBeginning(contestDTO.getBeginning());
+            contest.setEnding(contestDTO.getEnding());
+            contest.setSubjectId(contestDTO.getSubjectId());
+            contest.setCity(contestDTO.getCity());
+            contest.setLocation(contestDTO.getLocation());
+            return contestRepository.save(contest);
+        });
+    }
 }

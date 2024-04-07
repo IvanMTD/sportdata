@@ -105,8 +105,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="d-grid py-2">
-                                <button id="total-subjects-button" type="button" class="btn btn-dark"
-                                        data-bs-toggle="modal" data-bs-target="#subjects-modal" onclick="rename()">
+                                <button id="total-subjects-button" type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#subjects-modal" onclick="rename()">
                                     Субъекты принявшие участие
                                 </button>
                                 <script>
@@ -473,8 +472,8 @@
                                                     '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
                                                     '              </div>' +
                                                     '          </div>' +
-                                            '                   <div class="col">' +
-                                            '                       <div class="input-group py-2">' +
+                                                    '          <div class="col">' +
+                                                    '               <div class="input-group py-2">' +
                                             '                           <span class="input-group-text bg-secondary text-white">Занял место</span>' +
                                             '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="qualification-' + pCount + '" class="form-select">' +
                                             '                               <option value="1" selected>1</option>' +
@@ -542,28 +541,6 @@
                                         });
                                         pCount++;
                                     }
-
-                                    /*function rebuildDisciplineAndGroup(index) {
-                                        let sportId = document.getElementById(index).value;
-                                        for (let i = 0; i < sports.length; i++) {
-                                            if (sports[i].id == sportId) {
-                                                let disciplines = sports[i].disciplines;
-                                                $('#discipline-' + index + '-select').empty();
-                                                disciplines.forEach(function (discipline) {
-                                                    $('#discipline-' + index + '-select').append(
-                                                        '<option value="' + discipline.id + '">' + discipline.title + '</option>'
-                                                    );
-                                                });
-                                                let groups = sports[i].groups;
-                                                $('#group-' + count + '-select').empty();
-                                                groups.forEach(function (group) {
-                                                    $('#group-' + index + '-select').append(
-                                                        '<option value="' + group.id + '">' + group.title + ' | ' + group.minAge + '-' + group.maxAge + '</option>'
-                                                    );
-                                                });
-                                            }
-                                        }
-                                    }*/
 
                                     function rebuildCategory(selectId) {
                                         let parts = selectId.split('-');
@@ -820,7 +797,7 @@
                     </div>
                     <div class="row">
                         <div class="d-grid py-2">
-                            <input class="btn btn-dark" type="submit" value="Сохранить">
+                            <input class="btn btn-dark" type="submit" value="Сначала заполните карточку соревнования" disabled>
                         </div>
                     </div>
                 </form>

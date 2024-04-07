@@ -10,8 +10,10 @@ import ru.fcpsr.sportdata.dto.AgeGroupDTO;
 import ru.fcpsr.sportdata.models.AgeGroup;
 import ru.fcpsr.sportdata.repositories.AgeGroupRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,10 @@ public class AgeGroupService {
 
     public Flux<AgeGroup> getAllByIds(Set<Integer> ageGroupIds) {
         return groupRepository.findAllById(ageGroupIds);
+    }
+
+    public Flux<AgeGroup> getAllByIds2(Set<Integer> ageGroupIds) {
+        return groupRepository.findAllById(ageGroupIds).defaultIfEmpty(new AgeGroup());
     }
 
     public Flux<AgeGroup> getAll() {
@@ -69,5 +75,12 @@ public class AgeGroupService {
 
     public Mono<Long> getCount() {
         return groupRepository.count();
+    }
+
+    public Flux<AgeGroup> getAllBySportId(int sportId) {
+        return groupRepository.findAllByTypeOfSportId(sportId).collectList().flatMapMany(gl -> {
+            gl = gl.stream().sorted(Comparator.comparing(AgeGroup::getId)).collect(Collectors.toList());
+            return Flux.fromIterable(gl);
+        }).flatMapSequential(Mono::just);
     }
 }

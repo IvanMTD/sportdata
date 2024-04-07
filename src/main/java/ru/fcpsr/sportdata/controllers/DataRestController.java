@@ -29,6 +29,29 @@ public class DataRestController {
     private final SportSchoolService schoolService;
     private final SubjectService subjectService;
 
+    @GetMapping("/get/disciplines")
+    public Flux<DisciplineDTO> getDisciplines(@RequestParam(name = "query") String query){
+        int sportId = Integer.parseInt(query);
+        return disciplineService.getAllBySportId(sportId).flatMap(discipline -> {
+            DisciplineDTO disciplineDTO = new DisciplineDTO(discipline);
+            return Mono.just(disciplineDTO);
+        }).collectList().flatMapMany(dl -> {
+            dl = dl.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(dl);
+        }).flatMapSequential(Mono::just);
+    }
+
+    @GetMapping("/get/groups")
+    public Flux<AgeGroupDTO> getGroups(@RequestParam(name = "query") String query){
+        int sportId = Integer.parseInt(query);
+        return groupService.getAllBySportId(sportId).flatMap(group -> {
+            AgeGroupDTO ageGroupDTO = new AgeGroupDTO(group);
+            return Mono.just(ageGroupDTO);
+        }).collectList().flatMapMany(gl -> {
+            gl = gl.stream().sorted(Comparator.comparing(AgeGroupDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(gl);
+        }).flatMapSequential(Mono::just);
+    }
 
     @GetMapping("/get/sport")
     public Mono<TypeOfSportDTO> getSport(@RequestParam(name = "query") String query){

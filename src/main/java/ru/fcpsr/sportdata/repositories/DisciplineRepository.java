@@ -13,4 +13,6 @@ public interface DisciplineRepository extends ReactiveCrudRepository<Discipline,
 
     @Query("SELECT COUNT(*) FROM discipline")
     Mono<Long> getCount();
+
+    Flux<Discipline> findAllByTypeOfSportId(int sportId);
 }

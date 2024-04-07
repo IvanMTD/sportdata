@@ -48,6 +48,8 @@ public class Contest {
 
     private Set<Integer> aSportIds = new HashSet<>();
 
+    boolean complete;
+
     public Contest(ContestDTO contestDTO){
         setSubjectId(contestDTO.getSubjectId());
         setTypeOfSportId(contestDTO.getSportId());
@@ -93,6 +95,8 @@ public class Contest {
         setMsmk(contestDTO.getMsmk());
         setZms(contestDTO.getZms());
         setBr(contestDTO.getBr());
+
+        setComplete(contestDTO.isComplete());
     }
 
     public void addArchiveSport(ArchiveSport archiveSport){
@@ -105,5 +109,32 @@ public class Contest {
 
     public String getEndingDate(){
         return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(ending);
+    }
+
+    public void replaceSubjectIds(ContestDTO contestDTO) {
+        totalSubjects = new HashSet<>();
+        for(Integer id : contestDTO.getTotalSubjects()){
+            if(id != null){
+                totalSubjects.add(id);
+            }
+        }
+    }
+
+    public void updateContestData(ContestDTO contestDTO) {
+        setParticipantTotal(contestDTO.getParticipantTotal());
+        setBoyTotal(contestDTO.getBoyTotal());
+        setGirlTotal(contestDTO.getGirlTotal());
+
+        setBr(contestDTO.getBr());
+        setYn1(contestDTO.getYn1());
+        setYn2(contestDTO.getYn2());
+        setYn3(contestDTO.getYn3());
+        setR1(contestDTO.getR1());
+        setR2(contestDTO.getR2());
+        setR3(contestDTO.getR3());
+        setKms(contestDTO.getKms());
+        setMs(contestDTO.getMs());
+        setMsmk(contestDTO.getMsmk());
+        setZms(contestDTO.getZms());
     }
 }

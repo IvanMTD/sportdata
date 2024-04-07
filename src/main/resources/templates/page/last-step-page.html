@@ -1,0 +1,364 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p class="fs-2 text-secondary">Регистрация соревнования</p>
+        </div>
+    </div>
+    <div class="row rounded-4 shadow" th:id="'contest-card-' + ${volume}">
+        <!-- Картинка -->
+        <div class="col-3 p-0" style="overflow: hidden">
+            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+        </div>
+        <!-- Форма -->
+        <form class="col-9 px-4" th:method="POST" th:action="@{/contest/last-step}" th:object="${contest}">
+            <input type="number" th:field="*{id}" hidden>
+            <input type="checkbox" id="complete" th:field="*{complete}" hidden>
+            <div class="row">
+                <p class="fs-3 text-secondary text-center">Результаты соревнования</p>
+            </div>
+
+            <div class="row">
+                <div class="col-5">
+                    <div class="form-floating">
+                        <select class="form-select" id="discipline-id-0" th:field="*{sports[0].disciplineId}">
+                            <option th:each="discipline : ${sport.getDisciplines()}" th:value="${discipline.getId()}" th:text="${discipline.getTitle()}"></option>
+                        </select>
+                        <label for="discipline-id-0">Дисциплина</label>
+                    </div>
+                </div>
+                <div class="col-1 mt-1">
+                    <button type="button" class="btn btn-lg btn-outline-secondary" onclick="updateDisciplines('btn-update-disciplines-0')">
+                        <div id="icon-update-discipline-0">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                    </button>
+                </div>
+                <div class="col-5">
+                    <div class="form-floating">
+                        <select class="form-select" id="group-id-0" th:field="*{sports[0].groupId}">
+                            <option th:each="group : ${sport.getGroups()}" th:value="${group.getId()}" th:text="${group.getTitle()} + ' ' + ${group.getMinAge()} + '-' + ${group.getMaxAge()}"></option>
+                        </select>
+                        <label for="group-id-0">Возрастная группа</label>
+                    </div>
+                </div>
+                <div class="col-1 mt-1">
+                    <button type="button" class="btn btn-lg btn-outline-secondary" onclick="updateGroups('btn-update-groups-0')">
+                        <div id="icon-update-groups-0">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="d-grid gap-2 mt-3">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#category-modal-0">
+                            Допуски
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="category-modal-0" tabindex="-1" aria-labelledby="modalLabel-0" aria-hidden="true">
+                            <div class="modal-dialog  modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalLabel-0">Укажите допуски</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col" id="categories-0">
+                                                <div th:each="category, c_stat : ${categories}">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" th:value="${category.getCategory()}" th:field="*{sports[0].allowed[__${c_stat.index}__]}">
+                                                        <label class="form-check-label" th:text="${category.getCategory().getTitle()}"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                            Вернуться
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="d-grid gap-2 mt-3">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#fssp-modal-0">
+                            ФССП
+                        </button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="fssp-modal-0" tabindex="-1" aria-labelledby="fsspModalLabel-0" aria-hidden="true">
+                            <div class="modal-dialog  modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="fsspModalLabel-0">Укажите ФССП</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col" id="fssp-0">
+                                                <div th:each="standard, s_stat : ${federalStandards}">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" th:value="${standard.getFederalStandard()}" th:field="*{sports[0].standards[__${s_stat.index}__]}">
+                                                        <label class="form-check-label" th:text="${standard.getTitle()}"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                            Вернуться
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div id="participant-container"></div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="d-grid gap-2 col-6 mx-auto">
+                    <button class="btn btn-lg btn-outline-secondary" type="button" onclick="addParticipant()">Добавить финалиста</button>
+                </div>
+            </div>
+
+            <div class="row py-4">
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <a class="btn btn-outline-secondary btn-lg" th:href="@{/contest/second-step(contest=${contest.getId()})}">Назад</a>
+                </div>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <button class="btn btn-outline-secondary btn-lg" type="submit">Добавить дисциплину</button>
+                </div>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">Завершить</button>
+                    <script>
+                        function contestDone(){
+                            document.getElementById('complete').checked = true;
+                        }
+                    </script>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let sport = [[${sport}]];
+    let index = [[${volume}]];
+    let pCount = 0;
+    function updateDisciplines(btnId){
+        let parts = btnId.split('-'); // Разделяем строку по символу '-'
+        let count = parts[parts.length - 1]; // Получаем последний элемент массива
+        let disciplineSelect = $('#discipline-id-' + count);
+
+        // Начинаем анимацию вращения
+        $('#icon-update-discipline-' + count).addClass('rotate-icon');
+
+        // Задержка выполнения кода на 0.5 секунды
+        setTimeout(function() {
+            $.ajax({
+                url: '/rest/database/get/disciplines',
+                type: 'get',
+                data: {
+                    query: sport.id
+                },
+                success: function(disciplines) {
+                    console.log(disciplines);
+                    disciplineSelect.empty();
+                    disciplines.forEach(function (discipline){
+                        disciplineSelect.append(
+                            '<option value="' + discipline.id + '">' + discipline.title + '</option>'
+                        );
+                    });
+
+                    // Останавливаем анимацию вращения
+                    $('#icon-update-discipline-' + count).removeClass('rotate-icon');
+                }
+            });
+        }, 500);
+    }
+
+    function updateGroups(btnId){
+        let parts = btnId.split('-'); // Разделяем строку по символу '-'
+        let count = parts[parts.length - 1]; // Получаем последний элемент массива
+        let groupsSelect = $('#group-id-' + count);
+
+        // Начинаем анимацию вращения
+        $('#icon-update-groups-' + count).addClass('rotate-icon');
+
+        // Задержка выполнения кода на 0.5 секунды
+        setTimeout(function() {
+            $.ajax({
+                url: '/rest/database/get/groups',
+                type: 'get',
+                data: {
+                    query: sport.id
+                },
+                success: function(groups) {
+                    console.log(groups);
+                    groupsSelect.empty();
+                    groups.forEach(function (group){
+                        groupsSelect.append(
+                            '<option value="' + group.id + '">' + group.title + ' ' + group.minAge + '-' + group.maxAge + '</option>'
+                        );
+                    });
+
+                    // Останавливаем анимацию вращения
+                    $('#icon-update-groups-' + count).removeClass('rotate-icon');
+                }
+            });
+        }, 500);
+    }
+
+    function addParticipant() {
+        let sportId = [[${contest}]].sportId;
+        console.log(sportId);
+        $.ajax({
+            url: '/rest/database/sport/participants',
+            type: 'get',
+            data: {
+                query: sportId
+            },
+            success: function (participants) {
+                let participantContainer = $('#participant-container');
+                participantContainer.append(
+                    '<div class="mt-3 rounded-4 bg-success-subtle" id="container-' + index + '-' + pCount + '">' +
+                    '<div class="row p-4">' +
+                    '   <div class="col">' +
+                    '       <div class="row">' +
+                    '          <div class="col">' +
+                    '              <div class="form-floating">' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].participantId" id="participant-' + pCount + '" class="form-select" onchange="rebuildCategory(this.id)"></select>' +
+                    '                  <label for="participant-' + pCount + '">Спортсмен</label>' +
+                    '              </div>' +
+                    '          </div>' +
+                    '          <div class="col">' +
+                    '              <div class="form-floating">' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + pCount + '" class="form-select"></select>' +
+                    '                  <label for="school-' + pCount + '">Спортивная организация</label>' +
+                    '              </div>' +
+                    '          </div>' +
+                    '       </div>' +
+                    '       <div class="row pt-3">' +
+                    '          <div class="col">' +
+                    '              <div class="form-floating">' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
+                    '                  <label for="qualification-' + pCount + '">Квалификация</label>' +
+                    '              </div>' +
+                    '          </div>' +
+                    '          <div class="col">' +
+                    '              <div class="form-floating">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="prise-' + pCount + '" class="form-select">' +
+                    '                               <option value="1" selected>1</option>' +
+                    '                               <option value="2">2</option>' +
+                    '                               <option value="3">3</option>' +
+                    '                           </select>' +
+                    '                  <label for="prise-' + pCount + '">Занял место</label>' +
+                    '                       </div>' +
+                    '                   </div>' +
+                    '                   <div class="col">' +
+                    '                       <div class="form-floating">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].condition" id="condition-' + pCount + '" class="form-select">' +
+                    '                           </select>' +
+                    '                  <label for="condition-' + pCount + '">ЕВСК</label>' +
+                    '                       </div>' +
+                    '                   </div>' +
+                    '                   <div class="col">' +
+                    '                       <div class="form-floating">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].newQualificationData" id="nq-' + pCount + '" class="form-select">' +
+                    '                           </select>' +
+                    '                  <label for="nq-' + pCount + '">Состояние</label>' +
+                    '               </div>' +
+                    '           </div>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '   <div class="col-1">' +
+                    '       <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                    '           <button id="del-' + index + '-' + pCount + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="deleteParticipant(this.id)"></button>' +
+                    '       </div>' +
+                    '   </div>' +
+                    '</div>' +
+                    '</div>'
+                );
+
+                participants.forEach(function (participant) {
+                    $('#participant-' + pCount).append(
+                        '<option data-item="' + JSON.stringify(participant).replace(/"/g, '&quot;') + '" value="' + participant.id + '">' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Возраст: ' + participant.age + '</option>'
+                    );
+                });
+
+                participants[0].qualifications.forEach(function (qualification) {
+                    $('#qualification-' + pCount).append(
+                        '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
+                    );
+                });
+
+                participants[0].schools.forEach(function (school) {
+                    $('#school-' + pCount).append(
+                        '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
+                    );
+                });
+
+                [[${categories}]].forEach(function (category) {
+                    $('#nq-' + pCount).append(
+                        '<option value="' + category.category + '">' + category.title + '</option>'
+                    );
+                });
+
+                [[${conditions}]].forEach(function (condition) {
+                    $('#condition-' + pCount).append(
+                        '<option value="' + condition.condition + '">' + condition.title + '</option>'
+                    );
+                });
+                pCount++;
+            }
+        });
+    }
+
+    function rebuildCategory(selectId) {
+        let parts = selectId.split('-');
+        let index = parseInt(parts[parts.length - 1]);
+        let select = document.getElementById(selectId);
+        let option = select.options[select.selectedIndex];
+        let participant = JSON.parse(option.getAttribute('data-item').replace(/&quot;/g, '"'));
+        let qualifications = participant.qualifications;
+        let schools = participant.schools;
+        $('#qualification-' + index).empty();
+        qualifications.forEach(function (qualification) {
+            $('#qualification-' + index).append(
+                '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
+            );
+        });
+        $('#school-' + index).empty();
+        schools.forEach(function (school) {
+            $('#school-' + index).append(
+                '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
+            );
+        });
+    }
+
+    function deleteParticipant(delId2) {
+        let parts = delId2.split('-');
+        let index2 = parseInt(parts[parts.length - 1]);
+        let index1 = parseInt(parts[parts.length - 2]);
+        let container = $('#container-' + index1 + '-' + index2);
+        container.empty();
+    }
+</script>

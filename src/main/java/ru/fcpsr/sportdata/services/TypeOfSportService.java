@@ -136,4 +136,8 @@ public class TypeOfSportService {
     public Mono<Long> getCount() {
         return sportRepository.getCount();
     }
+
+    public Mono<TypeOfSport> findById(int sportId) {
+        return sportRepository.findById(sportId);
+    }
 }

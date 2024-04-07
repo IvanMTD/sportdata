@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
         <title th:text="${title}">page-title</title>
@@ -14,6 +14,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type='text/javascript' src='https://www.gstatic.com/charts/loader.js'></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="/css/main.css">
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     </head>
@@ -32,6 +33,9 @@
         <div th:insert="~{page/participant-page}" th:if="${index} == 'participant-page'"></div>
         <div th:insert="~{page/add-contest-page}" th:if="${index} == 'add-contest-page'"></div>
         <div th:insert="~{page/contest-all-page}" th:if="${index} == 'contest-all-page'"></div>
+        <div th:insert="~{page/first-step-page}" th:if="${index} == 'first-step-page'"></div>
+        <div th:insert="~{page/second-step-page}" th:if="${index} == 'second-step-page'"></div>
+        <div th:insert="~{page/last-step-page}" th:if="${index} == 'last-step-page'"></div>
 
         <footer th:insert="~{block/footer}"></footer>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

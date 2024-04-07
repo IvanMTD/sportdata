@@ -12,8 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class SportDTO {
-    private int sportId;
-    private TypeOfSportDTO sport;
+    private int id;
     private int disciplineId;
     private DisciplineDTO discipline;
     private int groupId;

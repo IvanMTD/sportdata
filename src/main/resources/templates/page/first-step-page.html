@@ -1,0 +1,136 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p class="fs-2 text-secondary">Регистрация соревнования</p>
+        </div>
+    </div>
+    <div class="row rounded-4 shadow">
+        <div class="col-3 p-0" style="overflow: hidden">
+            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+        </div>
+        <form class="col-9 px-4" th:method="POST" th:action="@{/contest/first-step}" th:object="${contest}">
+            <input type="number" th:field="*{id}" hidden>
+            <div class="row">
+                <p class="fs-3 text-secondary text-center">Данные соревнования</p>
+            </div>
+
+            <div class="row">
+                <div class="col" th:if="${#fields.hasErrors('title')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="title" placeholder="title" th:field="*{title}">
+                        <label for="title">Официальное название соревнования</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('title')}">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control is-invalid" id="title-error" placeholder="title-error" th:field="*{title}">
+                        <label for="title-error">Официальное название соревнования</label>
+                        <small class="text-danger float-end" th:errors="*{title}"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" th:if="${#fields.hasErrors('ekp')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="ekp" placeholder="ekp" th:field="*{ekp}">
+                        <label for="ekp">Номер в Едином Календарном Плане</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('ekp')}">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control is-invalid" id="ekp-error" placeholder="ekp-error" th:field="*{ekp}">
+                        <label for="ekp-error">Номер в Едином Календарном Плане</label>
+                        <small class="text-danger float-end" th:errors="*{ekp}"></small>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <select class="form-select" id="sport-id" th:field="*{sportId}">
+                            <option th:each="sport : ${sports}" th:value="${sport.getId()}" th:text="${sport.getTitle()}"></option>
+                        </select>
+                        <label for="sport-id">Вид спорта</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" th:if="${#fields.hasErrors('beginning')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="beginning" placeholder="beginning" th:field="*{beginning}">
+                        <label for="beginning">Начало соревнования</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('beginning')}">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control is-invalid" id="beginning-error" placeholder="beginning-error" th:field="*{beginning}">
+                        <label for="beginning-error">Начало соревнования</label>
+                        <small class="text-danger float-end" th:errors="*{beginning}"></small>
+                    </div>
+                </div>
+
+                <div class="col" th:if="${#fields.hasErrors('ending')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="ending" placeholder="ending" th:field="*{ending}">
+                        <label for="ending">Конец соревнования</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('ending')}">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control is-invalid" id="ending-error" placeholder="ending-error" th:field="*{ending}">
+                        <label for="ending-error">Конец соревнования</label>
+                        <small class="text-danger float-end" th:errors="*{ending}"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating">
+                        <select class="form-select" id="subject-id" th:field="*{subjectId}">
+                            <option th:each="subject : ${subjects}" th:value="${subject.getId()}" th:text="${subject.getTitle()}"></option>
+                        </select>
+                        <label for="subject-id">Субъект</label>
+                    </div>
+                </div>
+
+                <div class="col" th:if="${#fields.hasErrors('city')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="city" placeholder="city" th:field="*{city}">
+                        <label for="city">Город</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('city')}">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control is-invalid" id="city-error" placeholder="city-error" th:field="*{city}">
+                        <label for="city-error">Город</label>
+                        <small class="text-danger float-end" th:errors="*{title}"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" th:if="${#fields.hasErrors('location')} != true">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="location" placeholder="location" th:field="*{location}">
+                        <label for="location">Спортивный объект</label>
+                    </div>
+                </div>
+                <div class="col" th:if="${#fields.hasErrors('location')}">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control is-invalid" id="location-error" placeholder="location-error" th:field="*{location}">
+                        <label for="location-error">Спортивный объект</label>
+                        <small class="text-danger float-end" th:errors="*{location}"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-8"></div>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <button class="btn btn-outline-secondary btn-lg" type="submit">Далее</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -10,4 +10,6 @@ import java.util.Set;
 public interface AgeGroupRepository extends ReactiveCrudRepository<AgeGroup,Integer> {
     Flux<AgeGroup> findAllByIdIn(List<Integer> ids);
     Flux<AgeGroup> findAllByIdIn(Set<Integer> ids);
+
+    Flux<AgeGroup> findAllByTypeOfSportId(int sportId);
 }

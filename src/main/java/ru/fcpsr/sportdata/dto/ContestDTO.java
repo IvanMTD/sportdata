@@ -57,6 +57,8 @@ public class ContestDTO {
     private int msmk;
     private int zms;
 
+    boolean complete;
+
     @NotNull(message = "Укажите начало соревнования")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate beginning;
@@ -69,6 +71,8 @@ public class ContestDTO {
         setId(contest.getId());
         setEkp(contest.getEkp());
         setTitle(contest.getTitle());
+        setSubjectId(contest.getSubjectId());
+        setSportId(contest.getTypeOfSportId());
         setCity(contest.getCity());
         setLocation(contest.getLocation());
         setBeginning(contest.getBeginning());
@@ -87,6 +91,7 @@ public class ContestDTO {
         setParticipantTotal(contest.getParticipantTotal());
         setBoyTotal(contest.getBoyTotal());
         setGirlTotal(contest.getGirlTotal());
+        setComplete(contest.isComplete());
     }
 
     public void addSubjectInTotal(SubjectDTO subject){

@@ -12,7 +12,9 @@ import ru.fcpsr.sportdata.models.Discipline;
 import ru.fcpsr.sportdata.repositories.DisciplineRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +59,13 @@ public class DisciplineService {
     // COUNT
     public Mono<Long> getCount() {
         return disciplineRepository.getCount();
+    }
+
+    public Flux<Discipline> getAllBySportId(int sportId) {
+        return disciplineRepository.findAllByTypeOfSportId(sportId).collectList().flatMapMany(dl -> {
+            dl = dl.stream().sorted(Comparator.comparing(Discipline::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(dl);
+        }).flatMapSequential(Mono::just);
     }
 
    /* public Mono<Discipline> updateGroupInDiscipline(AgeGroup group) {
