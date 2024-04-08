@@ -34,12 +34,14 @@ public class ContestDTO {
     private List<SubjectDTO> subjects = new ArrayList<>();
     private List<SubjectDTO> baseSubjectTotal = new ArrayList<>();
     private List<SubjectDTO> baseSubjectIn = new ArrayList<>();
+
     private List<Integer> firstPlace = new ArrayList<>(Collections.nCopies(10, null));
     private List<SubjectDTO> firstSubjects = new ArrayList<>();
     private List<Integer> secondPlace = new ArrayList<>(Collections.nCopies(10, null));
     private List<SubjectDTO> secondSubjects = new ArrayList<>();
     private List<Integer> lastPlace = new ArrayList<>(Collections.nCopies(10, null));
     private List<SubjectDTO> lastSubjects = new ArrayList<>();
+
     private int participantTotal;
     private int boyTotal;
     private int girlTotal;
@@ -71,12 +73,20 @@ public class ContestDTO {
         setId(contest.getId());
         setEkp(contest.getEkp());
         setTitle(contest.getTitle());
-        setSubjectId(contest.getSubjectId());
-        setSportId(contest.getTypeOfSportId());
         setCity(contest.getCity());
         setLocation(contest.getLocation());
+
+        setSubjectId(contest.getSubjectId());
+        setSportId(contest.getTypeOfSportId());
+
+        totalSubjects.addAll(contest.getTotalSubjects());
+        firstPlace.addAll(contest.getFirstPlace());
+        secondPlace.addAll(contest.getSecondPlace());
+        lastPlace.addAll(contest.getLastPlace());
+
         setBeginning(contest.getBeginning());
         setEnding(contest.getEnding());
+
         setBr(contest.getBr());
         setYn1(contest.getYn1());
         setYn2(contest.getYn2());
@@ -88,9 +98,11 @@ public class ContestDTO {
         setMs(contest.getMs());
         setMsmk(contest.getMsmk());
         setZms(contest.getZms());
+
         setParticipantTotal(contest.getParticipantTotal());
         setBoyTotal(contest.getBoyTotal());
         setGirlTotal(contest.getGirlTotal());
+
         setComplete(contest.isComplete());
     }
 

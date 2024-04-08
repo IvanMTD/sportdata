@@ -29,7 +29,7 @@ public class ParticipantService {
         }
     }
     public Mono<Participant> getById(int participantId) {
-        return participantRepository.findById(participantId);
+        return participantRepository.findById(participantId).defaultIfEmpty(new Participant());
     }
     // FIND FLUX
     public Flux<Participant> findAllByLastnameLike(String query) {

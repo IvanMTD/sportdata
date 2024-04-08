@@ -119,6 +119,6 @@ public class SportSchoolService {
     }
 
     public Mono<SportSchool> getById(int sportSchoolId) {
-        return schoolRepository.findById(sportSchoolId);
+        return schoolRepository.findById(sportSchoolId).defaultIfEmpty(new SportSchool());
     }
 }

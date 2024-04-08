@@ -33,7 +33,7 @@ public class SubjectService {
     }
 
     public Mono<Subject> getById(int subjectId) {
-        return subjectRepository.findById(subjectId);
+        return subjectRepository.findById(subjectId).defaultIfEmpty(new Subject());
     }
     // GET FLUX
     public Flux<Subject> getSubjectsByFirstLetter(String letter) {

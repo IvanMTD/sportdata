@@ -21,7 +21,7 @@ public class QualificationService {
 
     // FIND MONO
     public Mono<Qualification> getById(int id) {
-        return qualificationRepository.findById(id);
+        return qualificationRepository.findById(id).defaultIfEmpty(new Qualification());
     }
 
     // FIND FLUX

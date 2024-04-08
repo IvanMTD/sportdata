@@ -4,10 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Condition;
+import ru.fcpsr.sportdata.models.Place;
 
 @Data
 @NoArgsConstructor
 public class PlaceDTO {
+    private int id;
     private int participantId;
     private ParticipantDTO participant;
     private int qualificationId;
@@ -18,4 +20,16 @@ public class PlaceDTO {
     private SportSchoolDTO school;
     private int place;
     private Condition condition;
+
+    public PlaceDTO(Place place){
+        setId(place.getId());
+        setParticipantId(place.getParticipantId());
+        setQualificationId(place.getQualificationId());
+        setSchoolId(place.getSportSchoolId());
+        setPlace(place.getPlace());
+        setNewQualificationData(place.getResultCategory());
+        if(place.getCondition() != null) {
+            setCondition(place.getCondition());
+        }
+    }
 }

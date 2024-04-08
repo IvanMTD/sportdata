@@ -26,6 +26,10 @@ public class ArchiveSportService {
     }
 
     public Flux<ArchiveSport> getAllByIdIn(Set<Integer> aSportIds) {
-        return archiveSportRepository.findAllByIdIn(aSportIds);
+        return archiveSportRepository.findAllByIdIn(aSportIds).defaultIfEmpty(new ArchiveSport());
+    }
+
+    public Mono<ArchiveSport> getById(int id) {
+        return archiveSportRepository.findById(id).defaultIfEmpty(new ArchiveSport());
     }
 }

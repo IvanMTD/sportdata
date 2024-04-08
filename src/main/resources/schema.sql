@@ -125,6 +125,7 @@ create table if not exists place(
     participant_id int,
     qualification_id int,
     new_qualification_id int,
+    result_category text,
     sport_school_id int,
     place int,
     condition text

@@ -112,12 +112,17 @@ public class Contest {
     }
 
     public void replaceSubjectIds(ContestDTO contestDTO) {
-        totalSubjects = new HashSet<>();
-        for(Integer id : contestDTO.getTotalSubjects()){
+        totalSubjects = replaceData(contestDTO.getTotalSubjects());
+    }
+
+    public Set<Integer> replaceData(List<Integer> ids){
+        Set<Integer> setIds = new HashSet<>();
+        for(Integer id : ids){
             if(id != null){
-                totalSubjects.add(id);
+                setIds.add(id);
             }
         }
+        return setIds;
     }
 
     public void updateContestData(ContestDTO contestDTO) {
@@ -136,5 +141,9 @@ public class Contest {
         setMs(contestDTO.getMs());
         setMsmk(contestDTO.getMsmk());
         setZms(contestDTO.getZms());
+
+        this.firstPlace = replaceData(contestDTO.getFirstPlace());
+        this.secondPlace = replaceData(contestDTO.getSecondPlace());
+        this.lastPlace = replaceData(contestDTO.getLastPlace());
     }
 }

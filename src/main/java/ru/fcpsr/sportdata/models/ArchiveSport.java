@@ -34,6 +34,24 @@ public class ArchiveSport {
         }
     }
 
+    public void setupAllowed(List<Category> categories){
+        allowed = new HashSet<>();
+        for(Category category : categories){
+            if(category != null){
+                allowed.add(category);
+            }
+        }
+    }
+
+    public void setupFederalStandards(List<FederalStandard> fs){
+        federalStandards = new HashSet<>();
+        for(FederalStandard federalStandard : fs){
+            if(federalStandard != null){
+                federalStandards.add(federalStandard);
+            }
+        }
+    }
+
     public void addPlace(Place place){
         placeIds.add(place.getId());
     }

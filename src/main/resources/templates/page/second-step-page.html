@@ -253,7 +253,277 @@
                 </div>
             </div>
 
-            <div class="row pt-4">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <p class="text-center text-secondary fs-5">Итоги соревнование по субъектам</p>
+                    </div>
+                    <div class="row mx-auto">
+                        <div class="col">
+                            <div class="row rounded-start-4" style="background-color: gold">
+                                <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                    <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                        <span class="text-center fs-5">1 место</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col pt-3" id="col-first-place">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <div class="form-floating">
+                                                <select id="select-first-place" class="form-select">
+                                                    <option th:each="subject : ${subjects}" th:text="${subject.getTitle()}" th:value="${subject.getId()}"></option>
+                                                </select>
+                                                <label for="select-first-place">Субъект</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="d-grid d-flex justify-content-center align-items-center" style="height: 100%">
+                                                <button class="btn btn-lg btn-outline-secondary" type="button" onclick="addFirstPlace()"><i class="bi bi-check-lg"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${contest.getFirstSubjects().size() > 0}">
+                                        <div th:each="fp, fp_stat : ${contest.getFirstSubjects()}" class="row pt-3" th:id="'f-r-' + ${fp_stat.index}">
+                                            <div class="col-9">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" th:value="${fp.getTitle()}" th:id="'f-' + ${fp_stat.index}" disabled>
+                                                    <input class="form-control" th:id="'h-f-' + ${fp_stat.index}" type="number" th:field="*{firstPlace[__${fp_stat.index}__]}" hidden>
+                                                    <script th:inline="javascript">
+                                                        $('#h-f-' + [[${fp_stat.index}]]).val([[${fp}]].id);
+                                                    </script>
+                                                    <label th:for="'f-' + ${fp_stat.index}">Субъект</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="container d-flex justify-content-center align-items-center" style="height: 100%">
+                                                    <button th:id="'f-del-' + ${fp_stat.index}" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="fDel(this.id)"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row" style="background-color: silver">
+                                <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                    <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                        <span class="text-center fs-5">2 место</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row border-start border-end">
+                                <div class="col pt-3" id="col-second-place">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <div class="form-floating">
+                                                <select id="select-second-place" class="form-select">
+                                                    <option th:each="subject : ${subjects}" th:text="${subject.getTitle()}" th:value="${subject.getId()}"></option>
+                                                </select>
+                                                <label for="select-second-place">Субъект</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="d-grid d-flex justify-content-center align-items-center" style="height: 100%">
+                                                <button class="btn btn-lg btn-outline-secondary" type="button" onclick="addSecondPlace()"><i class="bi bi-check-lg"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${contest.getSecondSubjects().size() > 0}">
+                                        <div th:each="sp, sp_stat : ${contest.getSecondSubjects()}" class="row pt-3" th:id="'s-r-' + ${sp_stat.index}">
+                                            <div class="col-9">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" th:value="${sp.getTitle()}" th:id="'s-' + ${sp_stat.index}" disabled>
+                                                    <input class="form-control" th:id="'h-s-' + ${sp_stat.index}" type="number" th:field="*{secondPlace[__${sp_stat.index}__]}" hidden>
+                                                    <script th:inline="javascript">
+                                                        $('#h-s-' + [[${sp_stat.index}]]).val([[${sp}]].id);
+                                                    </script>
+                                                    <label th:for="'s-' + ${sp_stat.index}">Субъект</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="container d-flex justify-content-center align-items-center" style="height: 100%">
+                                                    <button th:id="'s-del-' + ${sp_stat.index}" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="sDel(this.id)"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row rounded-end-4" style="background-color: darkgoldenrod">
+                                <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                    <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                        <span class="text-center fs-5">3 место</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col pt-3" id="col-last-place">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <div class="form-floating">
+                                                <select id="select-last-place" class="form-select">
+                                                    <option th:each="subject : ${subjects}" th:text="${subject.getTitle()}" th:value="${subject.getId()}"></option>
+                                                </select>
+                                                <label for="select-last-place">Субъект</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="d-grid d-flex justify-content-center align-items-center" style="height: 100%">
+                                                <button class="btn btn-lg btn-outline-secondary" type="button" onclick="addLastPlace()"><i class="bi bi-check-lg"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div th:if="${contest.getLastSubjects().size() > 0}">
+                                        <div th:each="lp, lp_stat : ${contest.getLastSubjects()}" class="row pt-3" th:id="'l-r-' + ${lp_stat.index}">
+                                            <div class="col-9">
+                                                <div class="form-floating">
+                                                    <input class="form-control" type="text" th:value="${lp.getTitle()}" th:id="'l-' + ${lp_stat.index}" disabled>
+                                                    <input class="form-control" th:id="'h-l-' + ${lp_stat.index}" type="number" th:field="*{lastPlace[__${lp_stat.index}__]}" hidden>
+                                                    <script th:inline="javascript">
+                                                        $('#h-l-' + [[${lp_stat.index}]]).val([[${lp}]].id);
+                                                    </script>
+                                                    <label th:for="'l-' + ${lp_stat.index}">Субъект</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="container d-flex justify-content-center align-items-center" style="height: 100%">
+                                                    <button th:id="'l-del-' + ${lp_stat.index}" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="lDel(this.id)"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script th:inline="javascript">
+                            let subjects = [[${subjects}]];
+                            let fCount = [[${contest.getFirstSubjects().size()}]];
+                            let sCount = [[${contest.getSecondSubjects().size()}]];
+                            let lCount = [[${contest.getLastSubjects().size()}]];
+                            function addFirstPlace(){
+                                let id = document.getElementById('select-first-place').value;
+                                let subject;
+                                for(let i=0; i<subjects.length; i++){
+                                    if(subjects[i].id == id){
+                                        subject = subjects[i];
+                                    }
+                                }
+                                $('#col-first-place').append(
+                                    '<div class="row pt-3" id="f-r-' + fCount + '">' +
+                                    '   <div class="col-9">' +
+                                    '       <div class="form-floating">\n' +
+                                    '           <input class="form-control" type="text" value="' + subject.title + '" id="f-' + fCount + '" disabled>' +
+                                    '           <input name="firstPlace[' + fCount + ']" class="form-control" type="number" value="' + subject.id + '" hidden>' +
+                                    '           <label for="f-' + fCount + '">Субъект</label>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '   <div class="col-3">' +
+                                    '       <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                                    '           <button id="f-del-' + fCount + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="fDel(this.id)"></button>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '</div>'
+                                );
+
+                                fCount++;
+                                if(fCount >= 10){
+                                    fCount = 0;
+                                }
+                            }
+
+                            function fDel(id) {
+                                let parts = id.split('-');
+                                let index = parts[parts.length - 1];
+                                let element = $('#f-r-' + index);
+                                element.remove();
+                            }
+
+                            function addSecondPlace(){
+                                let id = document.getElementById('select-second-place').value;
+                                let subject;
+                                for(let i=0; i<subjects.length; i++){
+                                    if(subjects[i].id == id){
+                                        subject = subjects[i];
+                                    }
+                                }
+                                $('#col-second-place').append(
+                                    '<div class="row pt-3" id="s-r-' + sCount + '">' +
+                                    '   <div class="col-9">' +
+                                    '       <div class="form-floating">\n' +
+                                    '           <input class="form-control" type="text" value="' + subject.title + '" id="s-' + sCount + '" disabled>' +
+                                    '           <input name="secondPlace[' + sCount + ']" class="form-control" type="number" value="' + subject.id + '" hidden>' +
+                                    '           <label for="s-' + sCount + '">Субъект</label>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '   <div class="col-3">' +
+                                    '       <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                                    '           <button id="f-del-' + sCount + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="sDel(this.id)"></button>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '</div>'
+                                );
+
+                                sCount++;
+                                if(lCount >= 10){
+                                    sCount = 0;
+                                }
+                            }
+
+                            function sDel(id) {
+                                let parts = id.split('-');
+                                let index = parts[parts.length - 1];
+                                let element = $('#s-r-' + index);
+                                element.remove();
+                            }
+
+                            function addLastPlace(){
+                                let id = document.getElementById('select-last-place').value;
+                                let subject;
+                                for(let i=0; i<subjects.length; i++){
+                                    if(subjects[i].id == id){
+                                        subject = subjects[i];
+                                    }
+                                }
+                                $('#col-last-place').append(
+                                    '<div class="row pt-3" id="l-r-' + lCount + '">' +
+                                    '   <div class="col-9">' +
+                                    '       <div class="form-floating">\n' +
+                                    '           <input class="form-control" type="text" value="' + subject.title + '" id="l-' + lCount + '" disabled>' +
+                                    '           <input name="lastPlace[' + lCount + ']" class="form-control" type="number" value="' + subject.id + '" hidden>' +
+                                    '           <label for="l-' + lCount + '">Субъект</label>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '   <div class="col-3">' +
+                                    '       <div class="container d-flex justify-content-center align-items-center" style="height: 100%">' +
+                                    '           <button id="f-del-' + lCount + '" type="button" class="btn-close mx-auto text-center border" aria-label="Close" onclick="lDel(this.id)"></button>' +
+                                    '       </div>' +
+                                    '   </div>' +
+                                    '</div>'
+                                );
+
+                                lCount++;
+                                if(lCount >= 10){
+                                    lCount = 0;
+                                }
+                            }
+
+                            function lDel(id) {
+                                let parts = id.split('-');
+                                let index = parts[parts.length - 1];
+                                let element = $('#l-r-' + index);
+                                element.remove();
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row p-4">
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <a class="btn btn-outline-secondary btn-lg" th:href="@{/contest/first-step(contest=${contest.getId()})}">Назад</a>
                 </div>

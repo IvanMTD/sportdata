@@ -1,169 +1,365 @@
 <div class="container">
+    <!-- Банер регистрация соревнования-->
     <div class="row">
         <div class="col">
             <p class="fs-2 text-secondary">Регистрация соревнования</p>
         </div>
     </div>
-    <div class="row rounded-4 shadow" th:id="'contest-card-' + ${volume}">
-        <!-- Картинка -->
-        <div class="col-3 p-0" style="overflow: hidden">
-            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+    <!-- Карточка для заполнения -->
+    <form th:method="POST" th:action="@{/contest/last-step}" th:object="${contest}">
+        <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}" th:id="'contest-card-' + ${as_stat.index}" hidden>
+            <!-- Картинка -->
+            <div class="col-3 p-0" style="overflow: hidden">
+                <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+            </div>
+            <!-- Форма -->
+            <div class="col-9 px-4">
+                <input type="number" th:field="*{id}" hidden>
+                <input type="number" th:id="'as_h-' + ${as_stat.index}" th:field="*{sports[__${as_stat.index}__].id}" hidden>
+                <script th:inline="javascript">
+                    $('#as-h-' + [[${as_stat.index}]]).val([[${as}]].id);
+                </script>
+                <input type="checkbox" id="complete" th:field="*{complete}" hidden>
+                <!-- Начало заполнения - банер -->
+                <div class="row">
+                    <p class="fs-3 text-secondary text-center">Результаты соревнования</p>
+                </div>
+                <!-- Первая строка -->
+                <div class="row">
+                    <div class="col-5">
+                        <div class="form-floating">
+                            <select class="form-select" th:id="'discipline-id-' + ${as_stat.index}"
+                                    th:field="*{sports[__${as_stat.index}__].disciplineId}">
+                                <option th:each="discipline : ${sport.getDisciplines()}"
+                                        th:value="${discipline.getId()}"
+                                        th:text="${discipline.getTitle()}"></option>
+                            </select>
+                            <label th:for="'discipline-id-' + ${as_stat.index}">Дисциплина</label>
+                        </div>
+                    </div>
+                    <div class="col-1 mt-1">
+                        <button th:id="'btn-update-disciplines-' + ${as_stat.index}" type="button"
+                                class="btn btn-lg btn-outline-secondary" onclick="updateDisciplines(this.id)">
+                            <div th:id="'icon-update-discipline-' + ${as_stat.index}">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="col-5">
+                        <div class="form-floating">
+                            <select class="form-select" th:id="'group-id-' + ${as_stat.index}"
+                                    th:field="*{sports[__${as_stat.index}__].groupId}">
+                                <option th:each="group : ${sport.getGroups()}" th:value="${group.getId()}"
+                                        th:text="${group.getTitle()} + ' ' + ${group.getMinAge()} + '-' + ${group.getMaxAge()}"></option>
+                            </select>
+                            <label th:for="'group-id-' + ${as_stat.index}">Возрастная группа</label>
+                        </div>
+                    </div>
+                    <div class="col-1 mt-1">
+                        <button th:id="'btn-update-groups-' + ${as_stat.index}" type="button"
+                                class="btn btn-lg btn-outline-secondary" onclick="updateGroups(this.id)">
+                            <div th:id="'icon-update-groups-' + ${as_stat.index}">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <!-- Вторая строка -->
+                <div class="row">
+                    <!-- Допуски -->
+                    <div class="col">
+                        <div class="d-grid gap-2 mt-3">
+                            <!-- Button trigger modal -->
+                            <button th:id="'category-modal-btn-' + ${as_stat.index}" type="button"
+                                    class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#category-modal-">
+                                Допуски
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" th:id="'category-modal-' + ${as_stat.index}" tabindex="-1"
+                                 aria-labelledby="modalLabel-0" aria-hidden="true">
+                                <div class="modal-dialog  modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modalLabel-0">Укажите допуски</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col" id="categories-0">
+                                                    <div th:each="category, c_stat : ${categories}">
+                                                        <div class="form-check">
+                                                            <input th:id="'a-' + ${as_stat.index} + '-' + ${c_stat.index}"
+                                                                   type="checkbox" class="form-check-input"
+                                                                   th:value="${category.getCategory()}"
+                                                                   th:field="*{sports[__${as_stat.index}__].allowed[__${c_stat.index}__]}">
+                                                            <label class="form-check-label"
+                                                                   th:text="${category.getCategory().getTitle()}"></label>
+                                                            <script th:inline="javascript">
+                                                                for (let i = 0; i < [[${as}]].allowed.length; i++) {
+                                                                    if ([[${as}]].allowed[i] === [[${category}]].category) {
+                                                                        document.getElementById('a-' + [[${as_stat.index}]] + '-' + [[${c_stat.index}]]).checked = true;
+                                                                    }
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                                Вернуться
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script th:inline="javascript">
+                                document.getElementById('category-modal-btn-' + [[${as_stat.index}]]).setAttribute('data-bs-target', '#category-modal-' + [[${as_stat.index}]]);
+                            </script>
+                        </div>
+                    </div>
+                    <!-- ФССП -->
+                    <div class="col">
+                        <div class="d-grid gap-2 mt-3">
+                            <!-- Button trigger modal -->
+                            <button th:id="'fssp-modal-btn-' + ${as_stat.index}" type="button"
+                                    class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal"
+                                    data-bs-target="#fssp-modal-">
+                                ФССП
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" th:id="'fssp-modal-' + ${as_stat.index}" tabindex="-1"
+                                 aria-labelledby="fsspModalLabel-0" aria-hidden="true">
+                                <div class="modal-dialog  modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="fsspModalLabel-0">Укажите ФССП</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col" id="fssp-0">
+                                                    <div th:each="standard, s_stat : ${federalStandards}">
+                                                        <div class="form-check">
+                                                            <input th:id="'f-' + ${as_stat.index} + '-' + ${s_stat.index}"
+                                                                   type="checkbox" class="form-check-input"
+                                                                   th:value="${standard.getFederalStandard()}"
+                                                                   th:field="*{sports[__${as_stat.index}__].standards[__${s_stat.index}__]}">
+                                                            <label class="form-check-label"
+                                                                   th:text="${standard.getTitle()}"></label>
+                                                            <script th:inline="javascript">
+                                                                for (let i = 0; i < [[${as}]].standards.length; i++) {
+                                                                    if ([[${as}]].standards[i] === [[${standard}]].federalStandard) {
+                                                                        document.getElementById('f-' + [[${as_stat.index}]] + '-' + [[${s_stat.index}]]).checked = true;
+                                                                    }
+                                                                }
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                                Вернуться
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script th:inline="javascript">
+                                document.getElementById('fssp-modal-btn-' + [[${as_stat.index}]]).setAttribute('data-bs-target', '#fssp-modal-' + [[${as_stat.index}]]);
+                            </script>
+                        </div>
+                    </div>
+                </div>
+                <!-- Сюда добавляются финалисты -->
+                <div class="row">
+                    <div class="col">
+                        <div th:id="'participant-container-' + ${as_stat.index}">
+                            <div th:if="${as.getPlaces.size() != 0}">
+                                <div th:each="place , p_stat : ${as.getPlaces()}">
+                                    <div class="mt-3 rounded-4 bg-success-subtle"
+                                         th:id="'container-' + ${as_stat.index} + '-' + ${p_stat.index}">
+                                        <div class="row p-4">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select class="form-select"
+                                                                    th:id="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].participantId}"
+                                                                    onchange="rebuildCategory(this.id)">
+
+                                                            </select>
+                                                            <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
+                                                            <script th:inline="javascript">
+                                                                [[${participantList}]].forEach(function (participant) {
+                                                                    $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option data-item="' + JSON.stringify(participant).replace(/"/g, '&quot;') + '" value="' + participant.id + '">' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Возраст: ' + participant.age + '</option>'
+                                                                    );
+                                                                });
+                                                                document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
+                                                            </script>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select th:id="'school-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    class="form-select"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].schoolId}">
+
+                                                            </select>
+                                                            <label th:for="'school-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортивная
+                                                                организация</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row pt-3">
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select th:id="'qualification-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    class="form-select"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].qualificationId}">
+
+                                                            </select>
+                                                            <label th:for="'qualification-' + ${as_stat.index} + '-' + ${p_stat.index}">Квалификация</label>
+                                                        </div>
+                                                    </div>
+                                                    <script th:inline="javascript">
+                                                        for (let i = 0; i < [[${participantList}]].length; i++) {
+                                                            if ([[${participantList}]][i].id == JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).id) {
+                                                                [[${participantList}]][i].schools.forEach(function (school) {
+                                                                    $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
+                                                                    );
+                                                                });
+                                                                [[${participantList}]][i].qualifications.forEach(function (qualification) {
+                                                                    $('#qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
+                                                                    );
+                                                                });
+                                                                document.getElementById('school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].schoolId;
+                                                                document.getElementById('qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].qualificationId;
+                                                                break;
+                                                            }
+                                                        }
+                                                    </script>
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select th:id="'prise-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    class="form-select"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].place}">
+                                                                <option value="1">1</option>
+                                                                <option value="2">2</option>
+                                                                <option value="3">3</option>
+                                                            </select>
+                                                            <label th:for="'prise-' + ${as_stat.index} + '-' + ${p_stat.index}">Занял
+                                                                место</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select th:id="'condition-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    class="form-select"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].condition}">
+                                                                <option th:each="condition : ${conditions}"
+                                                                        th:value="${condition.getCondition()}"
+                                                                        th:text="${condition.getTitle()}"></option>
+                                                            </select>
+                                                            <label th:for="'condition-' + ${as_stat.index} + '-' + ${p_stat.index}">ЕВСК</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-floating">
+                                                            <select th:id="'nq-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                    class="form-select"
+                                                                    th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].newQualificationData}">
+                                                                <option th:each="category : ${categories}"
+                                                                        th:value="${category.getCategory()}"
+                                                                        th:text="${category.getTitle()}"></option>
+                                                            </select>
+                                                            <label th:for="'nq-' + ${as_stat.index} + '-' + ${p_stat.index}">Состояние</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-1">
+                                                <div class="container d-flex justify-content-center align-items-center"
+                                                     style="height: 100%">
+                                                    <button th:id="'del-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                            type="button" class="btn-close mx-auto text-center border"
+                                                            aria-label="Close"
+                                                            onclick="deleteParticipant(this.id)"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Кнопка добавления финалиста -->
+                <div class="row mt-3">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button th:id="'add-principal-btn-' + ${as_stat.index}" class="btn btn-lg btn-outline-secondary"
+                                type="button" onclick="addParticipant(this.id)">Добавить финалиста
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row py-4">
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <a class="btn btn-outline-secondary btn-lg"
+                           th:href="@{/contest/second-step(contest=${contest.getId()})}">Назад</a>
+                    </div>
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button class="btn btn-outline-secondary btn-lg" type="submit">Добавить дисциплину</button>
+                    </div>
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">Завершить
+                        </button>
+                        <script>
+                            function contestDone() {
+                                document.getElementById('complete').checked = true;
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- Форма -->
-        <form class="col-9 px-4" th:method="POST" th:action="@{/contest/last-step}" th:object="${contest}">
-            <input type="number" th:field="*{id}" hidden>
-            <input type="checkbox" id="complete" th:field="*{complete}" hidden>
-            <div class="row">
-                <p class="fs-3 text-secondary text-center">Результаты соревнования</p>
-            </div>
-
-            <div class="row">
-                <div class="col-5">
-                    <div class="form-floating">
-                        <select class="form-select" id="discipline-id-0" th:field="*{sports[0].disciplineId}">
-                            <option th:each="discipline : ${sport.getDisciplines()}" th:value="${discipline.getId()}" th:text="${discipline.getTitle()}"></option>
-                        </select>
-                        <label for="discipline-id-0">Дисциплина</label>
-                    </div>
-                </div>
-                <div class="col-1 mt-1">
-                    <button type="button" class="btn btn-lg btn-outline-secondary" onclick="updateDisciplines('btn-update-disciplines-0')">
-                        <div id="icon-update-discipline-0">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </div>
-                    </button>
-                </div>
-                <div class="col-5">
-                    <div class="form-floating">
-                        <select class="form-select" id="group-id-0" th:field="*{sports[0].groupId}">
-                            <option th:each="group : ${sport.getGroups()}" th:value="${group.getId()}" th:text="${group.getTitle()} + ' ' + ${group.getMinAge()} + '-' + ${group.getMaxAge()}"></option>
-                        </select>
-                        <label for="group-id-0">Возрастная группа</label>
-                    </div>
-                </div>
-                <div class="col-1 mt-1">
-                    <button type="button" class="btn btn-lg btn-outline-secondary" onclick="updateGroups('btn-update-groups-0')">
-                        <div id="icon-update-groups-0">
-                            <i class="bi bi-arrow-repeat"></i>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <div class="d-grid gap-2 mt-3">
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#category-modal-0">
-                            Допуски
-                        </button>
-                        <!-- Modal -->
-                        <div class="modal fade" id="category-modal-0" tabindex="-1" aria-labelledby="modalLabel-0" aria-hidden="true">
-                            <div class="modal-dialog  modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="modalLabel-0">Укажите допуски</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col" id="categories-0">
-                                                <div th:each="category, c_stat : ${categories}">
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" th:value="${category.getCategory()}" th:field="*{sports[0].allowed[__${c_stat.index}__]}">
-                                                        <label class="form-check-label" th:text="${category.getCategory().getTitle()}"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                                            Вернуться
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="d-grid gap-2 mt-3">
-                        <!-- Button trigger modal -->
-                        <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#fssp-modal-0">
-                            ФССП
-                        </button>
-                        <!-- Modal -->
-                        <div class="modal fade" id="fssp-modal-0" tabindex="-1" aria-labelledby="fsspModalLabel-0" aria-hidden="true">
-                            <div class="modal-dialog  modal-dialog-centered">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="fsspModalLabel-0">Укажите ФССП</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col" id="fssp-0">
-                                                <div th:each="standard, s_stat : ${federalStandards}">
-                                                    <div class="form-check">
-                                                        <input type="checkbox" class="form-check-input" th:value="${standard.getFederalStandard()}" th:field="*{sports[0].standards[__${s_stat.index}__]}">
-                                                        <label class="form-check-label" th:text="${standard.getTitle()}"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                                            Вернуться
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <div id="participant-container"></div>
-                </div>
-            </div>
-
-            <div class="row mt-3">
-                <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-lg btn-outline-secondary" type="button" onclick="addParticipant()">Добавить финалиста</button>
-                </div>
-            </div>
-
-            <div class="row py-4">
-                <div class="d-grid gap-2 col-4 mx-auto">
-                    <a class="btn btn-outline-secondary btn-lg" th:href="@{/contest/second-step(contest=${contest.getId()})}">Назад</a>
-                </div>
-                <div class="d-grid gap-2 col-4 mx-auto">
-                    <button class="btn btn-outline-secondary btn-lg" type="submit">Добавить дисциплину</button>
-                </div>
-                <div class="d-grid gap-2 col-4 mx-auto">
-                    <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">Завершить</button>
-                    <script>
-                        function contestDone(){
-                            document.getElementById('complete').checked = true;
-                        }
-                    </script>
-                </div>
-            </div>
-        </form>
-
+    </form>
+    <!-- Кнопки перехода между карточками -->
+    <div class="row">
+        <div class="col-1" th:each="as, as_stat : ${contest.getSports()}">
+            <button th:id="'card-btn-' + ${as_stat.index}" type="button"
+                    class="btn btn-lg btn-outline-secondary mt-3 d-flex justify-content-center align-items-center square-btn"
+                    th:if="${as_stat.index + 1} != ${contest.getSports().size()}" onclick="openCard(this.id)">
+                <p class="text-center fs-4 m-0" th:text="${as_stat.index + 1}"></p>
+            </button>
+            <button th:id="'card-btn-' + ${as_stat.index}" type="button"
+                    class="btn btn-lg btn-secondary mt-3 d-flex justify-content-center align-items-center square-btn"
+                    th:if="${as_stat.index + 1} == ${contest.getSports().size()}" onclick="openCard(this.id)">
+                <p class="text-center fs-4 m-0" th:text="${as_stat.index + 1}"></p>
+            </button>
+        </div>
     </div>
 </div>
 
 <script th:inline="javascript">
+    let index = ([[${contest.getSports().size()}]] - 1)
     let sport = [[${sport}]];
-    let index = [[${volume}]];
     let pCount = 0;
-    function updateDisciplines(btnId){
+    let check = 0;
+
+    document.getElementById('contest-card-' + index).hidden = false;
+
+    function updateDisciplines(btnId) {
         let parts = btnId.split('-'); // Разделяем строку по символу '-'
         let count = parts[parts.length - 1]; // Получаем последний элемент массива
         let disciplineSelect = $('#discipline-id-' + count);
@@ -172,17 +368,16 @@
         $('#icon-update-discipline-' + count).addClass('rotate-icon');
 
         // Задержка выполнения кода на 0.5 секунды
-        setTimeout(function() {
+        setTimeout(function () {
             $.ajax({
                 url: '/rest/database/get/disciplines',
                 type: 'get',
                 data: {
                     query: sport.id
                 },
-                success: function(disciplines) {
-                    console.log(disciplines);
+                success: function (disciplines) {
                     disciplineSelect.empty();
-                    disciplines.forEach(function (discipline){
+                    disciplines.forEach(function (discipline) {
                         disciplineSelect.append(
                             '<option value="' + discipline.id + '">' + discipline.title + '</option>'
                         );
@@ -195,7 +390,7 @@
         }, 500);
     }
 
-    function updateGroups(btnId){
+    function updateGroups(btnId) {
         let parts = btnId.split('-'); // Разделяем строку по символу '-'
         let count = parts[parts.length - 1]; // Получаем последний элемент массива
         let groupsSelect = $('#group-id-' + count);
@@ -204,17 +399,16 @@
         $('#icon-update-groups-' + count).addClass('rotate-icon');
 
         // Задержка выполнения кода на 0.5 секунды
-        setTimeout(function() {
+        setTimeout(function () {
             $.ajax({
                 url: '/rest/database/get/groups',
                 type: 'get',
                 data: {
                     query: sport.id
                 },
-                success: function(groups) {
-                    console.log(groups);
+                success: function (groups) {
                     groupsSelect.empty();
-                    groups.forEach(function (group){
+                    groups.forEach(function (group) {
                         groupsSelect.append(
                             '<option value="' + group.id + '">' + group.title + ' ' + group.minAge + '-' + group.maxAge + '</option>'
                         );
@@ -227,9 +421,14 @@
         }, 500);
     }
 
-    function addParticipant() {
+    function addParticipant(btnId) {
+        let parts = btnId.split('-');
+        let index = parts[parts.length - 1];
+        if (check === 0) {
+            pCount = [[${contest}]].sports[index].places.length;
+            check = 1;
+        }
         let sportId = [[${contest}]].sportId;
-        console.log(sportId);
         $.ajax({
             url: '/rest/database/sport/participants',
             type: 'get',
@@ -237,7 +436,7 @@
                 query: sportId
             },
             success: function (participants) {
-                let participantContainer = $('#participant-container');
+                let participantContainer = $('#participant-container-' + index);
                 participantContainer.append(
                     '<div class="mt-3 rounded-4 bg-success-subtle" id="container-' + index + '-' + pCount + '">' +
                     '<div class="row p-4">' +
@@ -245,13 +444,13 @@
                     '       <div class="row">' +
                     '          <div class="col">' +
                     '              <div class="form-floating">' +
-                    '                  <select name="sports[' + index + '].places[' + pCount + '].participantId" id="participant-' + pCount + '" class="form-select" onchange="rebuildCategory(this.id)"></select>' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].participantId" id="participant-' + index + '-' + pCount + '" class="form-select" onchange="rebuildCategory(this.id)"></select>' +
                     '                  <label for="participant-' + pCount + '">Спортсмен</label>' +
                     '              </div>' +
                     '          </div>' +
                     '          <div class="col">' +
                     '              <div class="form-floating">' +
-                    '                  <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + pCount + '" class="form-select"></select>' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].schoolId" id="school-' + index + '-' + pCount + '" class="form-select"></select>' +
                     '                  <label for="school-' + pCount + '">Спортивная организация</label>' +
                     '              </div>' +
                     '          </div>' +
@@ -259,13 +458,13 @@
                     '       <div class="row pt-3">' +
                     '          <div class="col">' +
                     '              <div class="form-floating">' +
-                    '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + pCount + '" class="form-select"></select>' +
+                    '                  <select name="sports[' + index + '].places[' + pCount + '].qualificationId" id="qualification-' + index + '-' + pCount + '" class="form-select"></select>' +
                     '                  <label for="qualification-' + pCount + '">Квалификация</label>' +
                     '              </div>' +
                     '          </div>' +
                     '          <div class="col">' +
                     '              <div class="form-floating">' +
-                    '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="prise-' + pCount + '" class="form-select">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].place" id="prise-' + index + '-' + pCount + '" class="form-select">' +
                     '                               <option value="1" selected>1</option>' +
                     '                               <option value="2">2</option>' +
                     '                               <option value="3">3</option>' +
@@ -275,14 +474,14 @@
                     '                   </div>' +
                     '                   <div class="col">' +
                     '                       <div class="form-floating">' +
-                    '                           <select name="sports[' + index + '].places[' + pCount + '].condition" id="condition-' + pCount + '" class="form-select">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].condition" id="condition-' + index + '-' + pCount + '" class="form-select">' +
                     '                           </select>' +
                     '                  <label for="condition-' + pCount + '">ЕВСК</label>' +
                     '                       </div>' +
                     '                   </div>' +
                     '                   <div class="col">' +
                     '                       <div class="form-floating">' +
-                    '                           <select name="sports[' + index + '].places[' + pCount + '].newQualificationData" id="nq-' + pCount + '" class="form-select">' +
+                    '                           <select name="sports[' + index + '].places[' + pCount + '].newQualificationData" id="nq-' + index + '-' + pCount + '" class="form-select">' +
                     '                           </select>' +
                     '                  <label for="nq-' + pCount + '">Состояние</label>' +
                     '               </div>' +
@@ -299,31 +498,31 @@
                 );
 
                 participants.forEach(function (participant) {
-                    $('#participant-' + pCount).append(
+                    $('#participant-' + index + '-' + pCount).append(
                         '<option data-item="' + JSON.stringify(participant).replace(/"/g, '&quot;') + '" value="' + participant.id + '">' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Возраст: ' + participant.age + '</option>'
                     );
                 });
 
                 participants[0].qualifications.forEach(function (qualification) {
-                    $('#qualification-' + pCount).append(
+                    $('#qualification-' + index + '-' + pCount).append(
                         '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
                     );
                 });
 
                 participants[0].schools.forEach(function (school) {
-                    $('#school-' + pCount).append(
+                    $('#school-' + index + '-' + pCount).append(
                         '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
                     );
                 });
 
                 [[${categories}]].forEach(function (category) {
-                    $('#nq-' + pCount).append(
+                    $('#nq-' + index + '-' + pCount).append(
                         '<option value="' + category.category + '">' + category.title + '</option>'
                     );
                 });
 
                 [[${conditions}]].forEach(function (condition) {
-                    $('#condition-' + pCount).append(
+                    $('#condition-' + index + '-' + pCount).append(
                         '<option value="' + condition.condition + '">' + condition.title + '</option>'
                     );
                 });
@@ -334,31 +533,52 @@
 
     function rebuildCategory(selectId) {
         let parts = selectId.split('-');
-        let index = parseInt(parts[parts.length - 1]);
+        let index1 = parseInt(parts[parts.length - 2]);
+        let index2 = parseInt(parts[parts.length - 1]);
         let select = document.getElementById(selectId);
         let option = select.options[select.selectedIndex];
         let participant = JSON.parse(option.getAttribute('data-item').replace(/&quot;/g, '"'));
         let qualifications = participant.qualifications;
         let schools = participant.schools;
-        $('#qualification-' + index).empty();
+        $('#qualification-' + index1 + '-' + index2).empty();
         qualifications.forEach(function (qualification) {
-            $('#qualification-' + index).append(
+            $('#qualification-' + index1 + '-' + index2).append(
                 '<option value="' + qualification.id + '">' + qualification.categoryTitle + ' - ' + qualification.sport.title + '</option>'
             );
         });
-        $('#school-' + index).empty();
+        $('#school-' + index1 + '-' + index2).empty();
         schools.forEach(function (school) {
-            $('#school-' + index).append(
+            $('#school-' + index1 + '-' + index2).append(
                 '<option value="' + school.id + '">' + school.subject.title + ' - ' + school.title + '</option>'
             );
         });
     }
 
     function deleteParticipant(delId2) {
+        console.log(delId2);
         let parts = delId2.split('-');
-        let index2 = parseInt(parts[parts.length - 1]);
         let index1 = parseInt(parts[parts.length - 2]);
+        let index2 = parseInt(parts[parts.length - 1]);
         let container = $('#container-' + index1 + '-' + index2);
-        container.empty();
+        container.remove();
+    }
+
+    function openCard(btnId) {
+        let part = btnId.split('-');
+        let index = part[part.length - 1];
+        let list = [[${contest}]].sports;
+        for (let i = 0; i < list.length; i++) {
+            if (i == index) {
+                document.getElementById('contest-card-' + i).hidden = false;
+                let button = document.getElementById('card-btn-' + i);
+                button.classList.remove("btn-outline-secondary");
+                button.classList.add("btn-secondary");
+            } else {
+                document.getElementById('contest-card-' + i).hidden = true;
+                let button = document.getElementById('card-btn-' + i);
+                button.classList.remove("btn-secondary");
+                button.classList.add("btn-outline-secondary");
+            }
+        }
     }
 </script>
