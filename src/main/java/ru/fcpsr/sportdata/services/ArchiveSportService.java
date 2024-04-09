@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
 import ru.fcpsr.sportdata.models.ArchiveSport;
+import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.repositories.ArchiveSportRepository;
 
 import java.util.Set;
@@ -31,5 +32,12 @@ public class ArchiveSportService {
 
     public Mono<ArchiveSport> getById(int id) {
         return archiveSportRepository.findById(id).defaultIfEmpty(new ArchiveSport());
+    }
+
+    public Mono<ArchiveSport> deletePlaceFromASport(Place place) {
+        return archiveSportRepository.findById(place.getASportId()).flatMap(archiveSport -> {
+            archiveSport.getPlaceIds().remove(place.getId());
+            return archiveSportRepository.save(archiveSport);
+        });
     }
 }

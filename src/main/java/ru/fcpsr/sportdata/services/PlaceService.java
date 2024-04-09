@@ -46,4 +46,8 @@ public class PlaceService {
     public Mono<Place> getById(int id) {
         return placeRepository.findById(id).defaultIfEmpty(new Place());
     }
+
+    public Mono<Place> deleteById(int placeId) {
+        return placeRepository.findById(placeId).flatMap(place -> placeRepository.delete(place).then(Mono.just(place)));
+    }
 }

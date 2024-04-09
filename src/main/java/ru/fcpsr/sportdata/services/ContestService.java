@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -73,5 +74,13 @@ public class ContestService {
             contest.setLocation(contestDTO.getLocation());
             return contestRepository.save(contest);
         });
+    }
+
+    public Flux<Contest> getAllSortedByDate(Pageable pageable) {
+        return contestRepository.findAllByOrderByBeginningDesc(pageable);
+    }
+
+    public Mono<Long> getCount() {
+        return contestRepository.count();
     }
 }

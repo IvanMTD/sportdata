@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.Participant;
+import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.services.*;
 
 import java.util.Comparator;
@@ -28,6 +29,20 @@ public class DataRestController {
     private final AgeGroupService groupService;
     private final SportSchoolService schoolService;
     private final SubjectService subjectService;
+    private final ArchiveSportService archiveSportService;
+    private final PlaceService placeService;
+
+    @GetMapping("/place/delete")
+    public Mono<Place> deletePlace(@RequestParam(name = "query") String query){
+        int placeId = Integer.parseInt(query);
+        return placeService.deleteById(placeId).flatMap(place -> {
+            log.info("'place' [{}] has been delete from db", place);
+            return archiveSportService.deletePlaceFromASport(place).flatMap(archiveSport -> {
+                log.info("place has been removed from archive sport [{}]",archiveSport);
+                return Mono.just(place);
+            });
+        });
+    }
 
     @GetMapping("/get/disciplines")
     public Flux<DisciplineDTO> getDisciplines(@RequestParam(name = "query") String query){
