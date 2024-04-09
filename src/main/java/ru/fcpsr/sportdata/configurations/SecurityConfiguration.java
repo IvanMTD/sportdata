@@ -28,7 +28,7 @@ public class SecurityConfiguration {
 
         return http
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler))
-                .authorizeExchange(auth -> auth.pathMatchers("/auth/login","/auth/user/*").permitAll().anyExchange().authenticated())
+                .authorizeExchange(auth -> auth.pathMatchers("/auth/login","/auth/user/*","/img/**").permitAll().anyExchange().authenticated())
                 .formLogin(loginSpec -> loginSpec.loginPage("/auth/login"))
                 .logout(logoutSpec -> logoutSpec.logoutSuccessHandler(handler))
                 .build();

@@ -1,0 +1,159 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p class="fs-2 text-secondary">Детали соревнования</p>
+        </div>
+    </div>
+    <div class="row rounded-4 shadow">
+        <div class="col-3 p-0" style="overflow: hidden">
+            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+        </div>
+        <div class="col-9 px-4" th:object="${contest}">
+
+            <!-- ИНФОРМАЦИЯ ПЕРВОГО БЛОКА -->
+            <div class="row pt-4">
+                <div class="col">
+                    <p class="fs-5 text-secondary text-center">
+                        <span>Основные данные</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="title" placeholder="title" th:field="*{title}" disabled>
+                        <label for="title">Официальное название соревнования</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="ekp" placeholder="ekp" th:field="*{ekp}" disabled>
+                        <label for="ekp">Номер в Едином Календарном Плане</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="beginning" placeholder="beginning" th:field="*{beginning}" disabled>
+                        <label for="beginning">Начало соревнования</label>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="ending" placeholder="ending" th:field="*{ending}" disabled>
+                        <label for="ending">Конец соревнования</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="subject-id" th:field="*{subject.title}" disabled>
+                        <label for="subject-id">Субъект</label>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="city" placeholder="city" th:field="*{city}" disabled>
+                        <label for="city">Город</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="location" placeholder="location" th:field="*{location}" disabled>
+                        <label for="location">Спортивный объект</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ИНФОРМАЦИЯ ВТОРОГО БЛОКА -->
+            <div th:if="${contest.getSubjects().size() != 0}">
+
+                <div class="accordion pt-2 pb-4" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <p class="fs-5 text-secondary text-center">
+                                    <span th:text="'Всего субъектов принявших участие: ' + ${contest.getSubjects().size()}"></span>
+                                </p>
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="row row-cols-auto justify-content-center">
+                                    <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getSubjects()}" style="width: 200px">
+                                        <div class="row rounded-top-3 bg-success-subtle">
+                                            <p class="text-center" th:text="${subject.getIso()}"></p>
+                                        </div>
+                                        <div class="row">
+                                            <p class="text-center" th:text="${subject.getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <p class="fs-5 text-secondary text-center">
+                                    <span th:text="'Субъекты для которых данный вид спорта является базовым: ' + ${contest.getBaseSubjectTotal().size()}"></span>
+                                </p>
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="row row-cols-auto justify-content-center">
+                                    <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getBaseSubjectTotal()}" style="width: 200px">
+                                        <div class="row rounded-top-3 bg-warning-subtle">
+                                            <p class="text-center" th:text="${subject.getIso()}"></p>
+                                        </div>
+                                        <div class="row">
+                                            <p class="text-center" th:text="${subject.getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <p class="fs-5 text-secondary text-center">
+                                    <span th:text="'Субъекты которые приняли участие в соревнованиях и для которых данный вид спорта является базовым: ' + ${contest.getBaseSubjectIn().size()}"></span>
+                                </p>
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="row row-cols-auto justify-content-center">
+                                    <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getBaseSubjectIn()}" style="width: 200px">
+                                        <div class="row rounded-top-3 bg-success-subtle">
+                                            <p class="text-center" th:text="${subject.getIso()}"></p>
+                                        </div>
+                                        <div class="row">
+                                            <p class="text-center" th:text="${subject.getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

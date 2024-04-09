@@ -25,3 +25,27 @@
     width: 50px;
     height: 50px;
 }
+
+.pagination .page-link {
+    background-color: #fff; /* ÷вет фона дл€ secondary */
+    color: #6c757d; /* ÷вет текста */
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #6c757d; /* ÷вет фона дл€ активной страницы */
+    color: #fff; /* ÷вет текста дл€ активной страницы */
+    border-color: #6c757d; /* ÷вет границы дл€ активной страницы */
+}
+
+#overlay {
+    display: none; /* по умолчанию скрыт */
+    position: fixed; /* фиксированное позиционирование */
+    z-index: 1000; /* находитс€ над всеми элементами */
+    top: 0; left: 0; right: 0; bottom: 0; /* занимает всю страницу */
+    background-color: rgba(0,0,0,0.5); /* полупрозрачный фон */
+
+    /* ÷ентрирование спиннера */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

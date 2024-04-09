@@ -15,6 +15,7 @@ import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -388,6 +389,20 @@ public class ContestController {
         });
     }
 
+    @GetMapping("/show")
+    public Mono<Rendering> showContestDetails(@RequestParam(name = "contest") int contestId){
+        return contestService.getById(contestId).flatMap(contest -> {
+            log.info("contest found {}", contest);
+            return Mono.just(
+                    Rendering.view("template")
+                            .modelAttribute("title","Contest page")
+                            .modelAttribute("index","contest-detail-page")
+                            .modelAttribute("contest", getCompleteContest(contest.getId()))
+                            .build()
+            );
+        });
+    }
+
     private Mono<TypeOfSportDTO> getCompleteSport(int sportId) {
         return sportService.findById(sportId).flatMap(sport -> {
             TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
@@ -496,9 +511,13 @@ public class ContestController {
                             contestDTO.setSports(sportDTOS);
                             return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                                 return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                    return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                                        return Mono.just(new SubjectDTO(subject));
-                                    });
+                                    if(baseSport.getExpiration() < LocalDate.now().getYear()){
+                                        return Mono.empty();
+                                    }else{
+                                        return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
+                                            return Mono.just(new SubjectDTO(subject));
+                                        });
+                                    }
                                 }).collectList().flatMap(subjectsDTO -> {
                                     contestDTO.setBaseSubjectTotal(subjectsDTO);
                                     contestDTO.calcBaseIn();

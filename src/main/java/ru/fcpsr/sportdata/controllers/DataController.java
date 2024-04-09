@@ -17,6 +17,7 @@ import ru.fcpsr.sportdata.validators.ParticipantValidation;
 import ru.fcpsr.sportdata.validators.SchoolValidation;
 import ru.fcpsr.sportdata.validators.SubjectValidation;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -911,24 +912,39 @@ public class DataController {
     }
 
     private Flux<TypeOfSportDTO> getCompletedTypeOfSport(String letter){
-        return sportService.getSportsByFirstLetter(letter).flatMapSequential(sport -> {
+        return sportService.getSportsByFirstLetter(letter).flatMap(sport -> {
             TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-            return disciplineService.getAllByIds(sport.getDisciplineIds()).collectList().flatMap(disciplines -> {
-                List<DisciplineDTO> dl = new ArrayList<>();
-                for(Discipline discipline : disciplines){
-                    dl.add(new DisciplineDTO(discipline));
+            return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
+                if(LocalDate.now().getYear() <= baseSport.getExpiration()) {
+                    BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
+                    return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
+                        SubjectDTO subjectDTO = new SubjectDTO(subject);
+                        baseSportDTO.setSubject(subjectDTO);
+                        return Mono.just(baseSportDTO);
+                    });
+                }else{
+                    return Mono.empty();
                 }
-                dl = dl.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
-                typeOfSportDTO.setDisciplines(dl);
-                return groupService.getAllByIds(sport.getAgeGroupIds()).collectList();
-            }).flatMap(groups -> {
-                List<AgeGroupDTO> ag = new ArrayList<>();
-                for(AgeGroup ageGroup : groups){
-                    ag.add(new AgeGroupDTO(ageGroup));
-                }
-                ag = ag.stream().sorted(Comparator.comparing(AgeGroupDTO::getTitle)).collect(Collectors.toList());
-                typeOfSportDTO.setGroups(ag);
-                return Mono.just(typeOfSportDTO);
+            }).collectList().flatMap(bsl -> {
+                bsl = bsl.stream().sorted(Comparator.comparing(baseSportDTO -> baseSportDTO.getSubject().getTitle())).collect(Collectors.toList());
+                typeOfSportDTO.setBaseSports(bsl);
+                return disciplineService.getAllByIds(sport.getDisciplineIds()).collectList().flatMap(disciplines -> {
+                    List<DisciplineDTO> dl = new ArrayList<>();
+                    for(Discipline discipline : disciplines){
+                        dl.add(new DisciplineDTO(discipline));
+                    }
+                    dl = dl.stream().sorted(Comparator.comparing(DisciplineDTO::getTitle)).collect(Collectors.toList());
+                    typeOfSportDTO.setDisciplines(dl);
+                    return groupService.getAllByIds(sport.getAgeGroupIds()).collectList();
+                }).flatMap(groups -> {
+                    List<AgeGroupDTO> ag = new ArrayList<>();
+                    for(AgeGroup ageGroup : groups){
+                        ag.add(new AgeGroupDTO(ageGroup));
+                    }
+                    ag = ag.stream().sorted(Comparator.comparing(AgeGroupDTO::getTitle)).collect(Collectors.toList());
+                    typeOfSportDTO.setGroups(ag);
+                    return Mono.just(typeOfSportDTO);
+                });
             });
         }).collectList().flatMapMany(sports -> {
             sports = sports.stream().sorted(Comparator.comparing(TypeOfSportDTO::getTitle)).collect(Collectors.toList());

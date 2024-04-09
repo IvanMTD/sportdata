@@ -8,7 +8,7 @@
         </div>
         <div class="col"></div>
     </div>
-    <div class="row py-2">
+    <div class="container py-2 rounded-4 shadow">
         <div class="col">
             <script th:inline="javascript">
                 let subjects = [[${subjects}]];
@@ -45,7 +45,7 @@
                     chart.draw(dataTable, options);
                 }
             </script>
-            <div class="container border border-bottom-0 border-2">
+            <div class="row">
                 <div id="geochart_ru" style="width: 100%; height: auto"></div>
             </div>
             <script th:inline="javascript">
@@ -82,7 +82,7 @@
                     chart.draw(dataTableUA, optionsUA);
                 }
             </script>
-            <div class="container border border-top-0 border-2">
+            <div class="row">
                 <div id="geochart_ua" style="width: 30%; height: auto"></div>
                 <p>Новые территории</p>
             </div>

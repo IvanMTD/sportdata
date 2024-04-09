@@ -317,9 +317,9 @@
                                 <p class="fs-4 text-center">Базовые виды спорта субъекта<span th:text="' | Всего: ' + ${subject.getBaseSports().size()}"></span></p>
                                 <p class="text-center" th:if="${subject.getBaseSports().size()} == 0">У данного субъекта отсутствуют базовые виды спорта</p>
                             </div>
-                            <div class="row row-cols-4" style="padding-left: 30px">
-                                <div class="col bg-white border border-dark m-1" th:each="baseSport, bs_stat : ${subject.getBaseSports()}" style="width: 200px">
-                                    <div th:id="'sc-' + ${subject_stat.index} + '-' + ${bs_stat.index}" class="row bg-danger-subtle">
+                            <div class="row row-cols-auto justify-content-center">
+                                <div class="col bg-white m-2 rounded-3 shadow" th:each="baseSport, bs_stat : ${subject.getBaseSports()}" style="width: 200px">
+                                    <div th:id="'sc-' + ${subject_stat.index} + '-' + ${bs_stat.index}" class="row rounded-top-3 bg-danger-subtle">
                                         <div class="col-10">
                                             <p th:text="${baseSport.getSport().getTitle()}"></p>
                                         </div>
@@ -358,7 +358,7 @@
                                     </div>
                                     <script th:inline="javascript">
                                         if([[${baseSport}]].issueDateError){
-                                            document.getElementById('sc-' + [[${subject_stat.index}]] + '-' + [[${bs_stat.index}]]).setAttribute('class', 'row bg-danger');
+                                            document.getElementById('sc-' + [[${subject_stat.index}]] + '-' + [[${bs_stat.index}]]).setAttribute('class', 'row bg-danger rounded-top-3');
                                             document.getElementById('bs-date-error-' + [[${subject_stat.index}]]).hidden = false;
                                         }
                                     </script>

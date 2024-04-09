@@ -435,12 +435,55 @@
                             </div>
                             <!-- КОНЕЦ БЛОКА НАСТРОЙКИ ВИДА СПОРТА -->
                             <div class="row">
+                                <p class="fs-4 text-center">Регионы в которых данный вид спорта Базовый<span th:text="' | Всего: ' + ${sport.getBaseSports().size()}"></span></p>
+                                <p class="text-center" th:if="${sport.getBaseSports().size()} == 0">Регионы для которых данный вид спорта Базовый - отсутствуют</p>
+                            </div>
+                            <div class="row row-cols-auto justify-content-center">
+                                <div class="col m-2 rounded-3 shadow" th:each="bs, bs_stat : ${sport.getBaseSports()}" style="width: 200px">
+                                    <div class="row rounded-top-3 bg-primary-subtle">
+                                        <div class="col-10">
+                                            <p th:text="${bs.getSubject().getIso()}"></p>
+                                        </div>
+                                        <div class="col-2" style="padding: 5px">
+                                            <!--<button th:id="'b-' + ${sport_stat.index} + '-' + ${bs_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <div class="modal fade" th:id="'modal-' + ${sport_stat.index} + '-' + ${bs_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5">Внимание! Вы хотите удалить регион <span th:text="${bs.getSubject().getTitle()}"></span>?</h1>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                Вы собираетесь отвязать данный субъект <span th:text="${discipline.getTitle()}"></span>! Вы уверены?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                                            <form th:method="GET" th:action="@{/database/{letter}/sport/{sportId}/discipline/{disciplineId}/delete(letter=${letter},sportId=${sport.getId()},disciplineId=${discipline.getId()})}">
+                                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script th:inline="javascript">
+                                                document.getElementById('b-' + [[${sport_stat.index}]] + '-' + [[${bs_stat.index}]]).setAttribute('data-bs-target','#modal-' + [[${sport_stat.index}]] + '-' + [[${bs_stat.index}]])
+                                            </script>-->
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <p th:text="${bs.getSubject.getTitle()}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <p class="fs-4 text-center">Дисциплины<span th:text="' | Всего: ' + ${sport.getDisciplines().size()}"></span></p>
                                 <p class="text-center" th:if="${sport.getDisciplines().size()} == 0">Дисциплины отсутствуют</p>
                             </div>
-                            <div class="row row-cols-4" style="padding-left: 30px">
-                                <div class="col border border-dark m-1" th:each="discipline, d_stat : ${sport.getDisciplines()}" style="width: 200px">
-                                    <div class="row bg-success-subtle">
+                            <div class="row row-cols-auto justify-content-center">
+                                <div class="col m-2 rounded-3 shadow" th:each="discipline, d_stat : ${sport.getDisciplines()}" style="width: 200px">
+                                    <div class="row rounded-top-3 bg-success-subtle">
                                         <div class="col-10">
                                             <p>Описание</p>
                                         </div>
@@ -482,9 +525,9 @@
                                 <p class="fs-4 text-center">Возрастные группы<span th:text="' | Всего: ' + ${sport.getGroups().size()}"></span></p>
                                 <p class="text-center" th:if="${sport.getGroups().size()} == 0">Группы отсутствуют</p>
                             </div>
-                            <div class="row row-cols-4" style="padding-left: 30px">
-                                <div class="col border border-dark m-1" th:each="group, g_stat : ${sport.getGroups()}" style="width: 200px">
-                                    <div class="row bg-warning-subtle">
+                            <div class="row row-cols-auto justify-content-center">
+                                <div class="col m-2 rounded-3 shadow" th:each="group, g_stat : ${sport.getGroups()}" style="width: 200px">
+                                    <div class="row rounded-top-3 bg-warning-subtle">
                                         <div class="col-10">
                                             <p th:text="${group.getTitle()}"></p>
                                         </div>
