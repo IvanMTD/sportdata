@@ -73,7 +73,7 @@ public class ParticipantService {
         return participantRepository.findAllWhereFirstLetterIs(letter);
     }
 
-    //@Cacheable("participants")
+    //@Cacheable(value = "participants", key = "#search")
     public Mono<Participant> findByFullName(String search) {
         System.out.println(search);
         String[] parts = search.split(" ");
@@ -93,32 +93,32 @@ public class ParticipantService {
     }
 
     // CREATE
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addQualificationToParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.addQualification(qualification);
             return participantRepository.save(participant);
         });
     }
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> saveParticipant(Participant participant) {
         return participantRepository.save(participant);
     }
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addNewParticipant(ParticipantDTO participantDTO) {
         return Mono.just(new Participant(participantDTO)).flatMap(participantRepository::save);
     }
 
     // UPDATE
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeSchoolFromParticipant(int pid, int sid) {
         return participantRepository.findById(pid).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sid);
             return participantRepository.save(participant);
         });
     }
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Flux<Participant> removeSchoolFromParticipants(SportSchool sportSchool) {
         return participantRepository.findAllByIdIn(sportSchool.getParticipantIds()).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sportSchool.getId());
@@ -126,7 +126,7 @@ public class ParticipantService {
         }).defaultIfEmpty(new Participant());
     }
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int oldSchoolId, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.getSportSchoolIds().remove(oldSchoolId);
@@ -135,7 +135,7 @@ public class ParticipantService {
         });
     }
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateParticipantData(ParticipantDTO participantDTO) {
         return participantRepository.findById(participantDTO.getId()).flatMap(participant -> {
             participant.setLastname(participantDTO.getLastname());
@@ -146,7 +146,7 @@ public class ParticipantService {
         });
     }
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.addSportSchoolId(schoolId);
@@ -154,7 +154,7 @@ public class ParticipantService {
         });
     }
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeQualificationFromParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.getQualificationIds().remove(qualification.getId());
@@ -164,7 +164,7 @@ public class ParticipantService {
 
     // DELETE
 
-    //@CacheEvict(value = "participants", allEntries = true)
+    @CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> deleteParticipant(int pid) {
         return participantRepository.findById(pid).flatMap(participant -> participantRepository.delete(participant).then(Mono.just(participant)));
     }

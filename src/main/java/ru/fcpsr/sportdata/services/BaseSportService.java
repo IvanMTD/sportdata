@@ -29,11 +29,11 @@ public class BaseSportService {
     /**
      * FIND FLUX
      */
-    //@Cacheable("baseSports")
+    @Cacheable("baseSports")
     public Flux<BaseSport> getAllByIds(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds);
     }
-    //@Cacheable("baseSports")
+    @Cacheable("baseSports")
     public Flux<BaseSport> getAllByIdsWhereNotErrors(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> {
             if(baseSport.getExpiration() > LocalDate.now().getYear()){
@@ -47,7 +47,7 @@ public class BaseSportService {
     /**
      * CREATE
      */
-    //@CacheEvict(value = "baseSports", allEntries = true)
+    @CacheEvict(value = "baseSports", allEntries = true)
     public Mono<BaseSport> addNewBaseSport(BaseSportDTO baseSportDTO) {
         return Mono.just(new BaseSport()).flatMap(baseSport -> {
             baseSport.setTypeOfSportId(baseSportDTO.getSportId());
@@ -66,12 +66,12 @@ public class BaseSportService {
      * DELETE
      */
 
-    //@CacheEvict(value = "baseSports", allEntries = true)
+    @CacheEvict(value = "baseSports", allEntries = true)
     public Mono<BaseSport> deleteBaseSport(int bSportId) {
         return baseSportRepository.findById(bSportId).flatMap(baseSport -> baseSportRepository.delete(baseSport).then(Mono.just(baseSport)));
     }
 
-    //@CacheEvict(value = "baseSports", allEntries = true)
+    @CacheEvict(value = "baseSports", allEntries = true)
     public Flux<BaseSport> deleteAllBaseSports(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> baseSportRepository.delete(baseSport).then(Mono.just(baseSport))).defaultIfEmpty(new BaseSport());
     }

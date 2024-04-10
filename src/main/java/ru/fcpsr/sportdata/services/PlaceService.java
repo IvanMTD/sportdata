@@ -31,12 +31,12 @@ public class PlaceService {
         return placeRepository.save(place);
     }
 
-    //@Cacheable("places")
+    @Cacheable("places")
     public Flux<Place> getAllByIdIn(Set<Integer> placeIds) {
         return placeRepository.findAllByIdIn(placeIds).defaultIfEmpty(new Place());
     }
 
-    //@Cacheable("places")
+    @Cacheable("places")
     public Flux<Place> getAllByIdInTotal(List<Integer> placesIds) {
         return placeRepository.findAllByIdIn(placesIds).switchIfEmpty(
                 Flux.fromIterable(placesIds).collectList().flatMapMany(l -> {
@@ -49,7 +49,7 @@ public class PlaceService {
         );
     }
 
-    //@Cacheable("places")
+    @Cacheable("places")
     public Mono<Place> getById(int id) {
         return placeRepository.findById(id).defaultIfEmpty(new Place());
     }
