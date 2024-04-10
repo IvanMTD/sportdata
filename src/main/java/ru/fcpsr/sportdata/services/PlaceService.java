@@ -2,6 +2,9 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,14 +26,17 @@ public class PlaceService {
      * @param place
      * @return
      */
+    @CachePut("places")
     public Mono<Place> setPlace(Place place) {
         return placeRepository.save(place);
     }
 
+    @Cacheable("places")
     public Flux<Place> getAllByIdIn(Set<Integer> placeIds) {
         return placeRepository.findAllByIdIn(placeIds).defaultIfEmpty(new Place());
     }
 
+    @Cacheable("places")
     public Flux<Place> getAllByIdInTotal(List<Integer> placesIds) {
         return placeRepository.findAllByIdIn(placesIds).switchIfEmpty(
                 Flux.fromIterable(placesIds).collectList().flatMapMany(l -> {
@@ -43,10 +49,12 @@ public class PlaceService {
         );
     }
 
+    @Cacheable("places")
     public Mono<Place> getById(int id) {
         return placeRepository.findById(id).defaultIfEmpty(new Place());
     }
 
+    @CacheEvict("places")
     public Mono<Place> deleteById(int placeId) {
         return placeRepository.findById(placeId).flatMap(place -> placeRepository.delete(place).then(Mono.just(place)));
     }

@@ -2,6 +2,9 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -22,19 +25,23 @@ public class DisciplineService {
     private final DisciplineRepository disciplineRepository;
 
     // FIND MONO
+    @Cacheable("disciplines")
     public Mono<Discipline> getById(int disciplineId) {
         return disciplineRepository.findById(disciplineId).defaultIfEmpty(new Discipline());
     }
     // FIND FLUX
+    @Cacheable("disciplines")
     public Flux<Discipline> getAllByIds(Set<Integer> disciplineIds) {
         return disciplineRepository.findAllByIdIn(disciplineIds);
     }
 
+    @Cacheable("disciplines")
     public Flux<Discipline> getAll() {
         return disciplineRepository.findAll();
     }
 
     // CREATE
+    @CachePut("disciplines")
     public Mono<Discipline> addNew(DisciplineDTO disciplineDTO) {
         return Mono.just(new Discipline()).flatMap(discipline -> {
             discipline.setTypeOfSportId(disciplineDTO.getSportId());
@@ -44,6 +51,7 @@ public class DisciplineService {
     }
 
     // UPDATE
+    @CachePut("disciplines")
     public Mono<Discipline> updateTitle(DisciplineDTO disciplineDTO) {
         return disciplineRepository.findById(disciplineDTO.getId()).flatMap(discipline -> {
             discipline.setTitle(disciplineDTO.getTitle());
@@ -52,6 +60,7 @@ public class DisciplineService {
     }
 
     // DELETE
+    @CacheEvict("disciplines")
     public Mono<Discipline> deleteDiscipline(int disciplineId) {
         return disciplineRepository.findById(disciplineId).flatMap(discipline -> disciplineRepository.delete(discipline).then(Mono.just(discipline)));
     }
@@ -61,6 +70,7 @@ public class DisciplineService {
         return disciplineRepository.getCount();
     }
 
+    @Cacheable("disciplines")
     public Flux<Discipline> getAllBySportId(int sportId) {
         return disciplineRepository.findAllByTypeOfSportId(sportId).collectList().flatMapMany(dl -> {
             dl = dl.stream().sorted(Comparator.comparing(Discipline::getTitle)).collect(Collectors.toList());

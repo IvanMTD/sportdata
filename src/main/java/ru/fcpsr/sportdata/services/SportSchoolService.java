@@ -2,6 +2,9 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -24,6 +27,7 @@ public class SportSchoolService {
      * FIND MONO
      */
 
+    @Cacheable("schools")
     public Mono<SportSchool> findByTitle(String title) {
         return schoolRepository.findByTitle(title).defaultIfEmpty(new SportSchool());
     }
@@ -32,10 +36,12 @@ public class SportSchoolService {
      * FIND FLUX
      */
 
+    @Cacheable("schools")
     public Flux<SportSchool> getAll() {
         return schoolRepository.findAll();
     }
 
+    @Cacheable("schools")
     public Flux<SportSchool> getAllByIdIn(Set<Integer> sportSchoolIds) {
         return schoolRepository.findAllByIdIn(sportSchoolIds);
     }
@@ -44,6 +50,7 @@ public class SportSchoolService {
      * CREATE
      */
 
+    @CachePut("schools")
     public Mono<SportSchool> saveSchool(SportSchoolDTO sportSchoolDTO) {
         return Mono.just(new SportSchool()).flatMap(sportSchool -> {
             sportSchool.setTitle(sportSchoolDTO.getTitle());
@@ -57,6 +64,7 @@ public class SportSchoolService {
      * UPDATE
      */
 
+    @CachePut("schools")
     public Mono<SportSchool> addParticipantInSchool(int id, Participant participant) {
         return schoolRepository.findById(id).flatMap(school -> {
             school.addParticipant(participant);
@@ -64,6 +72,7 @@ public class SportSchoolService {
         });
     }
 
+    @CachePut("schools")
     public Mono<SportSchool> removeParticipantFromSchool(int sid, int pid) {
         return schoolRepository.findById(sid).flatMap(school -> {
             school.getParticipantIds().remove(pid);
@@ -72,7 +81,7 @@ public class SportSchoolService {
     }
 
 
-
+    @CachePut("schools")
     public Mono<SportSchool> updateTitleAndAddress(SportSchoolDTO sportSchoolDTO) {
         return schoolRepository.findById(sportSchoolDTO.getId()).flatMap(school -> {
             school.setTitle(sportSchoolDTO.getTitle());
@@ -80,7 +89,7 @@ public class SportSchoolService {
             return schoolRepository.save(school);
         });
     }
-
+    @CachePut("schools")
     public Mono<SportSchool> updateSchoolParticipant(int pid, int oldSchoolId, int schoolId) {
         return schoolRepository.findById(oldSchoolId).flatMap(school -> {
             school.getParticipantIds().remove(pid);
@@ -90,7 +99,7 @@ public class SportSchoolService {
             return schoolRepository.save(school);
         }));
     }
-
+    @CachePut("schools")
     public Flux<SportSchool> removeParticipantFromSchools(Participant participant) {
         return schoolRepository.findAllByIdIn(participant.getSportSchoolIds()).flatMap(sportSchool -> {
             sportSchool.getParticipantIds().remove(participant.getId());
@@ -101,10 +110,12 @@ public class SportSchoolService {
     /**
      * DELETE
      */
+    @CacheEvict("schools")
     public Mono<SportSchool> deleteSchool(int schoolId) {
         return schoolRepository.findById(schoolId).flatMap(sportSchool -> schoolRepository.delete(sportSchool).then(Mono.just(sportSchool)));
     }
 
+    @CacheEvict("schools")
     public Flux<SportSchool> deleteSchoolsByIds(Set<Integer> sportSchoolIds) {
         return schoolRepository.findAllByIdIn(sportSchoolIds).flatMap(sportSchool -> schoolRepository.delete(sportSchool).then(Mono.just(sportSchool))).defaultIfEmpty(new SportSchool());
     }
@@ -118,6 +129,7 @@ public class SportSchoolService {
         return schoolRepository.count();
     }
 
+    @Cacheable("schools")
     public Mono<SportSchool> getById(int sportSchoolId) {
         return schoolRepository.findById(sportSchoolId).defaultIfEmpty(new SportSchool());
     }

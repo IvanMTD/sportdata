@@ -1,6 +1,8 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
@@ -20,22 +22,26 @@ public class ContestService {
      * @param contestDTO
      * @return
      */
+    @CachePut("contests")
     public Mono<Contest> addContest(ContestDTO contestDTO) {
         return Mono.just(new Contest(contestDTO)).flatMap(contestRepository::save);
     }
 
+    @CachePut("contests")
     public Mono<Contest> saveContest(Contest contest) {
         return contestRepository.save(contest);
     }
 
+    @Cacheable("contests")
     public Flux<Contest> getAll() {
         return contestRepository.findAll();
     }
-
+    @Cacheable("contests")
     public Mono<Contest> getContestByEkp(String ekp) {
         return contestRepository.findByEkp(ekp).defaultIfEmpty(new Contest());
     }
 
+    @CachePut("contests")
     public Mono<Contest> createContestFirstStep(ContestDTO contestDTO) {
         return Mono.just(new Contest()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -50,10 +56,12 @@ public class ContestService {
         });
     }
 
+    @Cacheable("contests")
     public Mono<Contest> getById(int contestId) {
         return contestRepository.findById(contestId).defaultIfEmpty(new Contest());
     }
 
+    @CachePut("contests")
     public Mono<Contest> updateContestSecondStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.replaceSubjectIds(contestDTO);
@@ -62,6 +70,7 @@ public class ContestService {
         });
     }
 
+    @CachePut("contests")
     public Mono<Contest> updateContestFirstStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -75,7 +84,7 @@ public class ContestService {
             return contestRepository.save(contest);
         });
     }
-
+    @Cacheable("contests")
     public Flux<Contest> getAllSortedByDate(Pageable pageable) {
         return contestRepository.findAllByOrderByBeginningDesc(pageable);
     }

@@ -1,6 +1,9 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -20,19 +23,23 @@ public class QualificationService {
     private final QualificationRepository qualificationRepository;
 
     // FIND MONO
+    @Cacheable("qualifications")
     public Mono<Qualification> getById(int id) {
         return qualificationRepository.findById(id).defaultIfEmpty(new Qualification());
     }
 
     // FIND FLUX
+    @Cacheable("qualifications")
     public Flux<Qualification> getAllByIds(Set<Integer> qualificationIds) {
         return qualificationRepository.findAllByIdIn(qualificationIds).defaultIfEmpty(new Qualification(Category.BR));
     }
 
+    @Cacheable("qualifications")
     public Flux<Qualification> getAllBySportId(int sportId) {
         return qualificationRepository.findAllByTypeOfSportId(sportId);
     }
     // CREATE
+    @CachePut("qualifications")
     public Mono<Qualification> createNewQualification(QualificationDTO qualificationDTO) {
         return Mono.just(new Qualification()).flatMap(qualification -> {
             qualification.setCategory(qualificationDTO.getCategory());
@@ -42,10 +49,12 @@ public class QualificationService {
         });
     }
 
+    @CachePut("qualifications")
     public Mono<Qualification> save(Qualification qualification) {
         return qualificationRepository.save(qualification);
     }
     // UPDATE
+    @CachePut("qualifications")
     public Mono<Qualification> updateQualification(QualificationDTO qualificationDTO) {
         return qualificationRepository.findById(qualificationDTO.getId()).flatMap(qualification -> {
             qualification.setCategory(qualificationDTO.getCategory());
@@ -55,10 +64,12 @@ public class QualificationService {
     }
 
     // DELETE
+    @CacheEvict("qualifications")
     public Mono<Qualification> deleteQualification(int qid) {
         return qualificationRepository.findById(qid).flatMap(qualification -> qualificationRepository.delete(qualification).then(Mono.just(qualification)));
     }
 
+    @CacheEvict("qualifications")
     public Flux<Qualification> deleteQualifications(Set<Integer> qualificationIds) {
         return qualificationRepository.findAllByIdIn(qualificationIds).flatMap(qualification -> qualificationRepository.delete(qualification).then(Mono.just(qualification)));
     }

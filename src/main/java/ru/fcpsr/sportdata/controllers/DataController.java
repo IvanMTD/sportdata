@@ -923,7 +923,7 @@ public class DataController {
                         return Mono.just(baseSportDTO);
                     });
                 }else{
-                    return Mono.empty();
+                    return Mono.just(new BaseSportDTO());
                 }
             }).collectList().flatMap(bsl -> {
                 bsl = bsl.stream().sorted(Comparator.comparing(baseSportDTO -> baseSportDTO.getSubject().getTitle())).collect(Collectors.toList());

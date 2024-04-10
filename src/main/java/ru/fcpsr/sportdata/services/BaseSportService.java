@@ -2,6 +2,9 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -26,10 +29,11 @@ public class BaseSportService {
     /**
      * FIND FLUX
      */
+    @Cacheable("baseSports")
     public Flux<BaseSport> getAllByIds(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds);
     }
-
+    @Cacheable("baseSports")
     public Flux<BaseSport> getAllByIdsWhereNotErrors(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> {
             if(baseSport.getExpiration() > LocalDate.now().getYear()){
@@ -43,7 +47,7 @@ public class BaseSportService {
     /**
      * CREATE
      */
-
+    @CachePut("baseSports")
     public Mono<BaseSport> addNewBaseSport(BaseSportDTO baseSportDTO) {
         return Mono.just(new BaseSport()).flatMap(baseSport -> {
             baseSport.setTypeOfSportId(baseSportDTO.getSportId());
@@ -62,10 +66,12 @@ public class BaseSportService {
      * DELETE
      */
 
+    @CacheEvict("baseSports")
     public Mono<BaseSport> deleteBaseSport(int bSportId) {
         return baseSportRepository.findById(bSportId).flatMap(baseSport -> baseSportRepository.delete(baseSport).then(Mono.just(baseSport)));
     }
 
+    @CachePut("baseSports")
     public Flux<BaseSport> deleteAllBaseSports(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> baseSportRepository.delete(baseSport).then(Mono.just(baseSport))).defaultIfEmpty(new BaseSport());
     }

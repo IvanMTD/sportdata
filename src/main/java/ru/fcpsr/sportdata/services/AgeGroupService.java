@@ -2,6 +2,9 @@ package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
@@ -21,27 +24,30 @@ public class AgeGroupService {
     private final AgeGroupRepository groupRepository;
 
     // FIND MONO
+    @Cacheable("groups")
     public Mono<AgeGroup> getById(int ageGroupId) {
         return groupRepository.findById(ageGroupId).defaultIfEmpty(new AgeGroup());
     }
     // FIND FLUX
+    @Cacheable("groups")
     public Flux<AgeGroup> getAllByIdsList(List<Integer> ageGroupIds) {
         return groupRepository.findAllByIdIn(ageGroupIds);
     }
-
+    @Cacheable("groups")
     public Flux<AgeGroup> getAllByIds(Set<Integer> ageGroupIds) {
         return groupRepository.findAllById(ageGroupIds);
     }
-
+    @Cacheable("groups")
     public Flux<AgeGroup> getAllByIds2(Set<Integer> ageGroupIds) {
         return groupRepository.findAllById(ageGroupIds).defaultIfEmpty(new AgeGroup());
     }
-
+    @Cacheable("groups")
     public Flux<AgeGroup> getAll() {
         return groupRepository.findAll();
     }
 
     // CREATE
+    @CachePut("groups")
     public Mono<AgeGroup> addNewGroup(AgeGroupDTO groupDTO) {
         return Mono.just(new AgeGroup()).flatMap(group -> {
             group.setTitle(groupDTO.getTitle());
@@ -53,13 +59,14 @@ public class AgeGroupService {
     }
 
     // UPDATE
+    @CachePut("groups")
     public Mono<AgeGroup> updateTitle(AgeGroupDTO groupDTO) {
         return groupRepository.findById(groupDTO.getId()).flatMap(group -> {
             group.setTitle(groupDTO.getTitle());
             return groupRepository.save(group);
         });
     }
-
+    @CachePut("groups")
     public Mono<AgeGroup> updateAges(AgeGroupDTO groupDTO) {
         return groupRepository.findById(groupDTO.getId()).flatMap(group -> {
             group.setMinAge(groupDTO.getMinAge());
@@ -69,6 +76,7 @@ public class AgeGroupService {
     }
 
     // DELETE
+    @CacheEvict("groups")
     public Mono<AgeGroup> deleteGroup(int groupId) {
         return groupRepository.findById(groupId).flatMap(group -> groupRepository.deleteById(group.getId()).then(Mono.just(group)));
     }
@@ -77,6 +85,7 @@ public class AgeGroupService {
         return groupRepository.count();
     }
 
+    @CachePut("groups")
     public Flux<AgeGroup> getAllBySportId(int sportId) {
         return groupRepository.findAllByTypeOfSportId(sportId).collectList().flatMapMany(gl -> {
             gl = gl.stream().sorted(Comparator.comparing(AgeGroup::getId)).collect(Collectors.toList());
