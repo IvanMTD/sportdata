@@ -585,6 +585,7 @@ public class DataController {
 
     @GetMapping("/participant/search")
     public Mono<Rendering> searchParticipant(@RequestParam(name = "search") String search){
+        System.out.println(search);
         return participantService.findByFullName(search).flatMap(participant -> Mono.just(Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build()));
     }
 

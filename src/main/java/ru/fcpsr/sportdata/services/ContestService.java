@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -22,26 +23,26 @@ public class ContestService {
      * @param contestDTO
      * @return
      */
-    @CachePut("contests")
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> addContest(ContestDTO contestDTO) {
         return Mono.just(new Contest(contestDTO)).flatMap(contestRepository::save);
     }
 
-    @CachePut("contests")
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> saveContest(Contest contest) {
         return contestRepository.save(contest);
     }
 
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Flux<Contest> getAll() {
         return contestRepository.findAll();
     }
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Mono<Contest> getContestByEkp(String ekp) {
         return contestRepository.findByEkp(ekp).defaultIfEmpty(new Contest());
     }
 
-    @CachePut("contests")
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> createContestFirstStep(ContestDTO contestDTO) {
         return Mono.just(new Contest()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -56,12 +57,12 @@ public class ContestService {
         });
     }
 
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Mono<Contest> getById(int contestId) {
         return contestRepository.findById(contestId).defaultIfEmpty(new Contest());
     }
 
-    @CachePut("contests")
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> updateContestSecondStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.replaceSubjectIds(contestDTO);
@@ -70,7 +71,7 @@ public class ContestService {
         });
     }
 
-    @CachePut("contests")
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> updateContestFirstStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -84,7 +85,7 @@ public class ContestService {
             return contestRepository.save(contest);
         });
     }
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Flux<Contest> getAllSortedByDate(Pageable pageable) {
         return contestRepository.findAllByOrderByBeginningDesc(pageable);
     }

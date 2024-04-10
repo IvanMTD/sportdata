@@ -26,17 +26,17 @@ public class PlaceService {
      * @param place
      * @return
      */
-    @CachePut("places")
+    //@CacheEvict(value = "places", allEntries = true)
     public Mono<Place> setPlace(Place place) {
         return placeRepository.save(place);
     }
 
-    @Cacheable("places")
+    //@Cacheable("places")
     public Flux<Place> getAllByIdIn(Set<Integer> placeIds) {
         return placeRepository.findAllByIdIn(placeIds).defaultIfEmpty(new Place());
     }
 
-    @Cacheable("places")
+    //@Cacheable("places")
     public Flux<Place> getAllByIdInTotal(List<Integer> placesIds) {
         return placeRepository.findAllByIdIn(placesIds).switchIfEmpty(
                 Flux.fromIterable(placesIds).collectList().flatMapMany(l -> {
@@ -49,12 +49,12 @@ public class PlaceService {
         );
     }
 
-    @Cacheable("places")
+    //@Cacheable("places")
     public Mono<Place> getById(int id) {
         return placeRepository.findById(id).defaultIfEmpty(new Place());
     }
 
-    @CacheEvict("places")
+    //@CacheEvict(value = "places", allEntries = true)
     public Mono<Place> deleteById(int placeId) {
         return placeRepository.findById(placeId).flatMap(place -> placeRepository.delete(place).then(Mono.just(place)));
     }

@@ -73,60 +73,52 @@ public class ParticipantService {
         return participantRepository.findAllWhereFirstLetterIs(letter);
     }
 
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Mono<Participant> findByFullName(String search) {
-        String part[] = search.split(" ");
-        if(part.length == 3){
-            return participantRepository.findAllByLastnameAndNameAndMiddleName(part[0],part[1],part[2]).collectList().flatMap(participants -> {
-                for(Participant participant : participants){
-                    if(participant.getFullName().equals(search)){
-                        return Mono.just(participant);
-                    }
-                }
-                return Mono.just(new Participant());
-            });
+        System.out.println(search);
+        String[] parts = search.split(" ");
+        if (parts.length == 3) {
+            return participantRepository.findAllByLastnameAndNameAndMiddleName(parts[0], parts[1], parts[2])
+                    .filter(participant -> participant.getFullName().equals(search))
+                    .next()
+                    .switchIfEmpty(Mono.just(new Participant()));
+        } else if (parts.length == 2) {
+            return participantRepository.findAllByLastnameAndName(parts[0], parts[1])
+                    .filter(participant -> participant.getFullName().equals(search))
+                    .next()
+                    .switchIfEmpty(Mono.just(new Participant()));
+        } else {
+            return Mono.just(new Participant());
         }
-        if(part.length == 2){
-            return participantRepository.findAllByLastnameAndName(part[0],part[1]).collectList().flatMap(participants -> {
-                for(Participant participant : participants){
-                    if(participant.getFullName().equals(search)){
-                        return Mono.just(participant);
-                    }
-                }
-                return Mono.just(new Participant());
-            });
-        }
-
-        return Mono.just(new Participant());
     }
 
     // CREATE
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addQualificationToParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.addQualification(qualification);
             return participantRepository.save(participant);
         });
     }
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> saveParticipant(Participant participant) {
         return participantRepository.save(participant);
     }
 
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addNewParticipant(ParticipantDTO participantDTO) {
         return Mono.just(new Participant(participantDTO)).flatMap(participantRepository::save);
     }
 
     // UPDATE
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeSchoolFromParticipant(int pid, int sid) {
         return participantRepository.findById(pid).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sid);
             return participantRepository.save(participant);
         });
     }
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Flux<Participant> removeSchoolFromParticipants(SportSchool sportSchool) {
         return participantRepository.findAllByIdIn(sportSchool.getParticipantIds()).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sportSchool.getId());
@@ -134,7 +126,7 @@ public class ParticipantService {
         }).defaultIfEmpty(new Participant());
     }
 
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int oldSchoolId, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.getSportSchoolIds().remove(oldSchoolId);
@@ -143,7 +135,7 @@ public class ParticipantService {
         });
     }
 
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateParticipantData(ParticipantDTO participantDTO) {
         return participantRepository.findById(participantDTO.getId()).flatMap(participant -> {
             participant.setLastname(participantDTO.getLastname());
@@ -154,7 +146,7 @@ public class ParticipantService {
         });
     }
 
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.addSportSchoolId(schoolId);
@@ -162,7 +154,7 @@ public class ParticipantService {
         });
     }
 
-    @CachePut("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeQualificationFromParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.getQualificationIds().remove(qualification.getId());
@@ -172,7 +164,7 @@ public class ParticipantService {
 
     // DELETE
 
-    @CacheEvict("participants")
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> deleteParticipant(int pid) {
         return participantRepository.findById(pid).flatMap(participant -> participantRepository.delete(participant).then(Mono.just(participant)));
     }
