@@ -1,12 +1,14 @@
 package ru.fcpsr.sportdata.validators;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.fcpsr.sportdata.dto.SportSchoolDTO;
 import ru.fcpsr.sportdata.models.SportSchool;
 
+@Slf4j
 @Data
 @Component
 public class SchoolValidation implements Validator {
@@ -21,7 +23,8 @@ public class SchoolValidation implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         SportSchoolDTO sportSchoolDTO = (SportSchoolDTO) target;
-        if(sportSchoolDTO.getTitle().equals(sportSchool.getTitle())){
+        log.info("Валидация школ по названию времена прекращена ... ");
+        /*if(sportSchoolDTO.getTitle().equals(sportSchool.getTitle())){
             if(sportSchoolDTO.getId() != 0){
                 if(sportSchoolDTO.getId() != sportSchool.getId()){
                     errors.rejectValue("title", "", "Вы пытаетесь добавить уже существующую в базе данных организацию!");
@@ -29,6 +32,6 @@ public class SchoolValidation implements Validator {
             }else {
                 errors.rejectValue("title", "", "Вы пытаетесь добавить уже существующую в базе данных организацию!");
             }
-        }
+        }*/
     }
 }
