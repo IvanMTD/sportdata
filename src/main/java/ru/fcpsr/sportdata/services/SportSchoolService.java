@@ -1,8 +1,6 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,12 +24,12 @@ public class SportSchoolService {
      * FIND FLUX
      */
 
-    @Cacheable("schools")
+    //@Cacheable("schools")
     public Flux<SportSchool> getAll() {
         return schoolRepository.findAll();
     }
 
-    @Cacheable("schools")
+    //@Cacheable("schools")
     public Flux<SportSchool> getAllByIdIn(Set<Integer> sportSchoolIds) {
         return schoolRepository.findAllByIdIn(sportSchoolIds);
     }
@@ -40,7 +38,7 @@ public class SportSchoolService {
      * CREATE
      */
 
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> saveSchool(SportSchoolDTO sportSchoolDTO) {
         return Mono.just(new SportSchool()).flatMap(sportSchool -> {
             sportSchool.setTitle(sportSchoolDTO.getTitle());
@@ -54,7 +52,7 @@ public class SportSchoolService {
      * UPDATE
      */
 
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> addParticipantInSchool(int id, Participant participant) {
         return schoolRepository.findById(id).flatMap(school -> {
             school.addParticipant(participant);
@@ -62,7 +60,7 @@ public class SportSchoolService {
         });
     }
 
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> removeParticipantFromSchool(int sid, int pid) {
         return schoolRepository.findById(sid).flatMap(school -> {
             school.getParticipantIds().remove(pid);
@@ -71,7 +69,7 @@ public class SportSchoolService {
     }
 
 
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> updateTitleAndAddress(SportSchoolDTO sportSchoolDTO) {
         System.out.println(sportSchoolDTO);
         return schoolRepository.findById(sportSchoolDTO.getId()).flatMap(school -> {
@@ -80,7 +78,7 @@ public class SportSchoolService {
             return schoolRepository.save(school);
         });
     }
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> updateSchoolParticipant(int pid, int oldSchoolId, int schoolId) {
         return schoolRepository.findById(oldSchoolId).flatMap(school -> {
             school.getParticipantIds().remove(pid);
@@ -90,7 +88,7 @@ public class SportSchoolService {
             return schoolRepository.save(school);
         }));
     }
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Flux<SportSchool> removeParticipantFromSchools(Participant participant) {
         return schoolRepository.findAllByIdIn(participant.getSportSchoolIds()).flatMap(sportSchool -> {
             sportSchool.getParticipantIds().remove(participant.getId());
@@ -101,12 +99,12 @@ public class SportSchoolService {
     /**
      * DELETE
      */
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Mono<SportSchool> deleteSchool(int schoolId) {
         return schoolRepository.findById(schoolId).flatMap(sportSchool -> schoolRepository.delete(sportSchool).then(Mono.just(sportSchool)));
     }
 
-    @CacheEvict(value = "schools", allEntries = true)
+    //@CacheEvict(value = "schools", allEntries = true)
     public Flux<SportSchool> deleteSchoolsByIds(Set<Integer> sportSchoolIds) {
         return schoolRepository.findAllByIdIn(sportSchoolIds).flatMap(sportSchool -> schoolRepository.delete(sportSchool).then(Mono.just(sportSchool))).defaultIfEmpty(new SportSchool());
     }
@@ -120,12 +118,12 @@ public class SportSchoolService {
         return schoolRepository.count();
     }
 
-    @Cacheable(value = "schools")
+    //@Cacheable(value = "schools")
     public Mono<SportSchool> getById(int sportSchoolId) {
         return schoolRepository.findById(sportSchoolId).defaultIfEmpty(new SportSchool());
     }
 
-    @Cacheable(value = "schools")
+    //@Cacheable(value = "schools")
     public Mono<SportSchool> findByTitleAndSubjectId(SportSchoolDTO sportSchoolDTO) {
         return schoolRepository.findByTitleAndSubjectId(sportSchoolDTO.getTitle(),sportSchoolDTO.getSubjectId()).defaultIfEmpty(new SportSchool());
     }

@@ -23,17 +23,17 @@ public class ContestService {
      * @param contestDTO
      * @return
      */
-    @CacheEvict(value = "contests", allEntries = true)
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> addContest(ContestDTO contestDTO) {
         return Mono.just(new Contest(contestDTO)).flatMap(contestRepository::save);
     }
 
-    @CacheEvict(value = "contests", allEntries = true)
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> saveContest(Contest contest) {
         return contestRepository.save(contest);
     }
 
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Flux<Contest> getAll() {
         return contestRepository.findAll();
     }
@@ -42,7 +42,7 @@ public class ContestService {
         return contestRepository.findByEkp(ekp).defaultIfEmpty(new Contest());
     }
 
-    @CacheEvict(value = "contests", allEntries = true)
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> createContestFirstStep(ContestDTO contestDTO) {
         return Mono.just(new Contest()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -57,12 +57,12 @@ public class ContestService {
         });
     }
 
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Mono<Contest> getById(int contestId) {
         return contestRepository.findById(contestId).defaultIfEmpty(new Contest());
     }
 
-    @CacheEvict(value = "contests", allEntries = true)
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> updateContestSecondStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.replaceSubjectIds(contestDTO);
@@ -71,7 +71,7 @@ public class ContestService {
         });
     }
 
-    @CacheEvict(value = "contests", allEntries = true)
+    //@CacheEvict(value = "contests", allEntries = true)
     public Mono<Contest> updateContestFirstStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
@@ -85,7 +85,7 @@ public class ContestService {
             return contestRepository.save(contest);
         });
     }
-    @Cacheable("contests")
+    //@Cacheable("contests")
     public Flux<Contest> getAllSortedByDate(Pageable pageable) {
         return contestRepository.findAllByOrderByBeginningDesc(pageable);
     }

@@ -11,9 +11,12 @@ import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.models.Place;
+import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.services.*;
 
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -39,7 +42,17 @@ public class DataRestController {
             log.info("'place' [{}] has been delete from db", place);
             return archiveSportService.deletePlaceFromASport(place).flatMap(archiveSport -> {
                 log.info("place has been removed from archive sport [{}]",archiveSport);
-                return Mono.just(place);
+                if(place.getNewQualificationId() != 0){
+                    return qualificationService.deleteQualification(place.getNewQualificationId()).flatMap(qualification -> {
+                        return sportService.removeQualificationFromSport(qualification).flatMap(typeOfSport -> {
+                            return participantService.removeQualificationFromParticipant(qualification).flatMap(participant -> {
+                                return Mono.just(place);
+                            });
+                        });
+                    });
+                }else{
+                    return Mono.just(place);
+                }
             });
         });
     }
@@ -107,7 +120,49 @@ public class DataRestController {
     }
 
     private Flux<ParticipantDTO> getCompletedParticipantBySportId(int sportId) {
-        return qualificationService.getAllBySportId(sportId).flatMap(qualification -> {
+        return sportService.getById(sportId).flatMapMany(sport -> {
+            log.info("FOUND SPORT: [{}]", sport);
+            return qualificationService.getAllByIds(sport.getQualificationIds()).collectList().flatMap(ql -> {
+                Set<Integer> participantIds = new HashSet<>();
+                for(Qualification qualification : ql){
+                    participantIds.add(qualification.getParticipantId());
+                }
+                return Mono.just(participantIds);
+            }).flatMapMany(pidList -> {
+                log.info("THIS IS PID LIST: [{}]", pidList);
+                return participantService.getAllByIdIn(pidList).flatMap(participant -> {
+                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                    return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                        QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                        return sportService.findById(qualification.getTypeOfSportId()).flatMap(qSport -> {
+                            qualificationDTO.setSport(new TypeOfSportDTO(qSport));
+                            return Mono.just(qualificationDTO);
+                        });
+                    }).collectList().flatMap(ql -> {
+                        log.info("THIS IS QUALIFICATION LIST: [{}]", ql);
+                        ql = ql.stream().sorted(Comparator.comparing(qualification -> qualification.getCategory().getTitle())).collect(Collectors.toList());
+                        participantDTO.setQualifications(ql);
+                        return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                sportSchoolDTO.setSubject(new SubjectDTO(subject));
+                                return Mono.just(sportSchoolDTO);
+                            });
+                        }).collectList().flatMap(sl -> {
+                            log.info("THIS IS SCHOOL LIST: [{}]", sl);
+                            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                            participantDTO.setSchools(sl);
+                            return Mono.just(participantDTO);
+                        });
+                    });
+                });
+            }).collectList().flatMapMany(pl -> {
+                log.info("THIS IS PARTICIPANT LIST: [{}]", pl);
+                pl = pl.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
+                return Flux.fromIterable(pl);
+            }).flatMapSequential(Mono::just);
+        });
+        /*return qualificationService.getAllBySportId(sportId).flatMap(qualification -> {
             QualificationDTO qualificationDTO = new QualificationDTO(qualification);
             return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
                 TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
@@ -133,7 +188,7 @@ public class DataRestController {
         })).collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);
+        }).flatMapSequential(Mono::just);*/
     }
 
     private Mono<ParticipantDTO> getCompletedParticipant(String fullName) {

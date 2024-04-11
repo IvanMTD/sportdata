@@ -585,7 +585,6 @@ public class DataController {
 
     @GetMapping("/participant/search")
     public Mono<Rendering> searchParticipant(@RequestParam(name = "search") String search){
-        System.out.println(search);
         return participantService.findByFullName(search).flatMap(participant -> Mono.just(Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build()));
     }
 
@@ -916,7 +915,7 @@ public class DataController {
         return sportService.getSportsByFirstLetter(letter).flatMap(sport -> {
             TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
             return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                if(LocalDate.now().getYear() <= baseSport.getExpiration()) {
+                if(LocalDate.now().getYear() < baseSport.getExpiration()) {
                     BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
                     return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
                         SubjectDTO subjectDTO = new SubjectDTO(subject);
@@ -924,7 +923,7 @@ public class DataController {
                         return Mono.just(baseSportDTO);
                     });
                 }else{
-                    return Mono.just(new BaseSportDTO());
+                    return Mono.empty();
                 }
             }).collectList().flatMap(bsl -> {
                 bsl = bsl.stream().sorted(Comparator.comparing(baseSportDTO -> baseSportDTO.getSubject().getTitle())).collect(Collectors.toList());

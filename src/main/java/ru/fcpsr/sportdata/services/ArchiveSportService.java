@@ -25,22 +25,22 @@ public class ArchiveSportService {
      * @param archiveSport
      * @return
      */
-    @CachePut("archiveSport")
+    //@CachePut("archiveSport")
     public Mono<ArchiveSport> saveArchiveSport(ArchiveSport archiveSport) {
         return archiveSportRepository.save(archiveSport);
     }
 
-    @Cacheable("archiveSport")
+    //@Cacheable("archiveSport")
     public Flux<ArchiveSport> getAllByIdIn(Set<Integer> aSportIds) {
         return archiveSportRepository.findAllByIdIn(aSportIds).defaultIfEmpty(new ArchiveSport());
     }
 
-    @Cacheable("archiveSport")
+    //@Cacheable("archiveSport")
     public Mono<ArchiveSport> getById(int id) {
         return archiveSportRepository.findById(id).defaultIfEmpty(new ArchiveSport());
     }
 
-    @CacheEvict(value = "archiveSport", allEntries = true)
+    //@CacheEvict(value = "archiveSport", allEntries = true)
     public Mono<ArchiveSport> deletePlaceFromASport(Place place) {
         return archiveSportRepository.findById(place.getASportId()).flatMap(archiveSport -> {
             archiveSport.getPlaceIds().remove(place.getId());

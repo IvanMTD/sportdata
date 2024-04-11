@@ -90,4 +90,8 @@ public class ParticipantDTO {
     public void addQualification(QualificationDTO qualificationDTO){
         qualifications.add(qualificationDTO);
     }
+
+    public void addSportSchool(SportSchoolDTO sportSchoolDTO) {
+        schools.add(sportSchoolDTO);
+    }
 }

@@ -24,7 +24,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
 
     // FIND MONO
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Mono<Participant> findByFullNameAndBirthday(ParticipantDTO participantDTO) {
         if(participantDTO.getMiddleName() != null){
             return participantRepository.findByLastnameAndNameAndMiddleNameAndBirthday(participantDTO.getLastname(),participantDTO.getName(),participantDTO.getMiddleName(),participantDTO.getBirthday()).defaultIfEmpty(new Participant());
@@ -32,43 +32,43 @@ public class ParticipantService {
             return participantRepository.findByLastnameAndNameAndBirthday(participantDTO.getLastname(),participantDTO.getName(),participantDTO.getBirthday()).defaultIfEmpty(new Participant());
         }
     }
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Mono<Participant> getById(int participantId) {
         return participantRepository.findById(participantId).defaultIfEmpty(new Participant());
     }
     // FIND FLUX
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> findAllByLastnameLike(String query) {
         return participantRepository.findParticipantsWithPartOfLastname("%" + query + "%").collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
     }
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> getAllFreeParticipants(){
         return participantRepository.findAllFreeParticipants().collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
     }
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> getAll(){
         return participantRepository.findAll().collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(Participant::getFullName)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
     }
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> findByIds(Set<Integer> ids) {
         return participantRepository.findAllByIdIn(ids);
     }
 
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> findAllByLastname(String lastname) {
         return participantRepository.findAllByLastname(lastname);
     }
 
-    @Cacheable("participants")
+    //@Cacheable("participants")
     public Flux<Participant> getAllByFirstLetter(String letter) {
         return participantRepository.findAllWhereFirstLetterIs(letter);
     }
@@ -93,32 +93,32 @@ public class ParticipantService {
     }
 
     // CREATE
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addQualificationToParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.addQualification(qualification);
             return participantRepository.save(participant);
         });
     }
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> saveParticipant(Participant participant) {
         return participantRepository.save(participant);
     }
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> addNewParticipant(ParticipantDTO participantDTO) {
         return Mono.just(new Participant(participantDTO)).flatMap(participantRepository::save);
     }
 
     // UPDATE
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeSchoolFromParticipant(int pid, int sid) {
         return participantRepository.findById(pid).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sid);
             return participantRepository.save(participant);
         });
     }
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Flux<Participant> removeSchoolFromParticipants(SportSchool sportSchool) {
         return participantRepository.findAllByIdIn(sportSchool.getParticipantIds()).flatMap(participant -> {
             participant.getSportSchoolIds().remove(sportSchool.getId());
@@ -126,7 +126,7 @@ public class ParticipantService {
         }).defaultIfEmpty(new Participant());
     }
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int oldSchoolId, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.getSportSchoolIds().remove(oldSchoolId);
@@ -135,7 +135,7 @@ public class ParticipantService {
         });
     }
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateParticipantData(ParticipantDTO participantDTO) {
         return participantRepository.findById(participantDTO.getId()).flatMap(participant -> {
             participant.setLastname(participantDTO.getLastname());
@@ -146,7 +146,7 @@ public class ParticipantService {
         });
     }
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> updateSchool(int id, int schoolId) {
         return participantRepository.findById(id).flatMap(participant -> {
             participant.addSportSchoolId(schoolId);
@@ -154,7 +154,7 @@ public class ParticipantService {
         });
     }
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> removeQualificationFromParticipant(Qualification qualification) {
         return participantRepository.findById(qualification.getParticipantId()).flatMap(participant -> {
             participant.getQualificationIds().remove(qualification.getId());
@@ -164,7 +164,7 @@ public class ParticipantService {
 
     // DELETE
 
-    @CacheEvict(value = "participants", allEntries = true)
+    //@CacheEvict(value = "participants", allEntries = true)
     public Mono<Participant> deleteParticipant(int pid) {
         return participantRepository.findById(pid).flatMap(participant -> participantRepository.delete(participant).then(Mono.just(participant)));
     }
@@ -172,5 +172,9 @@ public class ParticipantService {
     // COUNT
     public Mono<Long> getCount() {
         return participantRepository.count();
+    }
+
+    public Flux<Participant> getAllByIdIn(Set<Integer> pidList) {
+        return participantRepository.findAllByIdIn(pidList);
     }
 }

@@ -137,17 +137,19 @@ public class ContestController {
 
     @PostMapping("/last-step")
     public Mono<Rendering> lastStepPage(@ModelAttribute(name = "contest") ContestDTO contestDTO){
-        log.info("DETECTED DATA: [{}]",contestDTO.getSports());
+        log.info("DETECTED DATA: [{}]",contestDTO);
         for(SportDTO sportDTO : contestDTO.getSports()){
             for(PlaceDTO placeDTO : sportDTO.getPlaces()){
                 log.info("PLACE IN DETECTED SPORTS: [{}]",placeDTO);
             }
         }
         return contestService.getById(contestDTO.getId()).flatMap(contest -> {
-            log.info("FOUND CONTEST FULL INFO: [{}]", contest);
+            //log.info("1.FOUND CONTEST FULL INFO: [{}]", contest);
             return Flux.fromIterable(contestDTO.getSports()).flatMap(sportDTO -> {
+                //log.info("2.INNER SPORT DTO [{}]", sportDTO);
                 if(sportDTO.getDisciplineId() != 0) {
                     return archiveSportService.getById(sportDTO.getId()).flatMap(archiveSport -> {
+                        //log.info("3.FOUND ARCHIVE SPORT [{}]", archiveSport);
                         archiveSport.setDisciplineId(sportDTO.getDisciplineId());
                         archiveSport.setAgeGroupId(sportDTO.getGroupId());
                         archiveSport.setContestId(contest.getId());
@@ -155,8 +157,10 @@ public class ContestController {
                         archiveSport.setupFederalStandards(sportDTO.getStandards());
                         return archiveSportService.saveArchiveSport(archiveSport).flatMap(preSavedSport -> {
                             return Flux.fromIterable(sportDTO.getPlaces()).flatMap(placeDTO -> {
+                                //log.info("4.INNER PLACE DTO [{}]", placeDTO);
                                 if(placeDTO.getParticipantId() != 0) {
                                     return placeService.getById(placeDTO.getId()).flatMap(place -> {
+                                        //log.info("5.FOUND PLACE [{}]", place);
                                         place.setParticipantId(placeDTO.getParticipantId());
                                         place.setSportSchoolId(placeDTO.getSchoolId());
                                         place.setQualificationId(placeDTO.getQualificationId());
@@ -165,22 +169,31 @@ public class ContestController {
                                         place.setASportId(preSavedSport.getId());
                                         place.setResultCategory(placeDTO.getNewQualificationData());
                                         return placeService.setPlace(place).flatMap(savedPlace -> {
-                                            if (savedPlace.getCondition().equals(Condition.ALLOW)) {
+                                            if (!savedPlace.getCondition().equals(Condition.DONE)) {
                                                 return Mono.just(savedPlace);
                                             } else {
                                                 int pid = savedPlace.getParticipantId();
-                                                int sid = contestDTO.getSportId();
+                                                int sid = contest.getTypeOfSportId();
                                                 Qualification qualification = new Qualification();
                                                 qualification.setParticipantId(pid);
                                                 qualification.setTypeOfSportId(sid);
                                                 qualification.setCategory(placeDTO.getNewQualificationData());
-                                                return qualificationService.save(qualification).flatMap(q -> {
-                                                    return participantService.addQualificationToParticipant(q).flatMap(p -> {
-                                                        return sportService.addQualificationInSport(q).flatMap(s -> {
-                                                            place.setNewQualificationId(q.getId());
-                                                            return placeService.setPlace(place);
+                                                return qualificationService.getBySportIdAndParticipantIdAndCategory(qualification).flatMap(checkQ -> {
+                                                    if(checkQ.getId() == 0) {
+                                                        return qualificationService.save(qualification).flatMap(q -> {
+                                                            //log.info("EXTRA: SAVED QUALIFICATION [{}]",q);
+                                                            return participantService.addQualificationToParticipant(q).flatMap(p -> {
+                                                                //log.info("EXTRA: UPDATED PARTICIPANT [{}]",p);
+                                                                return sportService.addQualificationInSport(q).flatMap(s -> {
+                                                                    //log.info("EXTRA: UPDATED SPORT [{}]",s);
+                                                                    place.setNewQualificationId(q.getId());
+                                                                    return placeService.setPlace(place);
+                                                                });
+                                                            });
                                                         });
-                                                    });
+                                                    }else{
+                                                        return Mono.just(place);
+                                                    }
                                                 });
                                             }
                                         });
@@ -207,14 +220,12 @@ public class ContestController {
                     ids.add(archiveSport.getId());
                 }
                 contest.setASportIds(ids);
-                if(contestDTO.isComplete()){
-                    contest.setComplete(true);
-                }
+                contest.setComplete(contestDTO.isComplete());
                 return contestService.saveContest(contest);
             }).flatMap(savedContest -> {
-                log.info("contest fullish updated {}", savedContest);
+                //log.info("contest fullish updated {}", savedContest);
                 if(savedContest.isComplete()){
-                    return Mono.just(Rendering.redirectTo("/").build());
+                    return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
                 }else{
                     return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
                 }
@@ -223,33 +234,48 @@ public class ContestController {
     }
 
     private Flux<ParticipantDTO> getCompletedParticipantBySportId(int sportId) {
-        return qualificationService.getAllBySportId(sportId).flatMap(qualification -> {
-            QualificationDTO qualificationDTO = new QualificationDTO(qualification);
-            return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
-                TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-                qualificationDTO.setSport(typeOfSportDTO);
-                return participantService.getById(qualification.getParticipantId()).flatMap(participant -> {
+        return sportService.getById(sportId).flatMapMany(sport -> {
+            //log.info("FOUND SPORT: [{}]", sport);
+            return qualificationService.getAllByIds(sport.getQualificationIds()).collectList().flatMap(ql -> {
+                Set<Integer> participantIds = new HashSet<>();
+                for(Qualification qualification : ql){
+                    participantIds.add(qualification.getParticipantId());
+                }
+                return Mono.just(participantIds);
+            }).flatMapMany(pidList -> {
+                //log.info("THIS IS PID LIST: [{}]", pidList);
+                return participantService.getAllByIdIn(pidList).flatMap(participant -> {
                     ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                    participantDTO.addQualification(qualificationDTO);
-                    participantDTO.setSchoolIds(participant.getSportSchoolIds());
-                    return Mono.just(participantDTO);
+                    return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                        QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                        return sportService.findById(qualification.getTypeOfSportId()).flatMap(qSport -> {
+                            qualificationDTO.setSport(new TypeOfSportDTO(qSport));
+                            return Mono.just(qualificationDTO);
+                        });
+                    }).collectList().flatMap(ql -> {
+                        //log.info("THIS IS QUALIFICATION LIST: [{}]", ql);
+                        ql = ql.stream().sorted(Comparator.comparing(qualification -> qualification.getCategory().getTitle())).collect(Collectors.toList());
+                        participantDTO.setQualifications(ql);
+                        return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                sportSchoolDTO.setSubject(new SubjectDTO(subject));
+                                return Mono.just(sportSchoolDTO);
+                            });
+                        }).collectList().flatMap(sl -> {
+                            //log.info("THIS IS SCHOOL LIST: [{}]", sl);
+                            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                            participantDTO.setSchools(sl);
+                            return Mono.just(participantDTO);
+                        });
+                    });
                 });
-            });
-        }).flatMap(participantDTO -> schoolService.getAllByIdIn(participantDTO.getSchoolIds()).flatMap(school -> {
-            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
-            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
-                SubjectDTO subjectDTO = new SubjectDTO(subject);
-                sportSchoolDTO.setSubject(subjectDTO);
-                return Mono.just(sportSchoolDTO);
-            });
-        }).collectList().flatMap(sl -> {
-            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
-            participantDTO.setSchools(sl);
-            return Mono.just(participantDTO);
-        })).collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
-            return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);
+            }).collectList().flatMapMany(pl -> {
+                //log.info("THIS IS PARTICIPANT LIST: [{}]", pl);
+                pl = pl.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
+                return Flux.fromIterable(pl);
+            }).flatMapSequential(Mono::just);
+        });
     }
 
 
@@ -315,7 +341,6 @@ public class ContestController {
                     if(sport.getDisciplineId() == 0){
                         return Mono.empty();
                     }else {
-                        System.out.println(sport);
                         ArchiveSport archiveSport = new ArchiveSport(sport);
                         archiveSport.setContestId(contest.getId());
                         return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
@@ -324,11 +349,9 @@ public class ContestController {
                                 if (placeDTO.getParticipantId() == 0) {
                                     return Mono.empty();
                                 } else {
-                                    System.out.println(placeDTO.toString());
                                     Place place = new Place(placeDTO);
                                     place.setASportId(as.getId());
                                     return qualificationService.getById(placeDTO.getQualificationId()).flatMap(q -> {
-                                        System.out.println(q.toString());
                                         if(!q.getCategory().equals(placeDTO.getNewQualificationData())){
                                             Qualification qualification = new Qualification();
                                             qualification.setCategory(placeDTO.getNewQualificationData());
@@ -366,7 +389,6 @@ public class ContestController {
 
     @GetMapping("/get/all")
     public Mono<Rendering> getAll(@RequestParam(name = "page") int page){
-        System.out.println(page);
         return contestService.getCount().flatMap(count -> {
             int pageControl = page;
             if(pageControl < 0){
@@ -376,7 +398,6 @@ public class ContestController {
             if(pageControl >= lastPage){
                 pageControl = (int)lastPage;
             }
-            System.out.println(pageControl);
             return Mono.just(
                     Rendering.view("template")
                             .modelAttribute("title", "Contest information")
@@ -433,7 +454,10 @@ public class ContestController {
         return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
             log.info("FOUND DATA IN DB: [{}}", contest);
             return getCompleteContest(contest.getId());
-        });
+        }).collectList().flatMapMany(cl -> {
+            cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
+            return Flux.fromIterable(cl);
+        }).flatMapSequential(Mono::just);
     }
 
     private Mono<ContestDTO> getCompleteContest(int contestId){
@@ -500,14 +524,12 @@ public class ContestController {
                     if(sportDTOS.size() == 1){
                         if(sportDTOS.get(0).getId() == 0){
                             contestDTO.setSports(sportDTOS);
-                            System.out.println(sportDTOS);
                             return Mono.just(contestDTO);
                         }else{
                             sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
                             if(!contest.isComplete()) {
                                 sportDTOS.add(new SportDTO());
                             }
-                            System.out.println(sportDTOS);
                             contestDTO.setSports(sportDTOS);
                             return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                                 return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
@@ -526,11 +548,10 @@ public class ContestController {
                             });
                         }
                     }else{
-                        sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
+                        sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(SportDTO::getId)).collect(Collectors.toList());
                         if(!contest.isComplete()) {
                             sportDTOS.add(new SportDTO());
                         }
-                        System.out.println(sportDTOS);
                         contestDTO.setSports(sportDTOS);
                         return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                             return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {

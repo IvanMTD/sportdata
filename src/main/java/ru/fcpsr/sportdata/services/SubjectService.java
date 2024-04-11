@@ -27,30 +27,30 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
 
     // GET MONO
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Mono<Subject> findByTitle(String title) {
         return subjectRepository.findByTitle(title).defaultIfEmpty(new Subject());
     }
 
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Mono<Subject> findByISO(String iso) {
         return subjectRepository.findByIso(iso).defaultIfEmpty(new Subject());
     }
 
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Mono<Subject> getById(int subjectId) {
         return subjectRepository.findById(subjectId).defaultIfEmpty(new Subject());
     }
     // GET FLUX
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Flux<Subject> getSubjectsByFirstLetter(String letter) {
         return subjectRepository.findAllWhereFirstLetterIs(letter);
     }
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Flux<Subject> getByIds(Set<Integer> subjectIds) {
         return subjectRepository.findAllByIdIn(subjectIds).defaultIfEmpty(new Subject());
     }
-    @Cacheable("subjects")
+    //@Cacheable("subjects")
     public Flux<Subject> getAll() {
         return subjectRepository.findAll().collectList().flatMapMany(l -> {
             l = l.stream().sorted(Comparator.comparing(Subject::getTitle)).collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class SubjectService {
     }
 
     // CREATE
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> save(SubjectDTO subjectDTO){
         Subject subject = new Subject();
         subject.setTitle(subjectDTO.getTitle());
@@ -69,7 +69,7 @@ public class SubjectService {
     }
 
     // UPDATE
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> addBaseSportInSubject(BaseSport baseSport) {
         return subjectRepository.findById(baseSport.getSubjectId()).flatMap(subject -> {
             subject.addBaseSport(baseSport);
@@ -77,35 +77,35 @@ public class SubjectService {
         });
     }
 
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> removeBaseSportFromSubject(BaseSport baseSport) {
         return subjectRepository.findById(baseSport.getSubjectId()).flatMap(subject -> {
             subject.getBaseSportIds().remove(baseSport.getId());
             return subjectRepository.save(subject);
         });
     }
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> addSchoolInSubject(SportSchool sportSchool) {
         return subjectRepository.findById(sportSchool.getSubjectId()).flatMap(subject -> {
             subject.addSportSchool(sportSchool);
             return subjectRepository.save(subject);
         });
     }
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> updateTitle(SubjectDTO subjectDTO) {
         return subjectRepository.findById(subjectDTO.getId()).flatMap(subject -> {
             subject.setTitle(subjectDTO.getTitle());
             return subjectRepository.save(subject);
         });
     }
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> updateISO(SubjectDTO subjectDTO) {
         return subjectRepository.findById(subjectDTO.getId()).flatMap(subject -> {
             subject.setIso(subjectDTO.getIso());
             return subjectRepository.save(subject);
         });
     }
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> removeSchoolFromSubject(int subjectId, int schoolId) {
         return subjectRepository.findById(subjectId).flatMap(subject -> {
             subject.getSportSchoolIds().remove(schoolId);
@@ -114,7 +114,7 @@ public class SubjectService {
     }
 
     // DELETE
-    @CacheEvict(value = "subjects", allEntries = true)
+    //@CacheEvict(value = "subjects", allEntries = true)
     public Mono<Subject> deleteSubject(int subjectId) {
         return subjectRepository.findById(subjectId).flatMap(subject -> subjectRepository.delete(subject).then(Mono.just(subject)));
     }

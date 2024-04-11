@@ -7,6 +7,8 @@
     </div>
     <!-- Карточка для заполнения -->
     <form th:method="POST" th:action="@{/contest/last-step}" th:object="${contest}">
+        <input type="number" th:field="*{id}" hidden>
+        <input type="checkbox" id="complete" th:field="*{complete}" hidden>
         <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}" th:id="'contest-card-' + ${as_stat.index}" hidden>
             <!-- Картинка -->
             <div class="col-3 p-0" style="overflow: hidden">
@@ -14,12 +16,10 @@
             </div>
             <!-- Форма -->
             <div class="col-9 px-4">
-                <input type="number" th:field="*{id}" hidden>
                 <input type="number" th:id="'as_h-' + ${as_stat.index}" th:field="*{sports[__${as_stat.index}__].id}" hidden>
                 <script th:inline="javascript">
                     $('#as-h-' + [[${as_stat.index}]]).val([[${as}]].id);
                 </script>
-                <input type="checkbox" id="complete" th:field="*{complete}" hidden>
                 <!-- Начало заполнения - банер -->
                 <div class="row">
                     <p class="fs-3 text-secondary text-center">Результаты соревнования</p>
@@ -328,15 +328,15 @@
                     <div class="d-grid gap-2 col-4 mx-auto">
                         <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">Завершить | Сохранить
                         </button>
-                        <script>
-                            function contestDone() {
-                                document.getElementById('complete').checked = true;
-                            }
-                            function contestEdit(){
-                                document.getElementById('complete').checked = false;
-                            }
-                        </script>
                     </div>
+                    <script>
+                        function contestDone() {
+                            document.getElementById('complete').checked = true;
+                        }
+                        function contestEdit(){
+                            document.getElementById('complete').checked = false;
+                        }
+                    </script>
                 </div>
             </div>
         </div>
