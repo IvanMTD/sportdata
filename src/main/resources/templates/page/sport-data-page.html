@@ -257,61 +257,6 @@
                     </h2>
                     <div th:id="'collapse-0-' + ${sport_stat.index}" class="accordion-collapse collapse">
                         <div class="accordion-body">
-                            <!--<div class="container bg-success-subtle border border-success">
-                                <div class="row">
-                                    <p class="text-center fs-5">
-                                        Редактирование <span th:text="${sport.getTitle()}"></span>
-                                    </p>
-                                </div>
-                                <form th:object="${sportForm}">
-                                    <input th:id="'sport-update-id-' + ${sport_stat.index}" type="number" th:field="*{id}" hidden>
-                                    <script th:inline="javascript">
-                                        document.getElementById('sport-update-id-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
-                                    </script>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" style="width: 100px">Название</span>
-                                                <input th:id="'sport-update-title-' + ${sport_stat.index}" type="text" class="form-control" th:field="*{title}">
-                                                <script th:inline="javascript">
-                                                    document.getElementById('sport-update-title-' + [[${sport_stat.index}]]).value = [[${sport}]].title;
-                                                </script>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" style="width: 100px">Сеозон</span>
-                                                <select th:id="'sport-update-season-' + ${sport_stat.index}" class="form-select" th:field="*{season}">
-                                                    <option th:each="s : ${seasons}" th:value="${s}" th:text="${s.getTitle()}"></option>
-                                                </select>
-                                                <script th:inline="javascript">
-                                                    document.getElementById('sport-update-season-' + [[${sport_stat.index}]]).value = [[${sport}]].season;
-                                                </script>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text" style="width: 100px">Фильтр</span>
-                                                <select th:id="'sport-update-filter-' + ${sport_stat.index}" class="form-select" th:field="*{sportFilterType}">
-                                                    <option th:each="f : ${filters}" th:value="${f}" th:text="${f.getTitle()}"></option>
-                                                </select>
-                                                <script th:inline="javascript">
-                                                    document.getElementById('sport-update-filter-' + [[${sport_stat.index}]]).value = [[${sport}]].sportFilterType;
-                                                </script>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row py-2">
-                                        <div class="col">
-                                            <div class="d-grid gap-2">
-                                                <input class="btn btn-primary" type="submit" value="Обновить">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>-->
                             <!-- НАЧАЛО БЛОКА КАРТЫ ПО НАСТРОЙКЕ ВИДА СПОРТА -->
                             <div class="row rounded-4 shadow m-4">
                                 <!-- Картинка -->
