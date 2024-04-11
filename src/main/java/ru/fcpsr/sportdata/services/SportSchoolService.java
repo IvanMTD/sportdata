@@ -22,11 +22,6 @@ public class SportSchoolService {
      * FIND MONO
      */
 
-    @Cacheable("schools")
-    public Mono<SportSchool> findByTitle(String title) {
-        return schoolRepository.findByTitle(title).defaultIfEmpty(new SportSchool());
-    }
-
     /**
      * FIND FLUX
      */
@@ -125,8 +120,13 @@ public class SportSchoolService {
         return schoolRepository.count();
     }
 
-    @Cacheable("schools")
+    @Cacheable(value = "schools")
     public Mono<SportSchool> getById(int sportSchoolId) {
         return schoolRepository.findById(sportSchoolId).defaultIfEmpty(new SportSchool());
+    }
+
+    @Cacheable(value = "schools")
+    public Mono<SportSchool> findByTitleAndSubjectId(SportSchoolDTO sportSchoolDTO) {
+        return schoolRepository.findByTitleAndSubjectId(sportSchoolDTO.getTitle(),sportSchoolDTO.getSubjectId()).defaultIfEmpty(new SportSchool());
     }
 }

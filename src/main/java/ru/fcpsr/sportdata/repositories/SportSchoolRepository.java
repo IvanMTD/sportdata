@@ -15,4 +15,6 @@ public interface SportSchoolRepository extends ReactiveCrudRepository<SportSchoo
     Mono<SportSchool> findByTitle(String title);
     @Query("select * from sport_school where :pid = any(participant_ids)")
     Flux<SportSchool> findAllWhereParticipantIdAny(@Param("pid") int pid);
+
+    Mono<SportSchool> findByTitleAndSubjectId(String title, int subjectId);
 }
