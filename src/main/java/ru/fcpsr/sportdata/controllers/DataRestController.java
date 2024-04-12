@@ -209,33 +209,6 @@ public class DataRestController {
                 return Flux.fromIterable(pl);
             }).flatMapSequential(Mono::just);
         });
-        /*return qualificationService.getAllBySportId(sportId).flatMap(qualification -> {
-            QualificationDTO qualificationDTO = new QualificationDTO(qualification);
-            return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
-                TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-                qualificationDTO.setSport(typeOfSportDTO);
-                return participantService.getById(qualification.getParticipantId()).flatMap(participant -> {
-                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                    participantDTO.addQualification(qualificationDTO);
-                    participantDTO.setSchoolIds(participant.getSportSchoolIds());
-                    return Mono.just(participantDTO);
-                });
-            });
-        }).flatMap(participantDTO -> schoolService.getAllByIdIn(participantDTO.getSchoolIds()).flatMap(school -> {
-            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
-            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
-                SubjectDTO subjectDTO = new SubjectDTO(subject);
-                sportSchoolDTO.setSubject(subjectDTO);
-                return Mono.just(sportSchoolDTO);
-            });
-        }).collectList().flatMap(sl -> {
-            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
-            participantDTO.setSchools(sl);
-            return Mono.just(participantDTO);
-        })).collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
-            return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);*/
     }
 
     private Mono<ParticipantDTO> getCompletedParticipant(String fullName) {

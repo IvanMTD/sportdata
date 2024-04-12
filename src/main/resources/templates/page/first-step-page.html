@@ -5,8 +5,7 @@
         </div>
     </div>
     <div class="row rounded-4 shadow">
-        <div class="col-3 p-0" style="overflow: hidden">
-            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+        <div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
         </div>
         <form class="col-9 px-4" th:method="POST" th:action="@{/contest/first-step}" th:object="${contest}">
             <input type="number" th:field="*{id}" hidden>
@@ -125,7 +124,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row pb-4">
                 <div class="col-8"></div>
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <button class="btn btn-outline-secondary btn-lg" type="submit">Далее</button>

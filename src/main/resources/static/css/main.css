@@ -2,6 +2,24 @@
     object-fit: cover;
 }
 
+.img-bg-control-1 {
+    background-image: url('/img/default-image-3.webp');
+    background-repeat: repeat;
+    background-position: center;
+}
+
+.img-bg-control-2 {
+    background-image: url('/img/default-image-4.webp');
+    background-repeat: repeat;
+    background-position: center;
+}
+
+.img-bg-control-3 {
+    background-image: url('/img/default-image-5.webp');
+    background-repeat: repeat;
+    background-position: center;
+}
+
 .img-special-settings {
     height: 100%;
     border-top-left-radius: 15px;

@@ -12,8 +12,7 @@
         <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}"
              th:id="'contest-card-' + ${as_stat.index}" hidden>
             <!-- Картинка -->
-            <div class="col-3 p-0" style="overflow: hidden">
-                <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+            <div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
             </div>
             <!-- Форма -->
             <div class="col-9 px-4">
@@ -313,9 +312,13 @@
                                                                 <option value="0">Отсутствует</option>
                                                             </select>
                                                             <script th:inline="javascript">
-                                                                $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                    '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.title + '</option>'
-                                                                );
+                                                                if([[${place.parallelSchoolId}]] != 0) {
+                                                                    $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).empty();
+                                                                    $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchoolId + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.title + '</option>' +
+                                                                        '<option value="0">Отсутсвует</option>'
+                                                                    );
+                                                                }
                                                             </script>
                                                             <label th:for="'parallel-school-' + ${as_stat.index} + '-' + ${p_stat.index}">Параллельный зачет</label>
                                                         </div>

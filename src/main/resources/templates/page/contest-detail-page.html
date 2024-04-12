@@ -5,8 +5,7 @@
         </div>
     </div>
     <div class="row rounded-4 shadow">
-        <div class="col-3 p-0" style="overflow: hidden">
-            <img class="img-ratio-control img-special-settings" src="/img/default-wallpaper.webp">
+        <div class="col-3 p-0 img-bg-control-3 rounded-start-4" style="overflow: hidden">
         </div>
         <div class="col-9 px-4" th:object="${contest}">
 
@@ -33,6 +32,12 @@
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="ekp" placeholder="ekp" th:field="*{ekp}" disabled>
                         <label for="ekp">Номер в Едином Календарном Плане</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="sport" placeholder="sport" th:value="${contest.getSport().getTitle()}" disabled>
+                        <label for="sport">Вид спорта</label>
                     </div>
                 </div>
             </div>
@@ -81,6 +86,14 @@
             <!-- ИНФОРМАЦИЯ ВТОРОГО БЛОКА -->
             <div th:if="${contest.getSubjects().size() != 0}">
 
+                <div class="row pt-4">
+                    <div class="col">
+                        <p class="fs-5 text-secondary text-center">
+                            <span>Общая характеристика соревнования</span>
+                        </p>
+                    </div>
+                </div>
+
                 <div class="accordion pt-2 pb-4" id="accordionExample">
                     <div class="accordion-item">
                         <h2 class="accordion-header">
@@ -94,7 +107,7 @@
                             <div class="accordion-body">
                                 <div class="row row-cols-auto justify-content-center">
                                     <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getSubjects()}" style="width: 200px">
-                                        <div class="row rounded-top-3 bg-success-subtle">
+                                        <div class="row rounded-top-3 bg-primary-subtle">
                                             <p class="text-center" th:text="${subject.getIso()}"></p>
                                         </div>
                                         <div class="row">
@@ -163,7 +176,7 @@
                             <div class="accordion-body">
                                 <div class="row row-cols-auto justify-content-center">
                                     <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getBaseSubjectOut()}" style="width: 200px">
-                                        <div class="row rounded-top-3 bg-success-subtle">
+                                        <div class="row rounded-top-3 bg-danger-subtle">
                                             <p class="text-center" th:text="${subject.getIso()}"></p>
                                         </div>
                                         <div class="row">
@@ -176,7 +189,365 @@
                     </div>
                 </div>
 
-            </div>
+                <div class="row">
+                    <div class="col position-relative">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="participant-total" placeholder="participantTotal" th:field="*{participantTotal}" disabled>
+                            <label for="participant-total">Всего участников</label>
+                        </div>
+                        <span data-bs-toggle="tooltip" data-bs-title="Общее количество участников не соответствует с указанной детализацией"
+                              style="position: absolute; top: -15px; right: 0;" th:if="(${contest.boyTotal} + ${contest.girlTotal} != ${contest.participantTotal}) or
+                              (${contest.br} + ${contest.yn1} + ${contest.yn2} + ${contest.yn3} + ${contest.r1} + ${contest.r2} + ${contest.r3} + ${contest.kms} + ${contest.ms} + ${contest.msmk} + ${contest.zms} != ${contest.participantTotal})">
+                            <i class="bi bi-info-square-fill fs-4 text-danger"></i>
+                        </span>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="boy-total" placeholder="boy-total" th:field="*{boyTotal}" disabled>
+                            <label for="boy-total">Участников <i class="bi bi-gender-male"></i></label>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="girl-total" placeholder="girl-total" th:field="*{girlTotal}" disabled>
+                            <label for="girl-total">Участников <i class="bi bi-gender-female"></i></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="br" placeholder="br" th:field="*{br}" disabled>
+                            <label for="br">Без разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="yn1" placeholder="yn1" th:field="*{yn1}" disabled>
+                            <label for="yn1">Первых юношеских разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="yn2" placeholder="yn2" th:field="*{yn2}" disabled>
+                            <label for="yn2">Вторых юношеских разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="yn3" placeholder="yn3" th:field="*{yn3}" disabled>
+                            <label for="yn3">Третьих юношеских разрядов</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="r1" placeholder="r1" th:field="*{r1}" disabled>
+                            <label for="r1">Первых разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="r2" placeholder="r2" th:field="*{r2}" disabled>
+                            <label for="r2">Вторых разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="r3" placeholder="r3" th:field="*{r3}" disabled>
+                            <label for="r3">Третьих разрядов</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="kms" placeholder="kms" th:field="*{kms}" disabled>
+                            <label for="kms">Кандидатов в мастера спорта</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="ms" placeholder="ms" th:field="*{ms}" disabled>
+                            <label for="ms">Мастеров спорта</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="msmk" placeholder="msmk" th:field="*{msmk}" disabled>
+                            <label for="msmk">Мастеров спорта международного класса</label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="zms" placeholder="zms" th:field="*{zms}" disabled>
+                            <label for="zms">Заслуженных мастеров спорта</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <p class="text-center text-secondary fs-5">Итоги соревнование по субъектам</p>
+                        </div>
+                        <div class="row mx-auto">
+                            <div class="col">
+                                <div class="row rounded-start-4" style="background-color: gold">
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">1 место</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col pt-2" id="col-first-place">
+                                        <div th:if="${contest.getFirstSubjects().size() > 0}">
+                                            <div th:each="fp, fp_stat : ${contest.getFirstSubjects()}" class="row pt-3" th:id="'f-r-' + ${fp_stat.index}">
+                                                <div class="col">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" type="text" th:value="${fp.getTitle()}" th:id="'f-' + ${fp_stat.index}" disabled>
+                                                        <input class="form-control" th:id="'h-f-' + ${fp_stat.index}" type="number" th:field="*{firstPlace[__${fp_stat.index}__]}" hidden>
+                                                        <script th:inline="javascript">
+                                                            $('#h-f-' + [[${fp_stat.index}]]).val([[${fp}]].id);
+                                                        </script>
+                                                        <label th:for="'f-' + ${fp_stat.index}">Субъект</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row" style="background-color: silver">
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">2 место</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row border-start border-end">
+                                    <div class="col pt-2" id="col-second-place">
+                                        <div th:if="${contest.getSecondSubjects().size() > 0}">
+                                            <div th:each="sp, sp_stat : ${contest.getSecondSubjects()}" class="row pt-3" th:id="'s-r-' + ${sp_stat.index}">
+                                                <div class="col">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" type="text" th:value="${sp.getTitle()}" th:id="'s-' + ${sp_stat.index}" disabled>
+                                                        <input class="form-control" th:id="'h-s-' + ${sp_stat.index}" type="number" th:field="*{secondPlace[__${sp_stat.index}__]}" hidden>
+                                                        <script th:inline="javascript">
+                                                            $('#h-s-' + [[${sp_stat.index}]]).val([[${sp}]].id);
+                                                        </script>
+                                                        <label th:for="'s-' + ${sp_stat.index}">Субъект</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="row rounded-end-4" style="background-color: darkgoldenrod">
+                                    <div class="container d-flex justify-content-center align-items-center" style="height: 50px">
+                                        <div class="mx-auto text-center fs-5 px-2 rounded-circle">
+                                            <span class="text-center fs-5">3 место</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col pt-2" id="col-last-place">
+                                        <div th:if="${contest.getLastSubjects().size() > 0}">
+                                            <div th:each="lp, lp_stat : ${contest.getLastSubjects()}" class="row pt-3" th:id="'l-r-' + ${lp_stat.index}">
+                                                <div class="col">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" type="text" th:value="${lp.getTitle()}" th:id="'l-' + ${lp_stat.index}" disabled>
+                                                        <input class="form-control" th:id="'h-l-' + ${lp_stat.index}" type="number" th:field="*{lastPlace[__${lp_stat.index}__]}" hidden>
+                                                        <script th:inline="javascript">
+                                                            $('#h-l-' + [[${lp_stat.index}]]).val([[${lp}]].id);
+                                                        </script>
+                                                        <label th:for="'l-' + ${lp_stat.index}">Субъект</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion py-4" id="sport-accordion">
+
+                    <div class="accordion-item" th:each="as, as_stat : ${contest.getSports()}">
+                        <h2 class="accordion-header">
+                            <button th:id="'accordion-btn-' + ${as_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
+                                <div class="col">
+                                    <i class="bi bi-flag fs-5 text-danger"></i><span class="fs-5 text-uppercase text-secondary" th:text="' ' + ${as.discipline.title}"></span>
+                                </div>
+                                <!--<div class="col-1">
+                                    <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют базовые виды спорта"><i class="bi bi-info-circle fs-4 text-warning"></i></span>
+                                </div>
+                                <div class="col-1">
+                                    <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют базовые виды спорта"><i class="bi bi-info-circle fs-4 text-warning"></i></span>
+                                </div>-->
+                            </button>
+                        </h2>
+                        <div th:id="'collapse-' + ${as_stat.index}" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+
+                                <div th:if="${as.getPlaces.size() != 0}">
+                                    <div th:each="place , p_stat : ${as.getPlaces()}">
+                                        <input type="number" th:id="'h-p-id-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                               th:value="${place.getId()}"
+                                               th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].id}"
+                                               hidden>
+                                        <script th:inline="javascript">
+                                            document.getElementById('h-p-id-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].id;
+                                        </script>
+                                        <div class="mt-3 rounded-4 bg-primary-subtle"
+                                             th:id="'container-' + ${as_stat.index} + '-' + ${p_stat.index}">
+                                            <div class="row p-4">
+
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select class="form-select"
+                                                                        th:id="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].participantId}"
+                                                                        onchange="rebuildCategory(this.id)" disabled>
+
+                                                                </select>
+                                                                <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
+                                                                <script th:inline="javascript">
+                                                                    $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Год рождения: ' + [[${place}]].participant.date + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
+                                                                    );
+                                                                    document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
+                                                                </script>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'school-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        class="form-select"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].schoolId}" disabled>
+
+                                                                </select>
+                                                                <label th:for="'school-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортивная
+                                                                    организация</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pt-3">
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'qualification-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        class="form-select"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].qualificationId}" disabled>
+
+                                                                </select>
+                                                                <label th:for="'qualification-' + ${as_stat.index} + '-' + ${p_stat.index}">Квалификация</label>
+                                                            </div>
+                                                        </div>
+                                                        <script th:inline="javascript">
+                                                            console.log(JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')));
+                                                            $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.title + '</option>'
+                                                            );
+                                                            $('#qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).qualification.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).qualification.categoryTitle + ' - ' + [[${contest}]].sport.title + '</option>'
+                                                            );
+                                                            document.getElementById('school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].schoolId;
+                                                            document.getElementById('qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].qualificationId;
+                                                        </script>
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'prise-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        class="form-select"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].place}" disabled>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                </select>
+                                                                <label th:for="'prise-' + ${as_stat.index} + '-' + ${p_stat.index}">Занял
+                                                                    место</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'condition-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        class="form-select"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].condition}" disabled>
+                                                                    <option th:each="condition : ${conditions}"
+                                                                            th:value="${condition.getCondition()}"
+                                                                            th:text="${condition.getTitle()}"></option>
+                                                                </select>
+                                                                <label th:for="'condition-' + ${as_stat.index} + '-' + ${p_stat.index}">ЕВСК</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'nq-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                        class="form-select"
+                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].newQualificationData}" disabled>
+                                                                    <option th:each="category : ${categories}"
+                                                                            th:value="${category.getCategory()}"
+                                                                            th:text="${category.getTitle()}"></option>
+                                                                </select>
+                                                                <label th:for="'nq-' + ${as_stat.index} + '-' + ${p_stat.index}">Состояние</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row pt-3">
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <select th:id="'parallel-school-' + ${as_stat.index} + '-' + ${p_stat.index}" class="form-select" th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].parallelSchoolId}" disabled>
+                                                                    <option value="0">Отсутствует</option>
+                                                                </select>
+                                                                <script th:inline="javascript">
+                                                                    if([[${place.parallelSchoolId}]] != 0) {
+                                                                        $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).empty();
+                                                                        $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                            '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchoolId + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.title + '</option>'
+                                                                        );
+                                                                    }
+                                                                </script>
+                                                                <label th:for="'parallel-school-' + ${as_stat.index} + '-' + ${p_stat.index}">Параллельный зачет</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="form-floating">
+                                                                <input type="text" th:id="'info-' + ${as_stat.index} + '-' + ${p_stat.index}" placeholder="info" class="form-control" th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].info}">
+                                                                <label th:for="'info-' + ${as_stat.index} + '-' + ${p_stat.index}">Дополнительная информация</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <script th:inline="javascript">
+                            document.getElementById('accordion-btn-' + [[${as_stat.index}]]).setAttribute('data-bs-target','#collapse-' + [[${as_stat.index}]]);
+                        </script>
+                    </div>
+
+                </div>
+
+            </div><!-- Тут конец второго блока -->
+
         </div>
     </div>
 </div>

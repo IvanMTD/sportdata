@@ -260,8 +260,7 @@
                             <!-- НАЧАЛО БЛОКА КАРТЫ ПО НАСТРОЙКЕ ВИДА СПОРТА -->
                             <div class="row rounded-4 shadow m-4">
                                 <!-- Картинка -->
-                                <div class="col-3 p-0" style="overflow: hidden; height: 380px">
-                                    <img class="img-ratio-control img-special-settings" src="/img/default-image-1.webp">
+                                <div class="col-3 p-0 img-bg-control-3 rounded-start-4" style="overflow: hidden">
                                 </div>
                                 <!-- Форма -->
                                 <div class="col-9 px-4">
@@ -362,7 +361,7 @@
 
                                     <hr>
 
-                                    <form th:method="POST" th:action="@{/database/sport/{letter}/add/group(letter=${letter})}" th:object="${groupForm}">
+                                    <form class="pb-4" th:method="POST" th:action="@{/database/sport/{letter}/add/group(letter=${letter})}" th:object="${groupForm}">
                                         <input th:id="'hidden3-1-' + ${sport_stat.index}" type="number" th:field="*{sportId}" hidden>
                                         <script th:inline="javascript">
                                             document.getElementById('hidden3-1-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
@@ -535,40 +534,49 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <ul class="list-group p-2">
-                <li class="list-group-item active fs-4" aria-current="true">Добавить новый вид спорта</li>
-                <li class="list-group-item">
-                    <form th:method="POST" th:action="@{/database/sport/{letter}/add(letter = ${letter})}" th:object="${sportForm}">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text" id="base-title">Название</span>
-                            <input type="text" class="form-control" placeholder="Введите название вида спорта" aria-label="title" aria-describedby="base-title" th:field="*{title}">
+    <div class="row rounded-4 shadow m-4">
+        <!-- Картинка -->
+        <div class="col-3 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden">
+        </div>
+        <!-- Форма -->
+        <div class="col-9 px-4">
+            <form th:method="POST" th:action="@{/database/sport/{letter}/add(letter = ${letter})}" th:object="${sportForm}">
+
+                <div class="row my-3">
+                    <div class="col">
+                        <div class="form-floating">
+                            <select id="season" class="form-select" th:field="*{season}">
+                                <option th:each="season : ${seasons}" th:value="${season}" th:text="${season.getTitle()}"></option>
+                            </select>
+                            <label for="season">Сезон</label>
                         </div>
-                        <div class="row">
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">Сезон</span>
-                                    <select class="form-select" th:field="*{season}">
-                                        <option th:each="season : ${seasons}" th:value="${season}" th:text="${season.getTitle()}"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">Фильтр</span>
-                                    <select class="form-select" th:field="*{sportFilterType}">
-                                        <option th:each="filter : ${filters}" th:value="${filter}" th:text="${filter.getTitle()}"></option>
-                                    </select>
-                                </div>
-                            </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-floating">
+                            <select class="form-select" th:field="*{sportFilterType}">
+                                <option id="filter" th:each="filter : ${filters}" th:value="${filter}" th:text="${filter.getTitle()}"></option>
+                            </select>
+                            <label for="filter">Фильтр</label>
                         </div>
-                        <div class="d-grid gap-2">
-                            <input class="btn btn-primary" type="submit" value="Добавить">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-8">
+                        <div class="form-floating">
+                            <input id="sport-title" type="text" class="form-control" placeholder="Введите название вида спорта" aria-label="title" aria-describedby="base-title" th:field="*{title}">
+                            <label for="sport-title">Название вида спорта</label>
                         </div>
-                    </form>
-                </li>
-            </ul>
+                    </div>
+                    <div class="col-4 d-flex align-items-center">
+                        <div class="d-grid" style="width: 100%">
+                            <input class="btn btn-lg btn-outline-secondary" type="submit" value="Добавить">
+                        </div>
+                    </div>
+                </div>
+
+            </form>
         </div>
     </div>
+
 </div>

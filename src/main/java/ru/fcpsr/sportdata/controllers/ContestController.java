@@ -420,6 +420,9 @@ public class ContestController {
                             .modelAttribute("title","Contest page")
                             .modelAttribute("index","contest-detail-page")
                             .modelAttribute("contest", getCompleteContest(contest.getId()))
+                            .modelAttribute("categories", getCategories())
+                            .modelAttribute("federalStandards", getFedStandards())
+                            .modelAttribute("conditions", getConditions())
                             .build()
             );
         });
@@ -453,7 +456,7 @@ public class ContestController {
 
     private Flux<ContestDTO> getAllCompleteContest(Pageable pageable) {
         return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
-            log.info("FOUND DATA IN DB: [{}}", contest);
+            //log.info("FOUND DATA IN DB: [{}}", contest);
             return getCompleteContest(contest.getId());
         }).collectList().flatMapMany(cl -> {
             cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
@@ -509,6 +512,8 @@ public class ContestController {
                                                             placeDTO.setSchool(sportSchoolDTO);
                                                             return Mono.just(placeDTO);
                                                         }else{
+                                                            sportSchoolDTO.setSubject(new SubjectDTO(subject2));
+                                                            placeDTO.setSchool(sportSchoolDTO);
                                                             return schoolService.getById(place.getParallelSchoolId()).flatMap(parallelSchool -> {
                                                                 SportSchoolDTO parallelDTO = new SportSchoolDTO(parallelSchool);
                                                                 return subjectService.getById(parallelSchool.getSubjectId()).flatMap(subject3 -> {
