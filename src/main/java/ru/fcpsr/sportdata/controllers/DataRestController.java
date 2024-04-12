@@ -110,7 +110,54 @@ public class DataRestController {
 
     @GetMapping("/participants")
     public Flux<Participant> getParticipants(@RequestParam(name = "query") String query){
-        return participantService.findAllByLastnameLike(query);
+        return participantService.getAllBySearchQuery(query).take(10);
+    }
+
+    @GetMapping("/sport-participants")
+    public Flux<ParticipantDTO> getParticipantsBySportId(@RequestParam(name = "search") String search, @RequestParam("sportId") int sportId){
+        if(search.equals("")){
+            return Flux.empty();
+        }else {
+            return qualificationService.getAllBySportId(sportId).collectList().flatMap(ql -> {
+                Set<Integer> participantIds = new HashSet<>();
+                for (Qualification qualification : ql) {
+                    participantIds.add(qualification.getParticipantId());
+                }
+                return Mono.just(participantIds);
+            }).flatMapMany(pidList -> {
+                return participantService.getAllByIdInAndSearchQuery(pidList, search).flatMap(participant -> {
+                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                    return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                        QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                        return sportService.findById(qualification.getTypeOfSportId()).flatMap(sport -> {
+                            TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                            qualificationDTO.setSport(typeOfSportDTO);
+                            return Mono.just(qualificationDTO);
+                        });
+                    }).collectList().flatMap(ql -> {
+                        ql = ql.stream().sorted(Comparator.comparing(QualificationDTO::getCategory)).collect(Collectors.toList());
+                        participantDTO.setQualifications(ql);
+                        return Mono.just(participantDTO);
+                    }).flatMap(participantDTO2 -> {
+                        return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                SubjectDTO subjectDTO = new SubjectDTO(subject);
+                                sportSchoolDTO.setSubject(subjectDTO);
+                                return Mono.just(sportSchoolDTO);
+                            });
+                        }).collectList().flatMap(sl -> {
+                            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                            participantDTO2.setSchools(sl);
+                            return Mono.just(participantDTO2);
+                        });
+                    });
+                }).collectList().flatMapMany(pl -> {
+                    pl = pl.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
+                    return Flux.fromIterable(pl);
+                }).flatMapSequential(Mono::just);
+            }).take(10);
+        }
     }
 
     @GetMapping("/sport/participants")

@@ -126,7 +126,6 @@ public class ContestController {
                             .modelAttribute("index","last-step-page")
                             .modelAttribute("contest", getCompleteContest(contestId))
                             .modelAttribute("sport", getCompleteSport(contest.getTypeOfSportId()))
-                            .modelAttribute("participantList", getCompletedParticipantBySportId(contest.getTypeOfSportId()))
                             .modelAttribute("categories", getCategories())
                             .modelAttribute("federalStandards", getFedStandards())
                             .modelAttribute("conditions", getConditions())
@@ -137,12 +136,12 @@ public class ContestController {
 
     @PostMapping("/last-step")
     public Mono<Rendering> lastStepPage(@ModelAttribute(name = "contest") ContestDTO contestDTO){
-        log.info("DETECTED DATA: [{}]",contestDTO);
-        for(SportDTO sportDTO : contestDTO.getSports()){
+        //log.info("DETECTED DATA: [{}]",contestDTO);
+        /*for(SportDTO sportDTO : contestDTO.getSports()){
             for(PlaceDTO placeDTO : sportDTO.getPlaces()){
                 log.info("PLACE IN DETECTED SPORTS: [{}]",placeDTO);
             }
-        }
+        }*/
         return contestService.getById(contestDTO.getId()).flatMap(contest -> {
             //log.info("1.FOUND CONTEST FULL INFO: [{}]", contest);
             return Flux.fromIterable(contestDTO.getSports()).flatMap(sportDTO -> {
@@ -168,6 +167,8 @@ public class ContestController {
                                         place.setCondition(placeDTO.getCondition());
                                         place.setASportId(preSavedSport.getId());
                                         place.setResultCategory(placeDTO.getNewQualificationData());
+                                        place.setParallelSchoolId(placeDTO.getParallelSchoolId());
+                                        place.setInfo(placeDTO.getInfo());
                                         return placeService.setPlace(place).flatMap(savedPlace -> {
                                             if (!savedPlace.getCondition().equals(Condition.DONE)) {
                                                 return Mono.just(savedPlace);
@@ -481,9 +482,9 @@ public class ContestController {
                         contestDTO.addSubjectInLast(new SubjectDTO(subject));
                     }
                 }
-                log.info("aSport size is {}", contest.getASportIds());
+                //log.info("aSport size is {}", contest.getASportIds());
                 return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
-                    log.info("found a sport {}", archiveSport);
+                    //log.info("found a sport {}", archiveSport);
                     SportDTO sportDTO = new SportDTO(archiveSport);
                     return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                         contestDTO.setSport(new TypeOfSportDTO(sport));
@@ -503,9 +504,20 @@ public class ContestController {
                                                 return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
                                                     SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
                                                     return subjectService.getById(school.getSubjectId()).flatMap(subject2 -> {
-                                                        sportSchoolDTO.setSubject(new SubjectDTO(subject2));
-                                                        placeDTO.setSchool(sportSchoolDTO);
-                                                        return Mono.just(placeDTO);
+                                                        if(place.getParallelSchoolId() == 0) {
+                                                            sportSchoolDTO.setSubject(new SubjectDTO(subject2));
+                                                            placeDTO.setSchool(sportSchoolDTO);
+                                                            return Mono.just(placeDTO);
+                                                        }else{
+                                                            return schoolService.getById(place.getParallelSchoolId()).flatMap(parallelSchool -> {
+                                                                SportSchoolDTO parallelDTO = new SportSchoolDTO(parallelSchool);
+                                                                return subjectService.getById(parallelSchool.getSubjectId()).flatMap(subject3 -> {
+                                                                    parallelDTO.setSubject(new SubjectDTO(subject3));
+                                                                    placeDTO.setParallelSchool(parallelDTO);
+                                                                    return Mono.just(placeDTO);
+                                                                });
+                                                            });
+                                                        }
                                                     });
                                                 });
                                             });
@@ -555,9 +567,13 @@ public class ContestController {
                         contestDTO.setSports(sportDTOS);
                         return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                             return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                                    return Mono.just(new SubjectDTO(subject));
-                                });
+                                if(LocalDate.now().getYear() < baseSport.getExpiration()) {
+                                    return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
+                                        return Mono.just(new SubjectDTO(subject));
+                                    });
+                                }else{
+                                    return Mono.empty();
+                                }
                             }).collectList().flatMap(subjectsDTO -> {
                                 contestDTO.setBaseSubjectTotal(subjectsDTO);
                                 contestDTO.calcBaseIn();
@@ -569,94 +585,6 @@ public class ContestController {
             });
         });
     }
-
-    /*private Flux<ContestDTO> getAllCompletedContest(){
-        return contestService.getAll().flatMap(contest -> {
-            ContestDTO contestDTO = new ContestDTO(contest);
-            return subjectService.getAll().collectList().flatMap(subjects -> {
-                for(Subject subject : subjects){
-                    if(subject.getId() == contest.getSubjectId()){
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        contestDTO.setSubject(subjectDTO);
-                    }
-                    if(contest.getTotalSubjects().stream().anyMatch(sid -> sid == subject.getId())){
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        contestDTO.addSubjectInTotal(subjectDTO);
-                    }
-                    if(contest.getFirstPlace().stream().anyMatch(sid -> sid == subject.getId())){
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        contestDTO.addSubjectInFirst(subjectDTO);
-                    }
-                    if(contest.getSecondPlace().stream().anyMatch(sid -> sid == subject.getId())){
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        contestDTO.addSubjectInSecond(subjectDTO);
-                    }
-                    if(contest.getLastPlace().stream().anyMatch(sid -> sid == subject.getId())){
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        contestDTO.addSubjectInLast(subjectDTO);
-                    }
-                }
-                return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
-                    SportDTO sportDTO = new SportDTO();
-                    sportDTO.setStandard(archiveSport.getFederalStandard());
-                    List<Category> categories = new ArrayList<>(archiveSport.getAllowed());
-                    sportDTO.setAllowed(categories);
-                    return sportService.getById(archiveSport.getTypeOfSportId()).flatMap(sport -> {
-                        TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
-                        sportDTO.setSport(typeOfSportDTO);
-                        return disciplineService.getById(archiveSport.getDisciplineId()).flatMap(discipline -> {
-                            DisciplineDTO disciplineDTO = new DisciplineDTO(discipline);
-                            sportDTO.setDiscipline(disciplineDTO);
-                            return groupService.getById(archiveSport.getAgeGroupId()).flatMap(ageGroup -> {
-                                AgeGroupDTO ageGroupDTO = new AgeGroupDTO(ageGroup);
-                                sportDTO.setGroup(ageGroupDTO);
-                                return placeService.getAllByIdIn(archiveSport.getPlaceIds()).flatMap(place -> {
-                                    PlaceDTO placeDTO = new PlaceDTO();
-                                    placeDTO.setPlace(place.getPlace());
-                                    placeDTO.setCondition(place.getCondition());
-                                    return participantService.getById(place.getParticipantId()).flatMap(participant -> {
-                                        ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                                        placeDTO.setParticipant(participantDTO);
-                                        return qualificationService.getById(place.getQualificationId()).flatMap(qualification -> {
-                                            QualificationDTO qualificationDTO = new QualificationDTO(qualification);
-                                            placeDTO.setQualification(qualificationDTO);
-                                            return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
-                                                SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
-                                                return subjectService.getById(school.getSubjectId()).flatMap(subject2 -> {
-                                                    SubjectDTO subjectDTO2 = new SubjectDTO(subject2);
-                                                    sportSchoolDTO.setSubject(subjectDTO2);
-                                                    placeDTO.setSchool(sportSchoolDTO);
-                                                    return Mono.just(placeDTO);
-                                                });
-                                            });
-                                        });
-                                    });
-                                }).collectList().flatMap(placesDTO -> {
-                                    placesDTO = placesDTO.stream().sorted(Comparator.comparing(PlaceDTO::getPlace)).collect(Collectors.toList());
-                                    sportDTO.setPlaces(placesDTO);
-                                    return Mono.just(sportDTO);
-                                });
-                            });
-                        });
-                    });
-                }).collectList().flatMap(sportDTOS -> {
-                    sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
-                    contestDTO.setSports(sportDTOS);
-                    return sportService.getById(sportDTOS.get(0).getSport().getId()).flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(bs -> subjectService.getById(bs.getSubjectId()).flatMap(s -> {
-                        SubjectDTO subjectDTO = new SubjectDTO(s);
-                        return Mono.just(subjectDTO);
-                    })).collectList().flatMap(sl -> {
-                        contestDTO.setBaseSubjectTotal(sl);
-                        contestDTO.calcBaseIn();
-                        return Mono.just(contestDTO);
-                    }));
-                });
-            });
-        }).collectList().flatMapMany(l -> {
-            l = l.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
-            return Flux.fromIterable(l);
-        }).flatMapSequential(Mono::just);
-    }*/
 
     private Flux<TypeOfSportDTO> getSports(){
         return sportService.getAll().flatMap(sport -> {

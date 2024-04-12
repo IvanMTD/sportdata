@@ -27,6 +27,14 @@ public interface ParticipantRepository extends ReactiveCrudRepository<Participan
     @Query("SELECT * FROM Participant participant WHERE lastname LIKE :query or name LIKE :query")
     Flux<Participant> findParticipantsWithPartOfLastname(@Param("query") String query);
 
+    Flux<Participant> findAllByIdInAndLastnameLikeIgnoreCase(Set<Integer> pidList, String lastnamePart);
+    Flux<Participant> findAllByIdInAndNameLikeIgnoreCase(Set<Integer> pidList, String name);
+    Flux<Participant> findAllByIdInAndMiddleNameLikeIgnoreCase(Set<Integer> pidList, String middleName);
+
+    Flux<Participant> findAllByLastnameLikeIgnoreCase(String lastnamePart);
+    Flux<Participant> findAllByNameLikeIgnoreCase(String name);
+    Flux<Participant> findAllByMiddleNameLikeIgnoreCase(String middleName);
+
     Flux<Participant> findAllByLastnameAndNameAndMiddleName(String s, String s1, String s2);
 
     Flux<Participant> findAllByLastnameAndName(String s, String s1);

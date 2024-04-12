@@ -25,11 +25,11 @@ public class ParticipantDTO {
     private int qualificationId;
     private int sportId;
     @NotBlank(message = "Поле Имя обязательно для заполнения!")
-    @Pattern(regexp = "^[А-Я][а-я]+", message = "Имя должно начинаться с большой буквы все остальные символы маленькие!")
+    //@Pattern(regexp = "^[А-Я][а-я]+", message = "Имя должно начинаться с большой буквы все остальные символы маленькие!")
     private String name;
     private String middleName;
     @NotBlank(message = "Поле Фамилия обязательны для заполнения!")
-    @Pattern(regexp = "^[А-Я][а-я]+", message = "Фамилия должно начинаться с большой буквы все остальные символы маленькие!")
+    //@Pattern(regexp = "^[А-Я][а-я]+", message = "Фамилия должно начинаться с большой буквы все остальные символы маленькие!")
     private String lastname;
     @Past(message = "Дата рождения не может быть текущей или будущей датой!")
     @NotNull(message = "Дата рождения обязательна! Укажите дату.")

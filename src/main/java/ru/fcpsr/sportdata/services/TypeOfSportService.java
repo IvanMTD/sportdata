@@ -159,6 +159,6 @@ public class TypeOfSportService {
 
     //@Cacheable(value = "typeOfSports")
     public Mono<TypeOfSport> findById(int sportId) {
-        return sportRepository.findById(sportId);
+        return sportRepository.findById(sportId).defaultIfEmpty(new TypeOfSport());
     }
 }

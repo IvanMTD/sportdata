@@ -21,6 +21,10 @@ public class PlaceDTO {
     private int place;
     private Condition condition;
 
+    private String info;
+    private int parallelSchoolId;
+    private SportSchoolDTO parallelSchool;
+
     public PlaceDTO(Place place){
         setId(place.getId());
         setParticipantId(place.getParticipantId());
@@ -28,6 +32,10 @@ public class PlaceDTO {
         setSchoolId(place.getSportSchoolId());
         setPlace(place.getPlace());
         setNewQualificationData(place.getResultCategory());
+
+        setParallelSchoolId(place.getParallelSchoolId());
+        setInfo(place.getInfo());
+
         if(place.getCondition() != null) {
             setCondition(place.getCondition());
         }

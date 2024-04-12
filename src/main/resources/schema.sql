@@ -106,6 +106,7 @@ create table if not exists contest(
     ms int,
     msmk int,
     zms int,
+
     complete bool
 );
 
@@ -128,5 +129,9 @@ create table if not exists place(
     result_category text,
     sport_school_id int,
     place int,
+
+    parallel_school_id int,
+    info text,
+
     condition text
 );

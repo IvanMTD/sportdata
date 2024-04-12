@@ -151,6 +151,29 @@
                             </div>
                         </div>
                     </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <p class="fs-5 text-secondary text-center">
+                                    <span th:text="'Субъекты для которых вид спорта является базовым но они не приняли участие в соревнованиях: ' + ${contest.getBaseSubjectOut().size()}"></span>
+                                </p>
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <div class="row row-cols-auto justify-content-center">
+                                    <div class="col m-2 rounded-3 shadow" th:each="subject : ${contest.getBaseSubjectOut()}" style="width: 200px">
+                                        <div class="row rounded-top-3 bg-success-subtle">
+                                            <p class="text-center" th:text="${subject.getIso()}"></p>
+                                        </div>
+                                        <div class="row">
+                                            <p class="text-center" th:text="${subject.getTitle()}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>

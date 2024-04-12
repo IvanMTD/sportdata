@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import org.reactivestreams.Publisher;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -14,7 +15,9 @@ import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.models.SportSchool;
 import ru.fcpsr.sportdata.repositories.ParticipantRepository;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -176,5 +179,39 @@ public class ParticipantService {
 
     public Flux<Participant> getAllByIdIn(Set<Integer> pidList) {
         return participantRepository.findAllByIdIn(pidList);
+    }
+
+    public Flux<Participant> getAllByIdInAndSearchQuery(Set<Integer> pidList, String search) {
+        String[] searchParts = search.split(" ");
+        List<Flux<Participant>> fluxes = new ArrayList<>();
+        for(String part : searchParts){
+            if (!part.equals("")) {
+                String searchData = "%" + part + "%";
+                Flux<Participant> lastnameFlux = participantRepository.findAllByIdInAndLastnameLikeIgnoreCase(pidList, searchData).take(10).switchIfEmpty(Flux.empty());
+                Flux<Participant> nameFlux = participantRepository.findAllByIdInAndNameLikeIgnoreCase(pidList, searchData).take(10).switchIfEmpty(Flux.empty());
+                Flux<Participant> middleNameFlux = participantRepository.findAllByIdInAndMiddleNameLikeIgnoreCase(pidList, searchData).take(10).switchIfEmpty(Flux.empty());
+                fluxes.add(lastnameFlux);
+                fluxes.add(nameFlux);
+                fluxes.add(middleNameFlux);
+            }
+        }
+        return Flux.merge(fluxes).distinct();
+    }
+
+    public Flux<Participant> getAllBySearchQuery(String search) {
+        String[] searchParts = search.split(" ");
+        List<Flux<Participant>> fluxes = new ArrayList<>();
+        for(String part : searchParts){
+            if (!part.equals("")) {
+                String searchData = "%" + part + "%";
+                Flux<Participant> lastnameFlux = participantRepository.findAllByLastnameLikeIgnoreCase(searchData).take(10).switchIfEmpty(Flux.empty());
+                Flux<Participant> nameFlux = participantRepository.findAllByNameLikeIgnoreCase(searchData).take(10).switchIfEmpty(Flux.empty());
+                Flux<Participant> middleNameFlux = participantRepository.findAllByMiddleNameLikeIgnoreCase(searchData).take(10).switchIfEmpty(Flux.empty());
+                fluxes.add(lastnameFlux);
+                fluxes.add(nameFlux);
+                fluxes.add(middleNameFlux);
+            }
+        }
+        return Flux.merge(fluxes).distinct();
     }
 }

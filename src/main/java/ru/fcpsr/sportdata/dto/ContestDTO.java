@@ -11,7 +11,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -34,6 +36,7 @@ public class ContestDTO {
     private List<SubjectDTO> subjects = new ArrayList<>();
     private List<SubjectDTO> baseSubjectTotal = new ArrayList<>();
     private List<SubjectDTO> baseSubjectIn = new ArrayList<>();
+    private List<SubjectDTO> baseSubjectOut = new ArrayList<>();
 
     private List<Integer> firstPlace = new ArrayList<>(Collections.nCopies(10, null));
     private List<SubjectDTO> firstSubjects = new ArrayList<>();
@@ -133,6 +136,23 @@ public class ContestDTO {
                 }
             }
         }
+
+        for(SubjectDTO total : baseSubjectTotal){
+            int num = 0;
+            for(SubjectDTO in : baseSubjectIn){
+                if(in.getId() == total.getId()){
+                    num++;
+                }
+            }
+            if(num == 0){
+                baseSubjectOut.add(total);
+            }
+        }
+
+        subjects = subjects.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+        baseSubjectIn = baseSubjectIn.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+        baseSubjectOut = baseSubjectOut.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+        baseSubjectTotal = baseSubjectTotal.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
     }
 
     public void addSport(SportDTO sportDTO){

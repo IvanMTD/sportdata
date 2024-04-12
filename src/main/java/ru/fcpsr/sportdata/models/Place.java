@@ -30,6 +30,9 @@ public class Place {
     private Condition condition;
     private Category resultCategory;
 
+    private int parallelSchoolId;
+    private String info;
+
     public Place(PlaceDTO placeDTO){
         setParticipantId(placeDTO.getParticipantId());
         setQualificationId(placeDTO.getQualificationId());
@@ -37,5 +40,7 @@ public class Place {
         setPlace(placeDTO.getPlace());
         setResultCategory(placeDTO.getNewQualificationData());
         setCondition(placeDTO.getCondition());
+        setInfo(placeDTO.getInfo());
+        setParallelSchoolId(placeDTO.getParallelSchoolId());
     }
 }
