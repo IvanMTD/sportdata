@@ -226,164 +226,10 @@ public class ContestController {
             }).flatMap(savedContest -> {
                 //log.info("contest fullish updated {}", savedContest);
                 if(savedContest.isComplete()){
-                    return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
+                    return Mono.just(Rendering.redirectTo("/contest/get/all?page=0").build());
                 }else{
                     return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
                 }
-            });
-        });
-    }
-
-    private Flux<ParticipantDTO> getCompletedParticipantBySportId(int sportId) {
-        return sportService.getById(sportId).flatMapMany(sport -> {
-            //log.info("FOUND SPORT: [{}]", sport);
-            return qualificationService.getAllByIds(sport.getQualificationIds()).collectList().flatMap(ql -> {
-                Set<Integer> participantIds = new HashSet<>();
-                for(Qualification qualification : ql){
-                    participantIds.add(qualification.getParticipantId());
-                }
-                return Mono.just(participantIds);
-            }).flatMapMany(pidList -> {
-                //log.info("THIS IS PID LIST: [{}]", pidList);
-                return participantService.getAllByIdIn(pidList).flatMap(participant -> {
-                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                    return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
-                        QualificationDTO qualificationDTO = new QualificationDTO(qualification);
-                        return sportService.findById(qualification.getTypeOfSportId()).flatMap(qSport -> {
-                            qualificationDTO.setSport(new TypeOfSportDTO(qSport));
-                            return Mono.just(qualificationDTO);
-                        });
-                    }).collectList().flatMap(ql -> {
-                        //log.info("THIS IS QUALIFICATION LIST: [{}]", ql);
-                        ql = ql.stream().sorted(Comparator.comparing(qualification -> qualification.getCategory().getTitle())).collect(Collectors.toList());
-                        participantDTO.setQualifications(ql);
-                        return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
-                            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
-                            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
-                                sportSchoolDTO.setSubject(new SubjectDTO(subject));
-                                return Mono.just(sportSchoolDTO);
-                            });
-                        }).collectList().flatMap(sl -> {
-                            //log.info("THIS IS SCHOOL LIST: [{}]", sl);
-                            sl = sl.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
-                            participantDTO.setSchools(sl);
-                            return Mono.just(participantDTO);
-                        });
-                    });
-                });
-            }).collectList().flatMapMany(pl -> {
-                //log.info("THIS IS PARTICIPANT LIST: [{}]", pl);
-                pl = pl.stream().sorted(Comparator.comparing(ParticipantDTO::getFullName)).collect(Collectors.toList());
-                return Flux.fromIterable(pl);
-            }).flatMapSequential(Mono::just);
-        });
-    }
-
-
-    @GetMapping("/new")
-    public Mono<Rendering> addContestPage(){
-        return Mono.just(
-                Rendering.view("template")
-                        .modelAttribute("title","Add contest page")
-                        .modelAttribute("index","add-contest-page")
-                        .modelAttribute("contestForm", new ContestDTO())
-                        .modelAttribute("sports", getSports())
-                        .modelAttribute("subjects", subjectService.getAll())
-                        .modelAttribute("categories", getCategories())
-                        .modelAttribute("federalStandards", getFedStandards())
-                        .modelAttribute("conditions", getConditions())
-                        .build()
-        );
-    }
-
-    @PostMapping("/add")
-    public Mono<Rendering> addContest(@ModelAttribute(name = "contestForm") @Valid ContestDTO contestDTO, Errors errors){
-       /* return Mono.just(Rendering.redirectTo("/contest/new").build());*/
-        return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(c -> {
-            if(errors.hasErrors()){
-                return Mono.just(
-                        Rendering.view("template")
-                                .modelAttribute("title","Add contest page")
-                                .modelAttribute("index","add-contest-page")
-                                .modelAttribute("contestForm", contestDTO)
-                                .modelAttribute("sports", getSports())
-                                .modelAttribute("subjects", subjectService.getAll())
-                                .modelAttribute("categories", getCategories())
-                                .modelAttribute("federalStandards", getFedStandards())
-                                .modelAttribute("conditions", getConditions())
-                                .build()
-                );
-            }
-            if(c.getId() != 0){
-                if(c.getEkp().equals(contestDTO.getEkp())){
-                    int year1 = c.getBeginning().getYear();
-                    int year2 = contestDTO.getBeginning().getYear();
-                    if(year1 == year2){
-                        errors.rejectValue("ekp","","Такой номер ЕКП и год проведения уже зарегистрирован. Это ошибка!");
-                        return Mono.just(
-                                Rendering.view("template")
-                                        .modelAttribute("title","Add contest page")
-                                        .modelAttribute("index","add-contest-page")
-                                        .modelAttribute("contestForm", contestDTO)
-                                        .modelAttribute("sports", getSports())
-                                        .modelAttribute("subjects", subjectService.getAll())
-                                        .modelAttribute("categories", getCategories())
-                                        .modelAttribute("federalStandards", getFedStandards())
-                                        .modelAttribute("conditions", getConditions())
-                                        .build()
-                        );
-                    }
-                }
-            }
-
-            return contestService.addContest(contestDTO).flatMap(contest -> {
-                log.info("contest saved: " + contest.toString());
-                return Flux.fromIterable(contestDTO.getSports()).flatMap(sport -> {
-                    if(sport.getDisciplineId() == 0){
-                        return Mono.empty();
-                    }else {
-                        ArchiveSport archiveSport = new ArchiveSport(sport);
-                        archiveSport.setContestId(contest.getId());
-                        return archiveSportService.saveArchiveSport(archiveSport).flatMap(as -> {
-                            log.info("aSport saved: " + as.toString());
-                            return Flux.fromIterable(sport.getPlaces()).flatMap(placeDTO -> {
-                                if (placeDTO.getParticipantId() == 0) {
-                                    return Mono.empty();
-                                } else {
-                                    Place place = new Place(placeDTO);
-                                    place.setASportId(as.getId());
-                                    return qualificationService.getById(placeDTO.getQualificationId()).flatMap(q -> {
-                                        if(!q.getCategory().equals(placeDTO.getNewQualificationData())){
-                                            Qualification qualification = new Qualification();
-                                            qualification.setCategory(placeDTO.getNewQualificationData());
-                                            qualification.setTypeOfSportId(contestDTO.getSportId());
-                                            qualification.setParticipantId(placeDTO.getParticipantId());
-                                            return qualificationService.save(qualification).flatMap(newQualification -> {
-                                                place.setNewQualificationId(qualification.getId());
-                                                return placeService.setPlace(place);
-                                            });
-                                        }
-                                        place.setNewQualificationId(q.getId());
-                                        return placeService.setPlace(place);
-                                    });
-                                }
-                            }).collectList().flatMap(pl -> {
-                                for (Place place : pl) {
-                                    as.addPlace(place);
-                                }
-                                return archiveSportService.saveArchiveSport(as);
-                            });
-                        });
-                    }
-                }).collectList().flatMap(sl -> {
-                    for(ArchiveSport archiveSport : sl){
-                        contest.addArchiveSport(archiveSport);
-                    }
-                    return contestService.saveContest(contest);
-                });
-            }).flatMap(contest -> {
-                log.info("contest fullish created " + contest.toString());
-                return Mono.just(Rendering.redirectTo("/contest/new").build());
             });
         });
     }
@@ -425,6 +271,22 @@ public class ContestController {
                             .modelAttribute("conditions", getConditions())
                             .build()
             );
+        });
+    }
+
+    @GetMapping("/delete")
+    public Mono<Rendering> deleteContest(@RequestParam(name = "contest") int contestId){
+        return contestService.deleteContest(contestId).flatMap(deletedContest -> {
+            log.info("CONTEST HAS BEEN DELETED: [{}]", deletedContest);
+            return archiveSportService.deleteAllCurrent(deletedContest.getASportIds()).flatMap(deletedArchiveSport -> {
+                log.info("ARCHIVE SPORT DELETED: [{}]", deletedArchiveSport);
+                return placeService.deleteAllCurrent(deletedArchiveSport.getPlaceIds());
+            }).collectList();
+        }).flatMap(l -> {
+            for(Place place : l){
+                log.info("PLACE HAS BEEN DELETED: [{}]", place);
+            }
+            return Mono.just(Rendering.redirectTo("/contest/get/all?page=0").build());
         });
     }
 
@@ -550,7 +412,7 @@ public class ContestController {
                             contestDTO.setSports(sportDTOS);
                             return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                                 return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                    if(baseSport.getExpiration() < LocalDate.now().getYear()){
+                                    if(baseSport.getExpiration() < contest.getBeginning().getYear()){
                                         return Mono.empty();
                                     }else{
                                         return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {

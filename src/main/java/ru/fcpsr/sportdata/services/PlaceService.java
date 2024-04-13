@@ -58,4 +58,12 @@ public class PlaceService {
     public Mono<Place> deleteById(int placeId) {
         return placeRepository.findById(placeId).flatMap(place -> placeRepository.delete(place).then(Mono.just(place)));
     }
+
+    public Flux<Place> deleteAllCurrent(Set<Integer> placeIds) {
+        return placeRepository
+                .findAllByIdIn(placeIds)
+                .collectList()
+                .flatMap(list -> placeRepository.deleteAll(list).then(Mono.just(list)))
+                .flatMapMany(Flux::fromIterable);
+    }
 }

@@ -93,4 +93,8 @@ public class ContestService {
     public Mono<Long> getCount() {
         return contestRepository.count();
     }
+
+    public Mono<Contest> deleteContest(int contestId) {
+        return contestRepository.findById(contestId).flatMap(contest -> contestRepository.delete(contest).then(Mono.just(contest)));
+    }
 }

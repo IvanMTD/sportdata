@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
@@ -46,5 +47,13 @@ public class ArchiveSportService {
             archiveSport.getPlaceIds().remove(place.getId());
             return archiveSportRepository.save(archiveSport);
         });
+    }
+
+    public Flux<ArchiveSport> deleteAllCurrent(Set<Integer> aSportIds) {
+        return archiveSportRepository
+                .findAllByIdIn(aSportIds)
+                .collectList()
+                .flatMap(list -> archiveSportRepository.deleteAll(list).then(Mono.just(list)))
+                .flatMapMany(Flux::fromIterable);
     }
 }

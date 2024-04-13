@@ -27,22 +27,16 @@
                     <p class="text-center"><b>Название</b></p>
                 </div>
                 <div class="col border-end border-bottom">
-                    <p class="text-center"><b>Город</b></p>
-                </div>
-                <div class="col border-end border-bottom">
-                    <p class="text-center"><b>Объект</b></p>
-                </div>
-                <div class="col border-end border-bottom">
                     <p class="text-center"><b>Субъект</b></p>
                 </div>
                 <div class="col border-end border-bottom">
                     <p class="text-center"><b>Вид спорта</b></p>
                 </div>
-                <div class="col border-bottom">
+                <div class="col-3 border-bottom">
                     <p class="text-center"><b>Детали</b></p>
                 </div>
             </div>
-            <div class="row" th:each="contest : ${contests}" style="height: 100px;">
+            <div class="row" th:each="contest, c_stat : ${contests}" style="height: 100px;">
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getEkp()}"></p>
                 </div>
@@ -50,18 +44,12 @@
                     <p th:text="${contest.getTitle()}"></p>
                 </div>
                 <div class="col border-end border-bottom">
-                    <p th:text="${contest.getCity()}"></p>
-                </div>
-                <div class="col border-end border-bottom">
-                    <p th:text="${contest.getLocation()}"></p>
-                </div>
-                <div class="col border-end border-bottom">
                     <p th:text="${contest.getSubject().getTitle()}"></p>
                 </div>
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getSport().getTitle()}"></p>
                 </div>
-                <div class="col border-bottom d-flex justify-content-center align-items-center">
+                <div class="col-3 border-bottom d-flex justify-content-center align-items-center">
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <a class="btn btn-outline-secondary" th:href="@{/contest/show(contest=${contest.getId()})}">
                             <span data-bs-toggle="tooltip" data-bs-title="Детальный просмотр"><i class="bi bi-card-text"></i></span>
@@ -69,6 +57,36 @@
                         <a class="btn btn-outline-secondary" th:href="@{/contest/first-step(contest=${contest.getId()})}">
                             <span data-bs-toggle="tooltip" data-bs-title="Редактировать данные"><i class="bi bi-pencil"></i></i></span>
                         </a>
+                        <!-- Button trigger modal -->
+                        <button th:id="'delete-modal-btn-' + ${c_stat.index}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#delete-modal">
+                            <span data-bs-toggle="tooltip" data-bs-title="Удалить данные"><i class="bi bi-trash"></i></i></span>
+                        </button>
+                    </div>
+                    <script th:inline="javascript">
+                        document.getElementById('delete-modal-btn-' + [[${c_stat.index}]]).setAttribute('data-bs-target','#delete-modal-' + [[${c_stat.index}]]);
+                    </script>
+                    <!-- Modal -->
+                    <div class="modal fade" th:id="'delete-modal-' + ${c_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Внимание!</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Вы собираетесь удалить соревнование ЕКП № <span th:text="' ' + ${contest.getEkp()}"></span>. Это действие не удаляет
+                                        (в целях безопасности структуру данных других записанных соревнований)
+                                        полученные участниками квалификации в процессе "выполнения" ими соревновательных зачетов. Однако другие данные связанные
+                                        непосредственно с этим соревнованием будут удалены.
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                    <a th:href="@{/contest/delete(contest=${contest.id})}" type="button" class="btn btn-primary">Подтвердить</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -91,7 +109,7 @@
                         <a class="page-link" th:href="@{/contest/get/all(page=${page - 1})}" th:if="${page - 1 >= 0}" th:text="${page}"></a>
                     </li>
                     <li class="page-item active">
-                        <a class="page-link" href="#" th:text="${page + 1}"></a>
+                        <a class="page-link disabled" href="#" th:text="${page + 1}"></a>
                     </li>
                     <li class="page-item">
                         <a class="page-link" th:href="@{/contest/get/all(page=${page + 1})}" th:if="${page + 1} <= ${lastPage}" th:text="${page + 2}"></a>
