@@ -138,6 +138,21 @@ private int participantTotal;
                             </div>
                         </div>
                     </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4 bg-secondary-subtle">
+                                <span>Базовых видов спорта</span>
+                            </div>
+                            <div class="col-4">
+                                <span th:text="${dbStat.baseSportTotal}"></span>
+                            </div>
+                            <div class="col-4">
+                                <span class="muted float-end">
+                                     <!--<span id="bs-a" data-bs-toggle="tooltip" data-bs-title="Отсутствуют записи в базе данных" hidden><i class="bi bi-database-exclamation fs-4 text-danger"></i></span>-->
+                                </span>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
                 <div class="d-grid gap-2 p-2">
                     <a th:href="@{/database/subject/А}" class="btn btn-primary" type="button">Управление записями - "Субъекты"</a>

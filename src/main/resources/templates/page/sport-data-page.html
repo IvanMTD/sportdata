@@ -433,6 +433,8 @@
                                     </div>
                                     <div class="row">
                                         <p th:text="${bs.getSubject.getTitle()}"></p>
+                                        <p th:text="'Выдан ' + ${bs.getDateYear()}"></p>
+                                        <p th:text="'Действует до ' + ${bs.getExpiration()}"></p>
                                     </div>
                                 </div>
                             </div>

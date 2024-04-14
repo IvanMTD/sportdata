@@ -11,4 +11,7 @@ public class TotalStatisticDTO {
     private int schoolTotal;
     private int participantTotal;
     private int qualificationTotal;
+
+    private int baseSportTotal;
+    private int contestTotal;
 }

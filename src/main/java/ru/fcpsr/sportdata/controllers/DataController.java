@@ -918,9 +918,25 @@ public class DataController {
                 if(LocalDate.now().getYear() < baseSport.getExpiration()) {
                     BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
                     return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                        SubjectDTO subjectDTO = new SubjectDTO(subject);
-                        baseSportDTO.setSubject(subjectDTO);
-                        return Mono.just(baseSportDTO);
+                        boolean check = false;
+                        for(int id : subject.getBaseSportIds()){
+                            if(id == baseSport.getId()){
+                                check = true;
+                                break;
+                            }
+                        }
+
+                        if(!check){
+                            return baseSportService.deleteBaseSport(baseSport.getId()).flatMap(bs -> {
+                                return sportService.deleteBaseSportFromSport(baseSport).flatMap(s -> {
+                                    return Mono.empty();
+                                });
+                            });
+                        }else {
+                            SubjectDTO subjectDTO = new SubjectDTO(subject);
+                            baseSportDTO.setSubject(subjectDTO);
+                            return Mono.just(baseSportDTO);
+                        }
                     });
                 }else{
                     return Mono.empty();
@@ -973,6 +989,9 @@ public class DataController {
             return qualificationService.getCount();
         }).flatMap(count -> {
             form.setQualificationTotal(Math.toIntExact(count));
+            return baseSportService.getCount();
+        }).flatMap(count -> {
+            form.setBaseSportTotal(Math.toIntExact(count));
             return Mono.just(form);
         }));
     }

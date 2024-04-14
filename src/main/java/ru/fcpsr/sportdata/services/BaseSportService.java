@@ -75,4 +75,8 @@ public class BaseSportService {
     public Flux<BaseSport> deleteAllBaseSports(Set<Integer> baseSportIds) {
         return baseSportRepository.findAllByIdIn(baseSportIds).flatMap(baseSport -> baseSportRepository.delete(baseSport).then(Mono.just(baseSport))).defaultIfEmpty(new BaseSport());
     }
+
+    public Mono<Long> getCount() {
+        return baseSportRepository.count();
+    }
 }
