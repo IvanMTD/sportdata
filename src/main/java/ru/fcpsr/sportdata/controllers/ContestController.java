@@ -412,7 +412,7 @@ public class ContestController {
                             contestDTO.setSports(sportDTOS);
                             return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
                                 return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                    if(baseSport.getExpiration() < contest.getBeginning().getYear()){
+                                    if(baseSport.getExpiration() <= contest.getBeginning().getYear()){
                                         return Mono.empty();
                                     }else{
                                         return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
