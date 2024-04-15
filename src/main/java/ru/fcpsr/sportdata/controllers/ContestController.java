@@ -416,7 +416,19 @@ public class ContestController {
                                         return Mono.empty();
                                     }else{
                                         return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                                            return Mono.just(new SubjectDTO(subject));
+                                            int check = 0;
+                                            for(Integer id : subject.getBaseSportIds()){
+                                                if(id == baseSport.getId()){
+                                                    check++;
+                                                }
+                                            }
+                                            if(check == 0){
+                                                return baseSportService.deleteBaseSport(baseSport.getId()).flatMap(bs -> {
+                                                    return Mono.empty();
+                                                });
+                                            }else {
+                                                return Mono.just(new SubjectDTO(subject));
+                                            }
                                         });
                                     }
                                 }).collectList().flatMap(subjectsDTO -> {
