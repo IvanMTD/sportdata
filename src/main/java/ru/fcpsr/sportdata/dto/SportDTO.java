@@ -20,7 +20,9 @@ public class SportDTO {
     private int groupId;
     private AgeGroupDTO group;
     private List<Category> allowed = new ArrayList<>(Collections.nCopies(Category.values().length, null));
+    private List<CategoryDTO> allowedList = new ArrayList<>();
     private List<FederalStandard> standards = new ArrayList<>(Collections.nCopies(FederalStandard.values().length, null));
+    private List<FederalStandardDTO> standardList = new ArrayList<>();
     List<PlaceDTO> places = new ArrayList<>();
 
     public SportDTO(ArchiveSport sport){
@@ -31,9 +33,29 @@ public class SportDTO {
 
         if(sport.getAllowed() != null) {
             allowed.addAll(sport.getAllowed());
+            setAllowedList(allowed);
         }
         if(sport.getFederalStandards() != null) {
             standards.addAll(sport.getFederalStandards());
+            setStandardList(standards);
+        }
+    }
+
+    public void setAllowedList(List<Category> allowed) {
+        for(Category category : allowed){
+            if(category != null){
+                CategoryDTO categoryDTO = new CategoryDTO(category);
+                allowedList.add(categoryDTO);
+            }
+        }
+    }
+
+    public void setStandardList(List<FederalStandard> fs) {
+        for(FederalStandard federalStandard : fs){
+            if(federalStandard != null){
+                FederalStandardDTO federalStandardDTO = new FederalStandardDTO(federalStandard);
+                standardList.add(federalStandardDTO);
+            }
         }
     }
 }

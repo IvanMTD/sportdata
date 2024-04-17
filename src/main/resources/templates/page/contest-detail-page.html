@@ -1,3 +1,17 @@
+<script>
+    function getCompleteText(text, list){
+        console.log(text);
+        for(let i=0; i<list.length; i++){
+            if(i === list.length - 1){
+                text += list[i].title + '\n';
+            }else{
+                text += list[i].title + ', \n';
+            }
+        }
+        return text;
+    }
+</script>
+
 <div class="container">
     <div class="row">
         <div class="col">
@@ -391,17 +405,22 @@
                                 <div class="col">
                                     <i class="bi bi-flag fs-5 text-danger"></i><span class="fs-5 text-uppercase text-secondary" th:text="' ' + ${as.discipline.title}"></span>
                                 </div>
-                                <!--<div class="col-1">
-                                    <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют базовые виды спорта"><i class="bi bi-info-circle fs-4 text-warning"></i></span>
+                                <div class="col-1">
+                                    <span th:id="'allow-' + ${as_stat.index}" data-bs-toggle="tooltip" data-bs-title=""><i class="bi bi-bookmark-check fs-4 text-success"></i></span>
+                                    <script th:inline="javascript">
+                                        document.getElementById('allow-' + [[${as_stat.index}]]).setAttribute('data-bs-title', getCompleteText('Допуски: ', [[${as}]].allowedList));
+                                    </script>
                                 </div>
                                 <div class="col-1">
-                                    <span data-bs-toggle="tooltip" data-bs-title="У субъекта отсутствуют базовые виды спорта"><i class="bi bi-info-circle fs-4 text-warning"></i></span>
-                                </div>-->
+                                    <span th:id="'fs-' + ${as_stat.index}" data-bs-toggle="tooltip" data-bs-title=""><i class="bi bi-bookmark-star fs-4 text-danger"></i></span>
+                                    <script th:inline="javascript">
+                                        document.getElementById('fs-' + [[${as_stat.index}]]).setAttribute('data-bs-title', getCompleteText('ФССП: ', [[${as}]].standardList));
+                                    </script>
+                                </div>
                             </button>
                         </h2>
                         <div th:id="'collapse-' + ${as_stat.index}" class="accordion-collapse collapse">
                             <div class="accordion-body">
-
                                 <div th:if="${as.getPlaces.size() != 0}">
                                     <div th:each="place , p_stat : ${as.getPlaces()}">
                                         <input type="number" th:id="'h-p-id-' + ${as_stat.index} + '-' + ${p_stat.index}"
