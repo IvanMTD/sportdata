@@ -8,7 +8,9 @@ import ru.fcpsr.sportdata.models.FederalStandard;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -48,6 +50,7 @@ public class SportDTO {
                 allowedList.add(categoryDTO);
             }
         }
+        allowedList = allowedList.stream().sorted(Comparator.comparing(CategoryDTO::getTitle)).collect(Collectors.toList());
     }
 
     public void setStandardList(List<FederalStandard> fs) {
@@ -57,5 +60,6 @@ public class SportDTO {
                 standardList.add(federalStandardDTO);
             }
         }
+        standardList = standardList.stream().sorted(Comparator.comparing(FederalStandardDTO::getTitle)).collect(Collectors.toList());
     }
 }

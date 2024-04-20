@@ -112,7 +112,7 @@
                         </div>
                         <div class="row">
                             <div class="d-grid py-2">
-                                <input class="btn btn-primary" type="submit" value="Обновить">
+                                <input class="btn btn-outline-secondary" type="submit" value="Обновить">
                             </div>
                         </div>
                     </form>
@@ -120,12 +120,12 @@
 
                 <div id="fio-edit" class="row">
                     <div class="d-grid py-2">
-                        <button class="btn btn-primary" type="button" onclick="fioEdit()">Редактировать</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="fioEdit()">Редактировать</button>
                     </div>
                 </div>
                 <div id="fio-back" class="row" hidden>
                     <div class="d-grid py-2">
-                        <button class="btn btn-primary" type="button" onclick="fioBack()">Назад</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="fioBack()">Назад</button>
                     </div>
                 </div>
                 <script th:inline="javascript">
@@ -152,7 +152,7 @@
                 <!-- КАРТОЧКА СПОРТСМЕНА! ФИО ДАТА -->
 
                 <div class="row">
-                    <p class="text-center fs-5 bg-warning-subtle">
+                    <p class="text-center fs-5 bg-dark-subtle">
                         Спортивные организации и регионы в которых состоит спортсмен
                     </p>
                     <p class="text-center" th:if="${participant.getSchools().size() == 0}">
@@ -236,12 +236,12 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="d-grid py-2">
-                                        <input class="btn btn-primary" type="submit" value="Обновить">
+                                        <input class="btn btn-outline-secondary" type="submit" value="Обновить">
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="d-grid py-2">
-                                        <a class="btn btn-primary" th:href="@{/database/participant/{pid}/subject/school/{schoolId}/delete(pid=${participant.getId}, schoolId=${school.getId()})}">Удалить</a>
+                                        <a class="btn btn-outline-secondary" th:href="@{/database/participant/{pid}/subject/school/{schoolId}/delete(pid=${participant.getId}, schoolId=${school.getId()})}">Удалить</a>
                                     </div>
                                 </div>
                             </div>
@@ -301,19 +301,19 @@
                         </div>
                         <div class="col">
                             <div class="d-grid py-2">
-                                <input class="btn btn-primary" type="submit" value="Добавить">
+                                <input class="btn btn-outline-secondary" type="submit" value="Добавить">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div id="ss-edit-button" class="row">
                     <div class="d-grid py-2">
-                        <button class="btn btn-warning" type="button" onclick="ssEdit()">Редактировать</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="ssEdit()">Редактировать</button>
                     </div>
                 </div>
                 <div id="ss-back-button" class="row" hidden>
                     <div class="d-grid py-2">
-                        <button class="btn btn-warning" type="button" onclick="ssGoBack()">Назад</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="ssGoBack()">Назад</button>
                     </div>
                 </div>
                 <script th:inline="javascript">
@@ -333,7 +333,7 @@
                     }
                 </script>
                 <div class="row">
-                    <p class="text-center fs-5 bg-success-subtle">
+                    <p class="text-center fs-5 bg-dark-subtle">
                         Квалификации спортсмена
                     </p>
                     <p class="text-center" th:if="${participant.getQualifications().size() == 0}">
@@ -388,12 +388,12 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="d-grid py-2">
-                                        <input class="btn btn-primary" type="submit" value="Обновить">
+                                        <input class="btn btn-outline-secondary" type="submit" value="Обновить">
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="d-grid py-2">
-                                        <a class="btn btn-primary" th:href="@{/database/participant/{pid}/qualification/{qid}/delete(pid=${participant.getId()}, qid=${q.getId()})}" role="button">Удалить</a>
+                                        <a class="btn btn-outline-secondary" th:href="@{/database/participant/{pid}/qualification/{qid}/delete(pid=${participant.getId()}, qid=${q.getId()})}" role="button">Удалить</a>
                                     </div>
                                 </div>
                             </div>
@@ -424,19 +424,19 @@
                         </div>
                         <div class="col">
                             <div class="d-grid py-2">
-                                <input class="btn btn-primary" type="submit" value="Добавить">
+                                <input class="btn btn-outline-secondary" type="submit" value="Добавить">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div id="qe" class="row">
                     <div class="d-grid py-2">
-                        <button class="btn btn-success" type="button" onclick="qe()">Редактировать</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="qe()">Редактировать</button>
                     </div>
                 </div>
                 <div id="qb" class="row" hidden>
                     <div class="d-grid py-2">
-                        <button class="btn btn-success" type="button" onclick="qb()">Назад</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="qb()">Назад</button>
                     </div>
                 </div>
                 <script>
@@ -457,7 +457,7 @@
                 </script>
                 <div class="container">
                     <div class="row py-2">
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal">Удалить спортсмена</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal">Удалить спортсмена</button>
                         <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">

@@ -478,7 +478,7 @@
 
                 participants.forEach(function (p) {
                     dataList.append(
-                        '<option data-item="' + JSON.stringify(p).replace(/"/g, '&quot;') + '" value="' + p.lastname + ' ' + p.name + ' ' + p.middleName + '">' + p.birthday + '</option>'
+                        '<option data-item="' + JSON.stringify(p).replace(/"/g, '&quot;') + '" value="' + p.lastname + ' ' + p.name + ' ' + p.middleName + '">' + p.birthday + ' | Возраст: ' + p.age + '</option>'
                     );
                 });
             }

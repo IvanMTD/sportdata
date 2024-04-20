@@ -62,6 +62,9 @@
                             <span data-bs-toggle="tooltip" data-bs-title="Удалить данные"><i class="bi bi-trash"></i></i></span>
                         </button>
                     </div>
+
+                    <span th:if="${!contest.complete}" class="ps-2" data-bs-toggle="tooltip" data-bs-title="Внесены не все данные по соревнованию. Числится как не закрытое."><i class="fs-3 text-danger bi bi-exclamation-circle"></i></span>
+
                     <script th:inline="javascript">
                         document.getElementById('delete-modal-btn-' + [[${c_stat.index}]]).setAttribute('data-bs-target','#delete-modal-' + [[${c_stat.index}]]);
                     </script>
@@ -75,7 +78,7 @@
                                 </div>
                                 <div class="modal-body">
                                     <p>
-                                        Вы собираетесь удалить соревнование ЕКП № <span th:text="' ' + ${contest.getEkp()}"></span>. Это действие не удаляет
+                                        Вы собираетесь <b>удалить</b> соревнование ЕКП № <span th:text="' ' + ${contest.getEkp()}"></span>. Это действие не удаляет
                                         (в целях безопасности структуру данных других записанных соревнований)
                                         полученные участниками квалификации в процессе "выполнения" ими соревновательных зачетов. Однако другие данные связанные
                                         непосредственно с этим соревнованием будут удалены.

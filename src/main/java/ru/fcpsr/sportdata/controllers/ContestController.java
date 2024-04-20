@@ -15,7 +15,6 @@ import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -403,40 +402,14 @@ public class ContestController {
                     if(sportDTOS.size() == 1){
                         if(sportDTOS.get(0).getId() == 0){
                             contestDTO.setSports(sportDTOS);
-                            return Mono.just(contestDTO);
+                            return getCalcSubjects(contestDTO,contest);
                         }else{
                             sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
                             if(!contest.isComplete()) {
                                 sportDTOS.add(new SportDTO());
                             }
                             contestDTO.setSports(sportDTOS);
-                            return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
-                                return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                    if(baseSport.getExpiration() <= contest.getBeginning().getYear()){
-                                        return Mono.empty();
-                                    }else{
-                                        return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                                            int check = 0;
-                                            for(Integer id : subject.getBaseSportIds()){
-                                                if(id == baseSport.getId()){
-                                                    check++;
-                                                }
-                                            }
-                                            if(check == 0){
-                                                return baseSportService.deleteBaseSport(baseSport.getId()).flatMap(bs -> {
-                                                    return Mono.empty();
-                                                });
-                                            }else {
-                                                return Mono.just(new SubjectDTO(subject));
-                                            }
-                                        });
-                                    }
-                                }).collectList().flatMap(subjectsDTO -> {
-                                    contestDTO.setBaseSubjectTotal(subjectsDTO);
-                                    contestDTO.calcBaseIn();
-                                    return Mono.just(contestDTO);
-                                });
-                            });
+                            return getCalcSubjects(contestDTO,contest);
                         }
                     }else{
                         sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(SportDTO::getId)).collect(Collectors.toList());
@@ -444,25 +417,39 @@ public class ContestController {
                             sportDTOS.add(new SportDTO());
                         }
                         contestDTO.setSports(sportDTOS);
-                        return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> {
-                            return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                                if(LocalDate.now().getYear() < baseSport.getExpiration()) {
-                                    return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
-                                        return Mono.just(new SubjectDTO(subject));
-                                    });
-                                }else{
-                                    return Mono.empty();
-                                }
-                            }).collectList().flatMap(subjectsDTO -> {
-                                contestDTO.setBaseSubjectTotal(subjectsDTO);
-                                contestDTO.calcBaseIn();
-                                return Mono.just(contestDTO);
-                            });
-                        });
+                        return getCalcSubjects(contestDTO,contest);
                     }
                 });
             });
         });
+    }
+
+    private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest){
+        return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
+            if(baseSport.getExpiration() <= contest.getBeginning().getYear()){
+                return Mono.empty();
+            }else{
+                return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
+                    int check = 0;
+                    for(Integer id : subject.getBaseSportIds()){
+                        if(id == baseSport.getId()){
+                            check++;
+                        }
+                    }
+                    if(check == 0){
+                        return baseSportService.deleteBaseSport(baseSport.getId()).flatMap(bs -> {
+                            return Mono.empty();
+                        });
+                    }else {
+                        return Mono.just(new SubjectDTO(subject));
+                    }
+                });
+            }
+        }).collectList().flatMap(subjectsDTO -> {
+            contestDTO.setBaseSubjectTotal(subjectsDTO);
+            contestDTO.calcBaseIn();
+            return Mono.just(contestDTO);
+        }));
     }
 
     private Flux<TypeOfSportDTO> getSports(){

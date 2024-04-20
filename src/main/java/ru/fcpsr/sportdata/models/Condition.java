@@ -3,7 +3,9 @@ package ru.fcpsr.sportdata.models;
 public enum Condition {
     DONE("Выполнение"),
     ALLOW("Подтверждение"),
-    NOT_ALLOW("Не подтверждение");
+    NOT_ALLOW("Не подтверждение"),
+
+    NO("Отсутствует");
 
     private final String title;
 

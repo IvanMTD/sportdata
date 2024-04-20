@@ -399,7 +399,7 @@
 
                 <div class="accordion py-4" id="sport-accordion">
 
-                    <div class="accordion-item" th:each="as, as_stat : ${contest.getSports()}">
+                    <div class="accordion-item" th:each="as, as_stat : ${contest.getSports()}" th:if="${as.id} != 0">
                         <h2 class="accordion-header">
                             <button th:id="'accordion-btn-' + ${as_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
                                 <div class="col">
@@ -437,21 +437,21 @@
                                                 <div class="col">
                                                     <div class="row">
                                                         <div class="col">
-                                                            <div class="form-floating">
-                                                                <select class="form-select"
-                                                                        th:id="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}"
-                                                                        th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].participantId}"
-                                                                        onchange="rebuildCategory(this.id)" disabled>
-
-                                                                </select>
-                                                                <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
-                                                                <script th:inline="javascript">
-                                                                    $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                        '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Год рождения: ' + [[${place}]].participant.date + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
-                                                                    );
-                                                                    document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
-                                                                </script>
-                                                            </div>
+                                                            <a th:href="@{/database/participant/{id}/show(id=${place.participant.id})}">
+                                                                <div class="form-floating">
+                                                                    <select class="form-select"
+                                                                            th:id="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}"
+                                                                            th:field="*{sports[__${as_stat.index}__].places[__${p_stat.index}__].participantId}" style="pointer-events: none">
+                                                                    </select>
+                                                                    <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
+                                                                    <script th:inline="javascript">
+                                                                        $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                            '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Год рождения: ' + [[${place}]].participant.date + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
+                                                                        );
+                                                                        document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
+                                                                    </script>
+                                                                </div>
+                                                            </a>
                                                         </div>
                                                         <div class="col">
                                                             <div class="form-floating">
@@ -477,7 +477,6 @@
                                                             </div>
                                                         </div>
                                                         <script th:inline="javascript">
-                                                            console.log(JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')));
                                                             $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
                                                                 '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.title + '</option>'
                                                             );

@@ -23,7 +23,9 @@ public enum Category {
     KMS("Кандидат в мастера спорта"),
     MS("Мастер спорта России"),
     MSMK("Мастер спорта международного класса"),
-    ZMS("Заслуженный мастер спорта");
+    ZMS("Заслуженный мастер спорта"),
+
+    NO("Отсутствует");
 
     private final String title;
 
@@ -33,5 +35,11 @@ public enum Category {
 
     public String getTitle(){
         return title;
+    }
+
+    public Category[] getBase(){
+        return new Category[]{
+                BR,YN1,YN2,YN3,R1,R2,R3,KMS,MS,MSMK,ZMS
+        };
     }
 }
