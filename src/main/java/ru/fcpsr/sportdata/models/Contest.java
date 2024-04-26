@@ -46,6 +46,26 @@ public class Contest {
     private int msmk;
     private int zms;
 
+    private int trainerTotal;
+    private int judgeTotal;
+    private int nonresidentJudge;
+    private int vrc;
+    private int fc;
+    private int sc;
+    private int tc;
+    private int bc;
+
+    private int yn1Date;
+    private int yn2Date;
+    private int yn3Date;
+    private int r1Date;
+    private int r2Date;
+    private int r3Date;
+    private int kmsDate;
+    private int msDate;
+    private int msmkDate;
+    private int zmsDate;
+
     private Set<Integer> aSportIds = new HashSet<>();
 
     boolean complete;
@@ -96,6 +116,26 @@ public class Contest {
         setZms(contestDTO.getZms());
         setBr(contestDTO.getBr());
 
+        setTrainerTotal(contestDTO.getTrainerTotal());
+        setJudgeTotal(contestDTO.getJudgeTotal());
+        setNonresidentJudge(contestDTO.getNonresidentJudge());
+        setVrc(contestDTO.getVrc());
+        setFc(contestDTO.getFc());
+        setSc(contestDTO.getSc());
+        setTc(contestDTO.getTc());
+        setBc(contestDTO.getBc());
+
+        setYn1Date(contestDTO.getYn1Date());
+        setYn2Date(contestDTO.getYn2Date());
+        setYn3Date(contestDTO.getYn3Date());
+        setR1Date(contestDTO.getR1Date());
+        setR2Date(contestDTO.getR2Date());
+        setR3Date(contestDTO.getR3Date());
+        setKmsDate(contestDTO.getKmsDate());
+        setMsDate(contestDTO.getMsDate());
+        setMsmkDate(contestDTO.getMsmkDate());
+        setZmsDate(contestDTO.getZmsDate());
+
         setComplete(contestDTO.isComplete());
     }
 
@@ -141,6 +181,26 @@ public class Contest {
         setMs(contestDTO.getMs());
         setMsmk(contestDTO.getMsmk());
         setZms(contestDTO.getZms());
+
+        setTrainerTotal(contestDTO.getTrainerTotal());
+        setJudgeTotal(contestDTO.getJudgeTotal());
+        setNonresidentJudge(contestDTO.getNonresidentJudge());
+        setVrc(contestDTO.getVrc());
+        setFc(contestDTO.getFc());
+        setSc(contestDTO.getSc());
+        setTc(contestDTO.getTc());
+        setBc(contestDTO.getBc());
+
+        setYn1Date(contestDTO.getYn1Date());
+        setYn2Date(contestDTO.getYn2Date());
+        setYn3Date(contestDTO.getYn3Date());
+        setR1Date(contestDTO.getR1Date());
+        setR2Date(contestDTO.getR2Date());
+        setR3Date(contestDTO.getR3Date());
+        setKmsDate(contestDTO.getKmsDate());
+        setMsDate(contestDTO.getMsDate());
+        setMsmkDate(contestDTO.getMsmkDate());
+        setZmsDate(contestDTO.getZmsDate());
 
         this.firstPlace = replaceData(contestDTO.getFirstPlace());
         this.secondPlace = replaceData(contestDTO.getSecondPlace());

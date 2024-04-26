@@ -5,8 +5,8 @@
         </div>
     </div>
     <div class="row rounded-4 shadow">
-        <div class="col-3 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden">
-        </div>
+        <div class="col-3 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden"></div>
+
         <form class="col-9 px-4" th:method="POST" th:action="@{/contest/second-step}" th:object="${contest}">
             <input type="number" th:field="*{id}" hidden>
             <div class="row">
@@ -155,6 +155,80 @@
             </div>
 
             <div class="row">
+                <p class="text-center text-secondary fs-5">Укажите возрастные допуски согласно ЕВСК</p>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="yn1Date" placeholder="yn1Date" th:field="*{yn1Date}">
+                        <label for="yn1Date">Юношеский 1 разряд с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="yn2Date" placeholder="yn2Date" th:field="*{yn2Date}">
+                        <label for="yn2Date">Юношеский 2 разряд с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="yn3Date" placeholder="yn3Date" th:field="*{yn3Date}">
+                        <label for="yn3Date">Юношеский 3 разряд с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="r1Date" placeholder="yn1Date" th:field="*{r1Date}">
+                        <label for="r1Date">1 разряд с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="r2Date" placeholder="r2Date" th:field="*{r2Date}">
+                        <label for="r2Date">2 разряд с</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="r3Date" placeholder="r3Date" th:field="*{r3Date}">
+                        <label for="r3Date">3 разряд с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="kmsDate" placeholder="kmsDate" th:field="*{kmsDate}">
+                        <label for="kmsDate">КМС с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="msDate" placeholder="msDate" th:field="*{msDate}">
+                        <label for="msDate">МС с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="msmkDate" placeholder="msmkDate" th:field="*{msmkDate}">
+                        <label for="msmkDate">МСМК с</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="zmsDate" placeholder="zmsDate" th:field="*{zmsDate}">
+                        <label for="zmsDate">ЗМС с</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <p class="text-center text-secondary fs-5">Оценка участников</p>
+            </div>
+
+            <div class="row">
                 <div class="col">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="participant-total" placeholder="participantTotal" th:field="*{participantTotal}">
@@ -248,6 +322,64 @@
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="zms" placeholder="zms" th:field="*{zms}">
                         <label for="zms">Заслуженных мастеров спорта</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <p class="text-center text-secondary fs-5">Оценка тренерского и судейского состава</p>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="trainerTotal" placeholder="trainerTotal" th:field="*{trainerTotal}">
+                        <label for="trainerTotal">Всего тренеров (представителей)</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="judgeTotal" placeholder="judgeTotal" th:field="*{judgeTotal}">
+                        <label for="judgeTotal">Всего судей</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="nonresidentJudge" placeholder="nonresidentJudge" th:field="*{nonresidentJudge}">
+                        <label for="nonresidentJudge">Всего иногородних судей</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="bc" placeholder="bc" th:field="*{bc}">
+                        <label for="bc">Судей без категории</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="vrc" placeholder="vrc" th:field="*{vrc}">
+                        <label for="vrc">Судей ВРК</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="fc" placeholder="fc" th:field="*{fc}">
+                        <label for="fc">Судей 1 категории</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="sc" placeholder="fc" th:field="*{sc}">
+                        <label for="sc">Судей 2 категории</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="tc" placeholder="tc" th:field="*{tc}">
+                        <label for="tc">Судей 3 категории</label>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,26 @@ public class ContestDTO {
     private int msmk;
     private int zms;
 
+    private int trainerTotal;
+    private int judgeTotal;
+    private int nonresidentJudge;
+    private int vrc;
+    private int fc;
+    private int sc;
+    private int tc;
+    private int bc;
+
+    private int yn1Date;
+    private int yn2Date;
+    private int yn3Date;
+    private int r1Date;
+    private int r2Date;
+    private int r3Date;
+    private int kmsDate;
+    private int msDate;
+    private int msmkDate;
+    private int zmsDate;
+
     boolean complete;
 
     @NotNull(message = "Укажите начало соревнования")
@@ -101,6 +121,26 @@ public class ContestDTO {
         setMs(contest.getMs());
         setMsmk(contest.getMsmk());
         setZms(contest.getZms());
+
+        setTrainerTotal(contest.getTrainerTotal());
+        setJudgeTotal(contest.getJudgeTotal());
+        setNonresidentJudge(contest.getNonresidentJudge());
+        setVrc(contest.getVrc());
+        setFc(contest.getFc());
+        setSc(contest.getSc());
+        setTc(contest.getTc());
+        setBc(contest.getBc());
+
+        setYn1Date(contest.getYn1Date());
+        setYn2Date(contest.getYn2Date());
+        setYn3Date(contest.getYn3Date());
+        setR1Date(contest.getR1Date());
+        setR2Date(contest.getR2Date());
+        setR3Date(contest.getR3Date());
+        setKmsDate(contest.getKmsDate());
+        setMsDate(contest.getMsDate());
+        setMsmkDate(contest.getMsmkDate());
+        setZmsDate(contest.getZmsDate());
 
         setParticipantTotal(contest.getParticipantTotal());
         setBoyTotal(contest.getBoyTotal());

@@ -92,6 +92,7 @@ create table if not exists contest(
     last_place integer[],
 
     a_sport_ids integer[],
+
     participant_total int,
     boy_total int,
     girl_total int,
@@ -106,6 +107,25 @@ create table if not exists contest(
     ms int,
     msmk int,
     zms int,
+
+    trainer_total int,
+    judge_total int,
+    nonresident_judge int,
+    vrc int,
+    fc int,
+    sc int,
+    tc int,
+
+    yn1_date int,
+    yn2_date int,
+    yn3_date int,
+    r1_date int,
+    r2_date int,
+    r3_date int,
+    kms_date int,
+    ms_date int,
+    msmk_date int,
+    zms_date int,
 
     complete bool
 );
