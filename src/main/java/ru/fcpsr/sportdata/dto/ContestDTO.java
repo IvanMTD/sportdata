@@ -209,4 +209,8 @@ public class ContestDTO {
     public String getEndingDate(){
         return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(ending);
     }
+
+    public int getContestYear(){
+        return beginning.getYear();
+    }
 }

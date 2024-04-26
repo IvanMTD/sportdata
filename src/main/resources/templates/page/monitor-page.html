@@ -1,0 +1,54 @@
+<script th:inline="javascript">
+    console.log([[${contest}]]);
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p class="fs-2 text-secondary">Мониторинг данных</p>
+        </div>
+    </div>
+    <hr>
+    <form class="row">
+        <p class="fs-2 text-dark">
+            Мониторинг и анализ данных спортивных соревнований <input type="text" th:value="${contest.title}">
+            по виду спорта <input type="text" th:value="'«' + ${contest.sport.title} + '»'">
+            среди спортсменов возрастной группы <input type="text" th:each="d, stat : ${contest.sports}" th:value="'«' + ${d.group.title} + ' (' + ${d.group.minAge} + '-' + ${d.group.maxAge} + ')»' + (${stat.last} ? ' ' : ', ')">
+            в спортивных дисциплинах:
+            <input type="text" th:each="d, stat : ${contest.sports}" th:value="'«' + ${d.discipline.title} + '»' + (${stat.last} ? '.' : ', ')">
+        </p>
+        <p class="fs-4 text-dark pt-5">
+            Спортивное мероприятие в Едином календарном плане: № <input type="text" th:value="${contest.ekp}">
+        </p>
+        <p class="fs-4 text-dark">
+            Сроки проведения: <input type="text" th:value="${contest.beginningDate} + ' - ' + ${contest.endingDate}">
+        </p>
+        <p class="fs-4 text-dark">
+            Место проведения: <input type="text" th:value="${contest.subject.title} + ', г. ' + ${contest.city}">
+        </p>
+
+        <p class="fs-4 text-dark pt-4">
+            Согласно Положения о межрегиональных и всероссийских официальных спортивных соревнованиях по <input type="text" th:value="${contest.sport.title}"> на <input type="text" th:value="${contest.contestYear}"> год (далее – Положение о спортивных соревнованиях), Единой всероссийской спортивной классификации, Федеральному стандарту спортивной подготовки по виду спорта «биатлон», официальных протоколов спортивных соревнований и отчета главной судейской коллегии по виду спорта, были сделаны следующие выводы:
+        </p>
+
+        <p class="fs-4 text-dark pt-4">
+            1. Вид спорта <input type="text" th:value="'«' + ${contest.sport.title} + '»'"> является базовым для <input type=text  th:value="${contest.baseSubjectTotal.size()}"> субъектов Российской Федерации.
+        </p>
+
+        <p class="fs-4 text-dark pt-4">
+            2.	В спортивных соревнованиях <input type=text  th:value="${contest.title}"> принял участие <input type=text  th:value="${contest.participantTotal}"> спортсмен (<input type=text  th:value="${contest.boyTotal}"> юниор и <input type=text  th:value="${contest.girlTotal}"> юниорок) и <input type=text  th:value="${contest.trainerTotal}"> тренер (представитель) из <input type=text  th:value="${contest.subjects.size()}"> субъектов Российской Федерации, в том числе из <input type=text  th:value="${contest.baseSubjectIn.size()}"> субъектов Российской Федерации, для которых вид спорта является базовым: <input type=text  th:each="subject, stat : ${contest.baseSubjectIn}" th:value="${subject.title} + (${stat.last} ? '*.' : '*, ')">
+        </p>
+        <p>
+            <small class="text-dark">
+                * субъект Российской Федерации, для которого вид спорта является базовым.
+            </small>
+        </p>
+        <p class="fs-4 text-dark pt-4">
+            По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях первенства России отсутствовали спортсмены из <input type=text  th:value="${contest.baseSubjectOut.size()}"> субъектов Российской Федерации, для которых вид спорта является базовым: <input type=text  th:each="subject, stat : ${contest.baseSubjectOut}" th:value="${subject.title} + (${stat.last} ? '.' : ', ')">
+        </p>
+
+        <p class="fs-4 text-dark pt-4">
+            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастной группы «юниоры, юниорки (19-21 год)» (2002 – 2004 годов рождения), имеющие спортивную квалификацию не ниже первого спортивного разряда. Дополнительно, к участию в спортивных соревнованиях могли быть допущены спортсмены возрастной группы «юноши, девушки (17-18 лет)» соответственно своему полу.
+        </p>
+    </form>
+</div>

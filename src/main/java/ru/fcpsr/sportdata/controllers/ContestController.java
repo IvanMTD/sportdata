@@ -233,6 +233,17 @@ public class ContestController {
         });
     }
 
+    @GetMapping("/monitor")
+    public Mono<Rendering> monitorData(@RequestParam(name = "monitor") int id){
+        return Mono.just(
+                Rendering.view("template")
+                        .modelAttribute("title","Monitor page")
+                        .modelAttribute("index","monitor-page")
+                        .modelAttribute("contest", getCompleteContest(id))
+                        .build()
+        );
+    }
+
     @GetMapping("/get/all")
     public Mono<Rendering> getAll(@RequestParam(name = "page") int page){
         return contestService.getCount().flatMap(count -> {

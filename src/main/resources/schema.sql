@@ -115,6 +115,7 @@ create table if not exists contest(
     fc int,
     sc int,
     tc int,
+    bc int,
 
     yn1_date int,
     yn2_date int,
