@@ -48,7 +48,7 @@
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="${d.group.title} + ' (Возрастом с ' + ${d.group.minAge} + ' до ' + ${d.group.maxAge} + ') (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')" style="width: 100%"></span> <input type="text" placeholder="Дополнительное поле" style="width: 100%">
+            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="${d.group.title} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')" style="width: 100%"></span> <input type="text" placeholder="Дополнительное поле" style="width: 100%">
         </p>
         <p class="fs-4 text-dark pt-4">
             4. В соответствии с Федеральным стандартом спортивной подготовки по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>, спортсмены данного возраста могут проходить спортивную подготовку в группах на следующих этапах спортивной подготовки: <span th:each="d, stat : ${contest.sports}" th:text="${d.standardString} + (${stat.last} ? '. ' : ', ')"></span>
