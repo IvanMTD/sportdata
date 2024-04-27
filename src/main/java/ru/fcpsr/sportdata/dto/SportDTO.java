@@ -2,6 +2,7 @@ package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.poi.ss.formula.functions.T;
 import ru.fcpsr.sportdata.models.ArchiveSport;
 import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.FederalStandard;
@@ -61,5 +62,29 @@ public class SportDTO {
             }
         }
         standardList = standardList.stream().sorted(Comparator.comparing(FederalStandardDTO::getTitle)).collect(Collectors.toList());
+    }
+
+    public String getAllowedString(){
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<allowedList.size(); i++){
+            if(i != allowedList.size() - 1) {
+                builder.append(allowedList.get(i).getTitle()).append(", ");
+            }else{
+                builder.append(allowedList.get(i).getTitle());
+            }
+        }
+        return builder.toString();
+    }
+
+    public String getStandardString(){
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<standardList.size(); i++){
+            if(i != standardList.size() - 1) {
+                builder.append(standardList.get(i).getTitle()).append(", ");
+            }else{
+                builder.append(standardList.get(i).getTitle());
+            }
+        }
+        return builder.toString();
     }
 }

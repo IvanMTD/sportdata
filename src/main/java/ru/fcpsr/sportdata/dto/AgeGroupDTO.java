@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.AgeGroup;
 
+import java.time.LocalDate;
+
 
 @Data
 @NoArgsConstructor
@@ -28,5 +30,13 @@ public class AgeGroupDTO {
         setTitle(group.getTitle());
         setMinAge(group.getMinAge());
         setMaxAge(group.getMaxAge());
+    }
+
+    public int getMinAgeYear(){
+        return LocalDate.now().getYear() - maxAge;
+    }
+
+    public int getMaxAgeYear(){
+        return LocalDate.now().getYear() - minAge;
     }
 }
