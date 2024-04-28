@@ -2,10 +2,14 @@ package ru.fcpsr.sportdata.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
@@ -14,9 +18,8 @@ import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.services.*;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -164,6 +167,72 @@ public class DataRestController {
     public Flux<ParticipantDTO> getParticipantsBySportId(@RequestParam(name = "query") String query){
         int sportId = Integer.parseInt(query);
         return getCompletedParticipantBySportId(sportId);
+    }
+
+    @PostMapping("/monitor")
+    public Mono<ResponseEntity<InputStreamResource>> monitoring(@RequestBody String data) throws IOException {
+        try {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new InternalError("VM does not support mandatory encoding UTF-8");
+        }
+
+        String[] paragraphs = data.split("\\\\n");
+        String additionally = paragraphs[paragraphs.length - 1];
+        List<String> paragraphList = new ArrayList<>();
+        for(int i=0; i<paragraphs.length - 2; i++){
+            String p = paragraphs[i].replace("\\","");
+            if(i == 18){
+                paragraphList.add(p + additionally.substring(0,additionally.length() - 1));
+            }else{
+                paragraphList.add(p);
+            }
+        }
+
+        return Mono.just(createWord(paragraphList));
+    }
+    public ResponseEntity<InputStreamResource> createWord(List<String> paragraphList) throws IOException {
+        // Создаем документ
+        XWPFDocument document = new XWPFDocument();
+
+        for(int i = 0; i < paragraphList.size(); i++) {
+            String paragraphString = paragraphList.get(i);
+           /* System.out.println(paragraphString + " (" + i + ") ");*/
+
+            // Создаем параграф
+            XWPFParagraph paragraph = document.createParagraph();
+
+            // Устанавливаем выравнивание по центру для первого параграфа
+            if(i == 0) {
+                paragraph.setAlignment(ParagraphAlignment.CENTER);
+            }
+            /*if(i == 8 || i == 10 || i == 12 || i == 16 || i == 18 || i == 19 || i == 20 || i == 22){
+                paragraph.setIndentationFirstLine(720);
+            }*/
+
+            // Создаем Run
+            XWPFRun run = paragraph.createRun();
+            run.setText(paragraphString);
+
+            // Делаем текст жирным и устанавливаем размер шрифта для первого параграфа
+            if(i == 0) {
+                run.setBold(true);
+                run.setFontSize(16);  // Размер шрифта примерно соответствует тегу h1
+            }
+            if(i == 14){
+                run.setFontSize(8);
+            }
+        }
+
+        // Конвертируем документ в поток байтов
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        document.write(out);
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+        // Возвращаем поток байтов как ответ
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(in));
     }
 
     private Flux<ParticipantDTO> getCompletedParticipantBySportId(int sportId) {

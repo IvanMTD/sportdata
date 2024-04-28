@@ -9,7 +9,7 @@
         </div>
     </div>
     <hr>
-    <form class="row" id="monitoring-content" th:method="POST" th:action="@{/contest/monitor}" th:object="${monitor}">
+    <div class="row" id="monitoring-content">
         <p class="fs-2 text-dark">
             Мониторинг и анализ данных спортивного соревнования <span th:text="${contest.title}"></span>
             по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>
@@ -48,7 +48,7 @@
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="${d.group.title} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')" style="width: 100%"></span> <input type="text" placeholder="Дополнительное поле" th:field="*{additionally}" style="width: 100%">
+            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="${d.group.title} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')" style="width: 100%"></span> <input type="text" id="additionally" placeholder="Дополнительное поле" style="width: 100%">
         </p>
         <p class="fs-4 text-dark pt-4">
             4. В соответствии с Федеральным стандартом спортивной подготовки по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>, спортсмены данного возраста могут проходить спортивную подготовку в группах на следующих этапах спортивной подготовки: <span th:each="d, stat : ${contest.sports}" th:text="${d.standardString} + (${stat.last} ? '. ' : ', ')"></span>
@@ -175,16 +175,45 @@
             <span th:text="'без категории - ' + ${contest.bc}"></span>
         </p>
         <hr>
-        <input type="text" id="monitor" th:field="*{content}" hidden>
         <div class="row pt-4">
             <div class="col">
                 <div class="d-grid gap-2 col-6 mx-auto">
-                    <button class="btn btn-outline-secondary" type="submit">Отправить</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="sendData()">Получить данные</button>
                 </div>
             </div>
         </div>
-    </form>
-    <script>
-        document.getElementById('monitor').value = document.getElementById('monitoring-content').innerText;
+    </div>
+    <script th:inline="javascript">
+        function sendData(){
+            let additionally = document.getElementById('additionally').value;
+            let data = document.getElementById('monitoring-content').innerText;
+            let csrf = [[${_csrf}]];
+            let header = csrf.headerName;
+            let token = csrf.token;
+            $.ajax({
+                url:'/rest/database/monitor',
+                type:'POST',
+                data: JSON.stringify(data + '\n' + additionally),
+                contentType: 'application/json',
+                xhrFields: {
+                    responseType: 'blob'  // для получения данных в виде файла
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (response, status, xhr){
+                    let filename = 'Мониторинг по ЕКП №' + [[${contest.ekp}]] + '.doc';
+
+                    let blob = new Blob([response]);
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            })
+        }
     </script>
 </div>

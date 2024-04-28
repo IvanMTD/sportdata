@@ -240,15 +240,8 @@ public class ContestController {
                         .modelAttribute("title","Monitor page")
                         .modelAttribute("index","monitor-page")
                         .modelAttribute("contest", getCompleteContest(id))
-                        .modelAttribute("monitor", new MonitorDTO())
                         .build()
         );
-    }
-
-    @PostMapping("/monitor")
-    public Mono<Rendering> monitorUpload(@ModelAttribute(name = "monitor") MonitorDTO monitor){
-        System.out.println(monitor);
-        return Mono.just(Rendering.redirectTo("/").build());
     }
 
     @GetMapping("/get/all")
