@@ -10,6 +10,7 @@ import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
+import ru.fcpsr.sportdata.dto.ParticipantContestDTO;
 import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.repositories.ContestRepository;
 

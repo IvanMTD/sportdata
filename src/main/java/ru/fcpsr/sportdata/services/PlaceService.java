@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.fcpsr.sportdata.dto.ParticipantContestDTO;
 import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.repositories.PlaceRepository;
 
@@ -65,5 +66,9 @@ public class PlaceService {
                 .collectList()
                 .flatMap(list -> placeRepository.deleteAll(list).then(Mono.just(list)))
                 .flatMapMany(Flux::fromIterable);
+    }
+
+    public Flux<Place> getAllWhereParticipantIdIs(int participantId) {
+        return placeRepository.findAllByParticipantId(participantId);
     }
 }

@@ -10,4 +10,6 @@ import java.util.Set;
 public interface PlaceRepository extends ReactiveCrudRepository<Place, Integer> {
     Flux<Place> findAllByIdIn(Set<Integer> placeIds);
     Flux<Place> findAllByIdIn(List<Integer> placeIds);
+
+    Flux<Place> findAllByParticipantId(int participantId);
 }

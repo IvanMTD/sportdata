@@ -51,6 +51,10 @@ public class DataController {
 
     private final ParticipantValidation participantValidation;
 
+    private final ContestService contestService;
+    private final ArchiveSportService archiveSportService;
+    private final PlaceService placeService;
+
     @GetMapping("/summary")
     public Mono<Rendering> getSummary(){
         return Mono.just(
@@ -612,6 +616,7 @@ public class DataController {
                             .modelAttribute("participant", getCompletedParticipant(id))
                             .modelAttribute("participantForm", new ParticipantDTO())
                             .modelAttribute("subjects", getCompletedSubjects())
+                            .modelAttribute("contests", getContests(id))
                             .modelAttribute("qualificationForm", new QualificationDTO())
                             .modelAttribute("sports", sportService.getAll())
                             .modelAttribute("category", Category.values())
@@ -782,6 +787,47 @@ public class DataController {
      * @param
      * @return
      */
+
+    private Flux<ParticipantContestDTO> getContests(int participantId) {
+        return placeService.getAllWhereParticipantIdIs(participantId).flatMap(place -> {
+            ParticipantContestDTO pc = new ParticipantContestDTO();
+            pc.setPlace(place.getPlace());
+            return qualificationService.getById(place.getQualificationId()).flatMap(qualification -> {
+                CategoryDTO categoryDTO = new CategoryDTO(qualification.getCategory());
+                pc.setMainCategory(categoryDTO);
+                pc.setCondition(new ConditionDTO(place.getCondition()));
+                if(place.getCondition().equals(Condition.DONE)){
+                    return qualificationService.getById(place.getNewQualificationId()).flatMap(qualification2 -> {
+                        pc.setNewCategory(new CategoryDTO(qualification2.getCategory()));
+                        return Mono.just(pc);
+                    });
+                }else{
+                    pc.setNewCategory(new CategoryDTO(qualification.getCategory()));
+                    return Mono.just(pc);
+                }
+            }).flatMap(pc2 -> {
+                return archiveSportService.getById(place.getASportId()).flatMap(archiveSport -> {
+                    return disciplineService.getById(archiveSport.getDisciplineId()).flatMap(discipline -> {
+                        pc2.setDisciplineTitle(discipline.getTitle());
+                        return sportService.getById(discipline.getTypeOfSportId()).flatMap(sport -> {
+                            pc2.setSportTitle(sport.getTitle());
+                            return contestService.getById(archiveSport.getContestId()).flatMap(contest -> {
+                                pc2.setContestId(contest.getId());
+                                pc2.setEkpNum(contest.getEkp());
+                                pc2.setDate(contest.getBeginningDate());
+                                pc2.setLocalDate(contest.getBeginning());
+                                pc2.setContestTitle(contest.getTitle());
+                                return Mono.just(pc2);
+                            });
+                        });
+                    });
+                });
+            });
+        }).collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(ParticipantContestDTO::getLocalDate)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
+    }
 
     private Mono<ParticipantDTO> getCompletedParticipant(int id) {
         return participantService.getById(id).flatMap(participant -> {
