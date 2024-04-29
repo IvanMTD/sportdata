@@ -246,6 +246,29 @@ public class DataController {
         );
     }
 
+    @GetMapping("/subject/show")
+    public Mono<Rendering> showSubjectCard(@RequestParam(name = "subject") int id, @RequestParam(name = "letter") String letter){
+        Flux<TypeOfSport> sports = sportService.getAll().collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(TypeOfSport::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
+
+        return Mono.just(
+                Rendering.view("template")
+                        .modelAttribute("title","Subject details")
+                        .modelAttribute("index", "subject-page")
+                        .modelAttribute("subject", getCompletedSubject(id))
+                        .modelAttribute("subjectForm", new SubjectDTO())
+                        .modelAttribute("baseSportForm", new BaseSportDTO())
+                        .modelAttribute("schoolForm", new SportSchoolDTO())
+                        .modelAttribute("participantForm", new ParticipantDTO())
+                        .modelAttribute("federals", FederalDistrict.getDistricts())
+                        .modelAttribute("sportList", sports)
+                        .modelAttribute("letter",letter)
+                        .build()
+        );
+    }
+
     @PostMapping("/subject/{letter}/add")
     public Mono<Rendering> addNewSubject(@PathVariable String letter, @ModelAttribute(name = "subjectForm") @Valid SubjectDTO subjectDTO, Errors errors){
         return subjectService.findByTitle(subjectDTO.getTitle()).flatMap(subject -> {
@@ -911,6 +934,47 @@ public class DataController {
             l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
             return Flux.fromIterable(l);
         }).flatMapSequential(Mono::just);
+    }
+
+    private Mono<SubjectDTO> getCompletedSubject(int id){
+        return subjectService.getById(id).flatMap(subject -> {
+            SubjectDTO subjectDTO = new SubjectDTO(subject);
+            return baseSportService.getAllByIds(subject.getBaseSportIds()).flatMap(baseSport -> {
+                BaseSportDTO baseSportDTO = new BaseSportDTO(baseSport);
+                return sportService.getById(baseSport.getTypeOfSportId()).flatMap(sport -> {
+                    TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                    baseSportDTO.setSport(typeOfSportDTO);
+                    return Mono.just(baseSportDTO);
+                });
+            }).collectList().flatMap(baseSportDTOS -> {
+                baseSportDTOS = baseSportDTOS.stream().sorted(Comparator.comparing(baseSportDTO -> baseSportDTO.getSport().getTitle())).collect(Collectors.toList());
+                subjectDTO.setBaseSports(baseSportDTOS);
+                return schoolService.getAllByIdIn(subject.getSportSchoolIds()).flatMap(school -> {
+                    SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                    return participantService.findByIds(school.getParticipantIds()).flatMap(participant -> {
+                        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                        return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                            QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                            return sportService.getById(qualification.getTypeOfSportId()).flatMap(sport -> {
+                                TypeOfSportDTO typeOfSportDTO = new TypeOfSportDTO(sport);
+                                qualificationDTO.setSport(typeOfSportDTO);
+                                return Mono.just(qualificationDTO);
+                            });
+                        }).collectList().flatMap(ql -> {
+                            participantDTO.setQualifications(ql);
+                            return Mono.just(participantDTO);
+                        });
+                    }).collectList().flatMap(participantDTOS -> {
+                        sportSchoolDTO.setParticipants(participantDTOS);
+                        return Mono.just(sportSchoolDTO);
+                    });
+                }).collectList().flatMap(sportSchoolDTOS -> {
+                    sportSchoolDTOS = sportSchoolDTOS.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                    subjectDTO.setSchools(sportSchoolDTOS);
+                    return Mono.just(subjectDTO);
+                });
+            });
+        });
     }
 
     private Flux<SubjectDTO> getCompletedSubjects(String letter){
