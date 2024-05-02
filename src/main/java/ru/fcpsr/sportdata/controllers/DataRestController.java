@@ -197,30 +197,33 @@ public class DataRestController {
 
         for(int i = 0; i < paragraphList.size(); i++) {
             String paragraphString = paragraphList.get(i);
-           /* System.out.println(paragraphString + " (" + i + ") ");*/
+            if(!paragraphString.equals("") || i == 1 || i == 7) {
+                /* System.out.println(paragraphString + " (" + i + ") ");*/
 
-            // Создаем параграф
-            XWPFParagraph paragraph = document.createParagraph();
+                // Создаем параграф
+                XWPFParagraph paragraph = document.createParagraph();
 
-            // Устанавливаем выравнивание по центру для первого параграфа
-            if(i == 0) {
-                paragraph.setAlignment(ParagraphAlignment.CENTER);
-            }
-            /*if(i == 8 || i == 10 || i == 12 || i == 16 || i == 18 || i == 19 || i == 20 || i == 22){
-                paragraph.setIndentationFirstLine(720);
-            }*/
+                // Устанавливаем выравнивание по центру для первого параграфа
+                if (i == 0) {
+                    paragraph.setAlignment(ParagraphAlignment.CENTER);
+                    paragraphString = paragraphString.substring(1);
+                } else {
+                    paragraph.setIndentationFirstLine(720);
+                }
 
-            // Создаем Run
-            XWPFRun run = paragraph.createRun();
-            run.setText(paragraphString);
+                // Создаем Run
+                XWPFRun run = paragraph.createRun();
+                run.setText(paragraphString);
+                run.setFontFamily("Times New Roman");
+                run.setFontSize(14);
 
-            // Делаем текст жирным и устанавливаем размер шрифта для первого параграфа
-            if(i == 0) {
-                run.setBold(true);
-                run.setFontSize(16);  // Размер шрифта примерно соответствует тегу h1
-            }
-            if(i == 14){
-                run.setFontSize(8);
+                // Делаем текст жирным и устанавливаем размер шрифта для первого параграфа
+                if (i == 0) {
+                    run.setBold(true);
+                }
+                if (i == 14) {
+                    run.setFontSize(8);
+                }
             }
         }
 
