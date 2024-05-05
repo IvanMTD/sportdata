@@ -39,4 +39,8 @@ public class AgeGroupDTO {
     public int getMaxAgeYear(){
         return LocalDate.now().getYear() - minAge;
     }
+
+    public String getLowTitle(){
+        return title.toLowerCase();
+    }
 }

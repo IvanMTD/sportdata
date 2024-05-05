@@ -10,13 +10,16 @@
     </div>
     <hr>
     <div class="row" id="monitoring-content">
-        <p class="fs-2 text-dark">
-            Мониторинг и анализ данных спортивного соревнования <span th:text="${contest.title}"></span>
-            по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>
-            среди спортсменов возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="'«' + ${d.group.title} + ' (' + ${d.group.minAge} + '-' + ${d.group.maxAge} + ' лет)»' + (${stat.last} ? ' ' : ', ')"></span>
-            в спортивных дисциплинах:
-            <span th:each="d, stat : ${contest.sports}" th:text="'«' + ${d.discipline.title} + '»' + (${stat.last} ? '.' : ', ')"></span>
+        <p id="head" class="fs-2 text-dark">
+            Мониторинг и анализ данных спортивного соревнования <span th:text="${contest.lowTitle}"></span> по виду спорта <span th:text="'«' + ${contest.getSport().getLowTitle()} + '»'"></span> среди спортсменов возрастных групп:|<span th:each="d, stat : ${contest.sports}" th:text="'«' + ${d.group.lowTitle} + ' (' + ${d.group.minAge} + '-' + ${d.group.maxAge} + ' лет)»' + (${stat.last} ? '|' : '$')"></span>в спортивных дисциплинах:|<span th:each="d, stat : ${contest.sports}" th:text="'«' + ${d.discipline.title} + '»' + (${stat.last} ? '' : ', ')"></span>
         </p>
+        <script>
+            let headerStr = document.getElementById('head').textContent;
+            let headerParts = headerStr.split('|').map(item => item.trim());
+            let groupSet = [...new Set(headerParts[1].split('$').map(item => item.trim()))];
+            let disciplineSet = [...new Set(headerParts[3].split(', ').map(item => item.trim()))];
+            document.getElementById('head').textContent = headerParts[0] + ' ' + groupSet.join(', ') + ' ' + headerParts[2] + ' ' + disciplineSet.join(', ') + '.';
+        </script>
         <p class="fs-4 text-dark pt-5">
             Спортивное мероприятие в Едином календарном плане: № <span th:text="${contest.ekp}"></span>
         </p>
@@ -28,15 +31,15 @@
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            Согласно Положения о межрегиональных и всероссийских официальных спортивных соревнованиях по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span> на <span th:text="${contest.contestYear}"></span> год (далее – Положение о спортивных соревнованиях), Единой всероссийской спортивной классификации, Федеральному стандарту спортивной подготовки по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>, официальных протоколов спортивных соревнований и отчета главной судейской коллегии по виду спорта, были сделаны следующие выводы:
+            Согласно Положения о межрегиональных и всероссийских официальных спортивных соревнованиях по виду спорта <span th:text="'«' + ${contest.getSport().getLowTitle()} + '»'"></span> на <span th:text="${contest.contestYear}"></span> год (далее – Положение о спортивных соревнованиях), Единой всероссийской спортивной классификации, Федеральному стандарту спортивной подготовки по виду спорта <span th:text="'«' + ${contest.getSport().getLowTitle()} + '»'"></span>, официальных протоколов спортивных соревнований и отчета главной судейской коллегии по виду спорта, были сделаны следующие выводы:
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            1. Вид спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span> является базовым для <span th:text="${contest.baseSubjectTotal.size()}"></span> субъектов Российской Федерации.
+            1. Вид спорта <span th:text="'«' + ${contest.getSport().getLowTitle()} + '»'"></span> является базовым для <span th:text="${contest.baseSubjectTotal.size()}"></span> субъектов Российской Федерации.
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            2.	В спортивных соревнованиях <span  th:text="${contest.title}"></span> приняло участие спортсменов - <span th:text="${contest.participantTotal}"></span> (<span th:text="'Участников - ' + ${contest.boyTotal}"></span> <span th:text="', участниц - ' + ${contest.girlTotal}"></span>) и тренеров (представителей) -  <span th:text="${contest.trainerTotal}"></span> из <span th:text="${contest.subjects.size()}"></span> субъектов Российской Федерации, в том числе из <span th:text="${contest.baseSubjectIn.size()}"></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:each="subject, stat : ${contest.noBaseSubjects}" th:text="${subject.title} + ', '"></span> <span th:each="subject, stat : ${contest.baseSubjectIn}" th:text="${subject.title} + (${stat.last} ? '*.' : '*, ')"></span>
+            2.	В спортивных соревнованиях <span  th:text="${contest.lowTitle}"></span> приняло участие спортсменов - <span th:text="${contest.participantTotal}"></span> (<span th:text="'участников - ' + ${contest.boyTotal}"></span> <span th:text="', участниц - ' + ${contest.girlTotal}"></span>) и тренеров (представителей) -  <span th:text="${contest.trainerTotal}"></span> из <span th:text="${contest.subjects.size()}"></span> субъектов Российской Федерации, в том числе из <span th:text="${contest.baseSubjectIn.size()}"></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:each="subject, stat : ${contest.noBaseSubjects}" th:text="${subject.title} + ', '"></span> <span th:each="subject, stat : ${contest.baseSubjectIn}" th:text="${subject.title} + (${stat.last} ? '*.' : '*, ')"></span>
         </p>
         <p>
             <small class="text-dark">
@@ -44,15 +47,41 @@
             </small>
         </p>
         <p class="fs-4 text-dark pt-4">
-            По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях <span th:text="'«' + ${contest.title} + '»'"></span> отсутствовали спортсмены из <span th:text="${contest.baseSubjectOut.size()}"></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:each="subject, stat : ${contest.baseSubjectOut}" th:text="${subject.title} + (${stat.last} ? '.' : ', ')"></span>
+            По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях <span th:text="'«' + ${contest.lowTitle} + '»'"></span> отсутствовали спортсмены из <span th:text="${contest.baseSubjectOut.size()}"></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:each="subject, stat : ${contest.baseSubjectOut}" th:text="${subject.title} + (${stat.last} ? '.' : ', ')"></span>
         </p>
 
-        <p class="fs-4 text-dark pt-4">
-            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп: <span th:each="d, stat : ${contest.sports}" th:text="${d.group.title} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')" style="width: 100%"></span> <input type="text" id="additionally" placeholder="Дополнительное поле" style="width: 100%">
+        <p id="point-3" class="fs-4 text-dark pt-4">
+            3. К участию в спортивных соревнованиях первенства России допускались спортсмены возрастных групп:|<span th:each="d, stat : ${contest.sports}" th:text="${d.group.lowTitle} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения)' + (${stat.last} ? '|' : ', ')"></span>, имеющие спортивные квалификации:|<span th:each="d, stat : ${contest.sports}" th:text="${d.allowedString} + (${stat.last} ? '' : ', ')"></span>
+            <!-- <span th:each="d, stat : ${contest.sports}" th:text="${d.group.lowTitle} + ' (' + ${d.group.minAge} + ' - ' + ${d.group.maxAge} + ' Лет) (' + ${d.group.minAgeYear} + ' – ' + ${d.group.maxAgeYear} + ' годов рождения) , имеющие спортивные квалификации: ' + ${d.allowedString} + (${stat.last} ? '. ' : ', ')"></span> -->
         </p>
-        <p class="fs-4 text-dark pt-4">
-            4. В соответствии с Федеральным стандартом спортивной подготовки по виду спорта <span th:text="'«' + ${contest.sport.title} + '»'"></span>, спортсмены данного возраста могут проходить спортивную подготовку в группах на следующих этапах спортивной подготовки: <span th:each="d, stat : ${contest.sports}" th:text="${d.standardString} + (${stat.last} ? '. ' : ', ')"></span>
+        <script>
+            let p4text = document.getElementById('point-3').textContent;
+            let p4parts = p4text.split('|');
+            let p4groups = p4parts[1].split(', ').map(item => item.trim());
+            let p4groupSet = [...new Set(p4groups)];
+            let p4categories = p4parts[3].split(', ').map(item => item.trim());
+            let p4categoriesSet = [...new Set(p4categories)];
+
+            document.getElementById('point-3').textContent = p4parts[0] + ' ' + p4groupSet.join(', ') + p4parts[2] + p4categoriesSet.join(', ') + '.';
+        </script>
+        <p class="fs-4 text-dark">
+            <input type="text" id="additionally" placeholder="Дополнительное поле" style="width: 100%">
         </p>
+        <p id="point-4" class="fs-4 text-dark pt-4">
+            4. В соответствии с Федеральным стандартом спортивной подготовки по виду спорта <span th:text="'«' + ${contest.getSport().getLowTitle()} + '»'"></span>, спортсмены данного возраста могут проходить спортивную подготовку в группах на следующих этапах спортивной подготовки: <span th:each="d, stat : ${contest.sports}" th:text="${d.standardString} + (${stat.last} ? '. ' : ', ')"></span>
+        </p>
+        <script>
+            let pTag = document.getElementById('point-4');
+            let str = pTag.textContent;
+
+            let parts = str.split(':');
+            let items = parts[1].split(',').map(item => item.trim());
+            let uniqueItems = [...new Set(items)];
+
+            let result = parts[0] + ': ' + uniqueItems.join(', ');
+
+            pTag.textContent = result;
+        </script>
         <p class="fs-4 text-dark pt-4">
             5. Согласно Единой всероссийской спортивной классификации, выполнение для присвоения спортивных разрядов/званий осуществляется: <span th:text="${contest.EVSK}" style="width: 100%"></span>
         </p>
@@ -109,7 +138,7 @@
 
         <p class="fs-4 text-dark pt-4">
             9. Возраст спортсменов – победителей и призеров первенства России составил
-            <span th:text="${contest.ageControl}" style="width: 100%"></span>
+            <span th:text="${contest.ageControl}"></span>
         </p>
 
         <p class="fs-4 text-dark pt-4">
@@ -119,7 +148,7 @@
             Первое место:
         </p>
         <p class="fs-4 text-dark" th:each="fp, stat : ${contest.firstSubjects}">
-            <span th:text="${fp.title}" style="width: 100%"></span>
+            <span th:text="${fp.title}"></span>
         </p>
         <p class="fs-4 text-dark">
             Второе место:
@@ -140,7 +169,7 @@
 
         <div th:each="d, stat : ${contest.sports}">
             <p class="fs-4 text-dark pt-4 text-center text-uppercase">
-                <span th:text="${d.discipline.title} + ' (' + ${d.group.title} + ' возрастом от ' + ${d.group.minAge} + ' до ' + ${d.group.maxAge} + ')'" style="width: 100%"></span>
+                <span th:text="${d.discipline.title} + ' (' + ${d.group.lowTitle} + ' возрастом от ' + ${d.group.minAge} + ' до ' + ${d.group.maxAge} + ')'" style="width: 100%"></span>
             </p>
             <div class="fs-4 text-dark" th:each="p, p_stat : ${d.places}">
                 <span th:text="${p.place} + ' Место, ' + ${p.school.title} + ', ' + ${p.school.subject.title}" style="width: 100%"></span>
@@ -152,7 +181,7 @@
         </p>
 
         <p class="fs-4 text-dark pt-4">
-            12. Спортивные соревнования <span th:text="'«' + ${contest.title} + '»'"></span> обслуживали <span th:text="${contest.judgeTotal}"></span> спортивных судей<span th:text="', в том числе ' + ${contest.nonresidentJudge} + ' иногородних'" th:if="${contest.nonresidentJudge} != 0"></span>.
+            12. Спортивные соревнования <span th:text="'«' + ${contest.lowTitle} + '»'"></span> обслуживали <span th:text="${contest.judgeTotal}"></span> спортивных судей<span th:text="', в том числе ' + ${contest.nonresidentJudge} + ' иногородних'" th:if="${contest.nonresidentJudge} != 0"></span>.
         </p>
 
         <p class="fs-4 text-dark pt-4">

@@ -66,25 +66,121 @@ public class SportDTO {
 
     public String getAllowedString(){
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i<allowedList.size(); i++){
-            if(i != allowedList.size() - 1) {
-                builder.append(allowedList.get(i).getTitle()).append(", ");
-            }else{
-                builder.append(allowedList.get(i).getTitle());
+        for(int i=0; i<10; i++){
+            if(i==0){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.YN3)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==1){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.YN2)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==2){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.YN1)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==3){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.R3)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==4){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.R2)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==5){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.R1)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==6){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.KMS)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==7){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.MS)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else if(i==8){
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.MSMK)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }else {
+                for(CategoryDTO categoryDTO : allowedList){
+                    if(categoryDTO.getCategory().equals(Category.ZMS)){
+                        builder.append(categoryDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
             }
         }
-        return builder.toString();
+
+        return getFinalCut(builder.toString());
     }
 
     public String getStandardString(){
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i<standardList.size(); i++){
-            if(i != standardList.size() - 1) {
-                builder.append(standardList.get(i).getTitle()).append(", ");
-            }else{
-                builder.append(standardList.get(i).getTitle());
+
+        for(int i=0; i<4; i++){
+            if(i==0){
+                for(FederalStandardDTO federalStandardDTO : standardList){
+                    if(federalStandardDTO.getFederalStandard().equals(FederalStandard.NP)){
+                        builder.append(federalStandardDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }
+            if(i==1){
+                for(FederalStandardDTO federalStandardDTO : standardList){
+                    if(federalStandardDTO.getFederalStandard().equals(FederalStandard.UTE)){
+                        builder.append(federalStandardDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }
+            if(i==2){
+                for(FederalStandardDTO federalStandardDTO : standardList){
+                    if(federalStandardDTO.getFederalStandard().equals(FederalStandard.SSM)){
+                        builder.append(federalStandardDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
+            }
+            if(i==3){
+                for(FederalStandardDTO federalStandardDTO : standardList){
+                    if(federalStandardDTO.getFederalStandard().equals(FederalStandard.VSM)){
+                        builder.append(federalStandardDTO.getTitle().toLowerCase()).append("|");
+                    }
+                }
             }
         }
-        return builder.toString();
+
+        return getFinalCut(builder.toString());
+    }
+
+    private String getFinalCut(String data){
+        String[] part = data.split("\\|");
+        StringBuilder finalCut = new StringBuilder();
+        for(int i=0; i<part.length; i++){
+            if(i == part.length - 1){
+                finalCut.append(part[i]);
+            }else{
+                finalCut.append(part[i]).append(", ");
+            }
+        }
+
+        return finalCut.toString();
     }
 }

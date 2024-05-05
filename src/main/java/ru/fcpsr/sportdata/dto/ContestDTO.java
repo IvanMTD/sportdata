@@ -182,31 +182,7 @@ public class ContestDTO {
 
         noBaseSubjects = buildList(subjects);
 
-        /*for(SubjectDTO subject : subjects){
-            int num = 0;
-            for(SubjectDTO in : baseSubjectIn){
-                if(subject.getId() == in.getId()){
-                    num++;
-                }
-            }
-            if(num == 0){
-                noBaseSubjects.add(subject);
-            }
-        }*/
-
         baseSubjectOut = buildList(baseSubjectTotal);
-
-        /*for(SubjectDTO total : baseSubjectTotal){
-            int num = 0;
-            for(SubjectDTO in : baseSubjectIn){
-                if(in.getId() == total.getId()){
-                    num++;
-                }
-            }
-            if(num == 0){
-                baseSubjectOut.add(total);
-            }
-        }*/
 
         subjects = subjects.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
         baseSubjectIn = baseSubjectIn.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
@@ -252,34 +228,34 @@ public class ContestDTO {
     public String getEVSK(){
         StringBuilder builder = new StringBuilder();
         if(yn3Date != 0){
-            builder.append("Третий юношеский разряд возраст с ").append(yn3Date).append("|");
+            builder.append("Третий юношеский разряд с ").append(yn3Date).append(" лет |");
         }
         if(yn2Date != 0){
-            builder.append("Второй юношеский разряд возраст с ").append(yn2Date).append("|");
+            builder.append("Второй юношеский разряд с ").append(yn2Date).append(" лет |");
         }
         if(yn1Date != 0){
-            builder.append("Первый юношеский разряд возраст с ").append(yn1Date).append("|");
+            builder.append("Первый юношеский разряд с ").append(yn1Date).append(" лет |");
         }
         if(r3Date != 0){
-            builder.append("Третий разряд возраст с ").append(r3Date).append("|");
+            builder.append("Третий разряд с ").append(r3Date).append(" лет |");
         }
         if(r2Date != 0){
-            builder.append("Второй разряд возраст с ").append(r2Date).append("|");
+            builder.append("Второй разряд с ").append(r2Date).append(" лет |");
         }
         if(r1Date != 0){
-            builder.append("Первый разряд возраст с ").append(r1Date).append("|");
+            builder.append("Первый разряд с ").append(r1Date).append(" лет |");
         }
         if(kmsDate != 0){
-            builder.append("Кандидаты в мастера спорта возраст с ").append(kmsDate).append("|");
+            builder.append("Кандидаты в мастера спорта с ").append(kmsDate).append(" лет |");
         }
         if(msDate != 0){
-            builder.append("Мастера спорта возраст с ").append(msDate).append("|");
+            builder.append("Мастера спорта с ").append(msDate).append(" лет |");
         }
         if(msmkDate != 0){
-            builder.append("Мастера спорта международного класса возраст с ").append(msmkDate).append("|");
+            builder.append("Мастера спорта международного класса с ").append(msmkDate).append(" лет |");
         }
         if(zmsDate != 0){
-            builder.append("Заслуженные мастера спорта возраст с ").append(zmsDate).append("|");
+            builder.append("Заслуженные мастера спорта с ").append(zmsDate).append(" лет |");
         }
 
         String string = builder.toString();
@@ -598,9 +574,13 @@ public class ContestDTO {
         }
 
         if(violation == 0){
-            return "от " + minimal + " до " + maximal + "(" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что соответствует требованиям Положения о спортивных соревнованиях.";
+            return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что соответствует требованиям Положения о спортивных соревнованиях.";
         }else{
             return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что не соответствует требованиям Положения о спортивных соревнованиях.";
         }
+    }
+
+    public String getLowTitle(){
+        return Character.toLowerCase(title.charAt(0)) + title.substring(1);
     }
 }

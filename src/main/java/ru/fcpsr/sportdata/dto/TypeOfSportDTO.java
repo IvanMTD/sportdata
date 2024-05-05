@@ -38,4 +38,8 @@ public class TypeOfSportDTO {
             setSportFilterType(sport.getSportFilterType());
         }
     }
+
+    public String getLowTitle(){
+        return title.toLowerCase();
+    }
 }

@@ -198,16 +198,13 @@ public class DataRestController {
         for(int i = 0; i < paragraphList.size(); i++) {
             String paragraphString = paragraphList.get(i);
             if(!paragraphString.equals("") || i == 1 || i == 7) {
-                /* System.out.println(paragraphString + " (" + i + ") ");*/
-
-                // Создаем параграф
                 XWPFParagraph paragraph = document.createParagraph();
 
-                // Устанавливаем выравнивание по центру для первого параграфа
                 if (i == 0) {
                     paragraph.setAlignment(ParagraphAlignment.CENTER);
                     paragraphString = paragraphString.substring(1);
                 } else {
+                    paragraph.setAlignment(ParagraphAlignment.BOTH);
                     paragraph.setIndentationFirstLine(720);
                 }
 
