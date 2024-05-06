@@ -225,7 +225,7 @@ public class ContestController {
             }).flatMap(savedContest -> {
                 //log.info("contest fullish updated {}", savedContest);
                 if(savedContest.isComplete()){
-                    return Mono.just(Rendering.redirectTo("/contest/get/all?page=0").build());
+                    return Mono.just(Rendering.redirectTo("/contest/get/all?page=0&search=all").build());
                 }else{
                     return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
                 }
@@ -244,9 +244,14 @@ public class ContestController {
         );
     }
 
+    @GetMapping("/search/{page}")
+    public Mono<Rendering> search(@PathVariable(name = "page") int page, @RequestParam(name = "search") String search){
+        return Mono.just(Rendering.redirectTo("/contest/get/all?page=" + page + "&search=" + search.replace(" ", "+")).build());
+    }
+
     @GetMapping("/get/all")
-    public Mono<Rendering> getAll(@RequestParam(name = "page") int page){
-        return contestService.getCount().flatMap(count -> {
+    public Mono<Rendering> getAll(@RequestParam(name = "page") int page, @RequestParam(name = "search") String search){
+        return contestService.getCountBy(search).flatMap(count -> {
             int pageControl = page;
             if(pageControl < 0){
                 pageControl = 0;
@@ -259,9 +264,10 @@ public class ContestController {
                     Rendering.view("template")
                             .modelAttribute("title", "Contest information")
                             .modelAttribute("index","contest-all-page")
-                            .modelAttribute("contests", getAllCompleteContest(PageRequest.of(pageControl,12)))
+                            .modelAttribute("contests", getAllCompleteContest(PageRequest.of(pageControl,12),search))
                             .modelAttribute("page",pageControl)
                             .modelAttribute("lastPage", lastPage)
+                            .modelAttribute("search",search)
                             .build()
             );
         });
@@ -296,7 +302,7 @@ public class ContestController {
             for(Place place : l){
                 log.info("PLACE HAS BEEN DELETED: [{}]", place);
             }
-            return Mono.just(Rendering.redirectTo("/contest/get/all?page=0").build());
+            return Mono.just(Rendering.redirectTo("/contest/get/all?page=0&search=all").build());
         });
     }
 
@@ -326,14 +332,22 @@ public class ContestController {
         });
     }
 
-    private Flux<ContestDTO> getAllCompleteContest(Pageable pageable) {
-        return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
-            //log.info("FOUND DATA IN DB: [{}}", contest);
-            return getCompleteContest(contest.getId());
-        }).collectList().flatMapMany(cl -> {
-            cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
-            return Flux.fromIterable(cl);
-        }).flatMapSequential(Mono::just);
+    private Flux<ContestDTO> getAllCompleteContest(Pageable pageable, String search) {
+        if(search.equals("all") || search.equals("")) {
+            return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
+                return getCompleteContest(contest.getId());
+            }).collectList().flatMapMany(cl -> {
+                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
+                return Flux.fromIterable(cl);
+            }).flatMapSequential(Mono::just);
+        }else{
+            return contestService.getAllBy(pageable,search).flatMap(contest -> {
+                return getCompleteContest(contest.getId());
+            }).collectList().flatMapMany(cl -> {
+                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
+                return Flux.fromIterable(cl);
+            }).flatMapSequential(Mono::just);
+        }
     }
 
     private Mono<ContestDTO> getCompleteContest(int contestId){
@@ -409,7 +423,6 @@ public class ContestController {
                         }
                     });
                 }).collectList().flatMap(sportDTOS -> {
-                    log.info("data.size {}", sportDTOS.size());
                     if(sportDTOS.size() == 1){
                         if(sportDTOS.get(0).getId() == 0){
                             contestDTO.setSports(sportDTOS);

@@ -8,9 +8,16 @@ import ru.fcpsr.sportdata.models.Contest;
 
 public interface ContestRepository extends ReactiveCrudRepository<Contest,Integer> {
     Mono<Contest> findByEkp(String ekp);
+    Flux<Contest> findAllByEkp(Pageable pageable, String ekp);
 
     Flux<Contest> findAllByOrderByBeginningDesc(Pageable pageable);
     Flux<Contest> findAllByEkpLikeIgnoreCase(String ekpPart);
     Flux<Contest> findAllBySportTitleLikeIgnoreCase(String sportPart);
     Flux<Contest> findAllBySubjectTitleLikeIgnoreCase(String sportPart);
+    Mono<Long> countBySportTitle(String sportTitle);
+    Mono<Long> countBySubjectTitle(String subjectTitle);
+    Mono<Long> countByEkp(String ekp);
+
+    Flux<Contest> findAllBySportTitle(Pageable pageable, String search);
+    Flux<Contest> findAllBySubjectTitle(Pageable pageable, String search);
 }

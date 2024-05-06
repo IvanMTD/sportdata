@@ -103,6 +103,26 @@ public class ContestService {
         return contestRepository.count();
     }
 
+    public Mono<Long> getCountBy(String search){
+        if(search.equals("all") || search.equals("")){
+            return contestRepository.count();
+        }else{
+            List<Mono<Long>> fluxes = new ArrayList<>();
+            fluxes.add(contestRepository.countByEkp(search));
+            fluxes.add(contestRepository.countBySportTitle(search));
+            fluxes.add(contestRepository.countBySubjectTitle(search));
+            return Flux.merge(fluxes).collectList().flatMap(counts -> {
+                long max = 0;
+                for(long count : counts){
+                    if(count > max){
+                        max = count;
+                    }
+                }
+                return Mono.just(max);
+            });
+        }
+    }
+
     public Mono<Contest> deleteContest(int contestId) {
         return contestRepository.findById(contestId).flatMap(contest -> contestRepository.delete(contest).then(Mono.just(contest)));
     }
@@ -140,5 +160,13 @@ public class ContestService {
                 return Mono.empty();
             }
         });
+    }
+
+    public Flux<ContestDTO> getAllBy(Pageable pageable, String search) {
+        List<Flux<Contest>> fluxes = new ArrayList<>();
+        fluxes.add(contestRepository.findAllByEkp(pageable,search));
+        fluxes.add(contestRepository.findAllBySportTitle(pageable,search));
+        fluxes.add(contestRepository.findAllBySubjectTitle(pageable,search));
+        return Flux.merge(fluxes).distinct().flatMap(contest -> Mono.just(new ContestDTO(contest)));
     }
 }
