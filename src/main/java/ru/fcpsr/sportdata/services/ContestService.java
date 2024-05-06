@@ -12,7 +12,11 @@ import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
 import ru.fcpsr.sportdata.dto.ParticipantContestDTO;
 import ru.fcpsr.sportdata.models.Contest;
+import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.repositories.ContestRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +51,8 @@ public class ContestService {
     public Mono<Contest> createContestFirstStep(ContestDTO contestDTO) {
         return Mono.just(new Contest()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
+            contest.setSportTitle(contestDTO.getSportTitle());
+            contest.setSubjectTitle(contestDTO.getSubjectTitle());
             contest.setEkp(contestDTO.getEkp());
             contest.setTypeOfSportId(contestDTO.getSportId());
             contest.setBeginning(contestDTO.getBeginning());
@@ -76,6 +82,8 @@ public class ContestService {
     public Mono<Contest> updateContestFirstStep(ContestDTO contestDTO) {
         return contestRepository.findById(contestDTO.getId()).flatMap(contest -> {
             contest.setTitle(contestDTO.getTitle());
+            contest.setSportTitle(contestDTO.getSportTitle());
+            contest.setSubjectTitle(contestDTO.getSubjectTitle());
             contest.setEkp(contestDTO.getEkp());
             contest.setTypeOfSportId(contestDTO.getSportId());
             contest.setBeginning(contestDTO.getBeginning());
@@ -97,5 +105,40 @@ public class ContestService {
 
     public Mono<Contest> deleteContest(int contestId) {
         return contestRepository.findById(contestId).flatMap(contest -> contestRepository.delete(contest).then(Mono.just(contest)));
+    }
+
+    public Flux<Contest> searchBy(String query) {
+        String[] queryParts = query.split(" ");
+        List<Flux<Contest>> fluxes = new ArrayList<>();
+        for(String part : queryParts){
+            String searchPart = "%" + part + "%";
+            fluxes.add(contestRepository.findAllByEkpLikeIgnoreCase(searchPart));
+            fluxes.add(contestRepository.findAllBySportTitleLikeIgnoreCase(searchPart));
+            fluxes.add(contestRepository.findAllBySubjectTitleLikeIgnoreCase(searchPart));
+        }
+
+        return filterContest(fluxes,queryParts);
+    }
+
+    private Flux<Contest> filterContest(List<Flux<Contest>> fluxes, String[] searchParts){
+        return Flux.merge(fluxes).distinct().flatMap(contest -> {
+            int check = 0;
+            for(String part : searchParts){
+                if (contest.getEkp().toLowerCase().contains(part.toLowerCase())){
+                    check++;
+                }
+                if (contest.getSportTitle().toLowerCase().contains(part.toLowerCase())){
+                    check++;
+                }
+                if (contest.getSubjectTitle().toLowerCase().contains(part.toLowerCase())){
+                    check++;
+                }
+            }
+            if(check >= searchParts.length){
+                return Mono.just(contest);
+            }else{
+                return Mono.empty();
+            }
+        });
     }
 }

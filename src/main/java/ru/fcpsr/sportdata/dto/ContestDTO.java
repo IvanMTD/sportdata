@@ -33,6 +33,8 @@ public class ContestDTO {
     private SubjectDTO subject;
     private int sportId;
     private TypeOfSportDTO sport;
+    private String subjectTitle;
+    private String sportTitle;
 
     private List<Integer> totalSubjects = new ArrayList<>(Collections.nCopies(100, null));
     private List<SubjectDTO> subjects = new ArrayList<>();
@@ -101,6 +103,8 @@ public class ContestDTO {
         setTitle(contest.getTitle());
         setCity(contest.getCity());
         setLocation(contest.getLocation());
+        setSubjectTitle(contest.getSubjectTitle());
+        setSportTitle(contest.getSportTitle());
 
         setSubjectId(contest.getSubjectId());
         setSportId(contest.getTypeOfSportId());
@@ -416,7 +420,7 @@ public class ContestDTO {
                         brDone++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         brAllow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         brNotAllow++;
                     }
                 }else if(category.equals(Category.YN3)){
@@ -425,7 +429,7 @@ public class ContestDTO {
                         yn3Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         yn3Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         yn3NotAllow++;
                     }
                 }else if(category.equals(Category.YN2)){
@@ -434,7 +438,7 @@ public class ContestDTO {
                         yn2Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         yn2Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         yn2NotAllow++;
                     }
                 }else if(category.equals(Category.YN1)){
@@ -443,7 +447,7 @@ public class ContestDTO {
                         yn1Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         yn1Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         yn1NotAllow++;
                     }
                 }else if(category.equals(Category.R3)){
@@ -452,7 +456,7 @@ public class ContestDTO {
                         r3Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         r3Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         r3NotAllow++;
                     }
                 }else if(category.equals(Category.R2)){
@@ -461,7 +465,7 @@ public class ContestDTO {
                         r2Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         r2Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         r2NotAllow++;
                     }
                 }else if(category.equals(Category.R1)){
@@ -470,7 +474,7 @@ public class ContestDTO {
                         r1Done++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         r1Allow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         r1NotAllow++;
                     }
                 }else if(category.equals(Category.KMS)){
@@ -479,7 +483,7 @@ public class ContestDTO {
                         kmsDone++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         kmsAllow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         kmsNotAllow++;
                     }
                 }else if(category.equals(Category.MS)){
@@ -488,7 +492,7 @@ public class ContestDTO {
                         msDone++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         msAllow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         msNotAllow++;
                     }
                 }else if(category.equals(Category.MSMK)){
@@ -497,7 +501,7 @@ public class ContestDTO {
                         msmkDone++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         msmkAllow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         msmkNotAllow++;
                     }
                 }else if(category.equals(Category.ZMS)){
@@ -506,7 +510,7 @@ public class ContestDTO {
                         zmsDone++;
                     }else if(place.getCondition().equals(Condition.ALLOW)){
                         zmsAllow++;
-                    }else if(place.getCondition().equals(Condition.NO)){
+                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
                         zmsNotAllow++;
                     }
                 }

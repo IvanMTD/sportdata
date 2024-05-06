@@ -44,12 +44,19 @@
                     </div>
                 </div>
                 <div class="col">
+                    <input type="text" id="sportTitleField" th:field="*{sportTitle}" hidden>
                     <div class="form-floating">
                         <select class="form-select" id="sport-id" th:field="*{sportId}">
                             <option th:each="sport : ${sports}" th:value="${sport.getId()}" th:text="${sport.getTitle()}"></option>
                         </select>
                         <label for="sport-id">Вид спорта</label>
                     </div>
+                    <script>
+                        document.getElementById('sportTitleField').value = document.getElementById('sport-id').options[document.getElementById('sport-id').selectedIndex].textContent;
+                        $('#sport-id').on('change', function (){
+                            document.getElementById('sportTitleField').value = document.getElementById('sport-id').options[document.getElementById('sport-id').selectedIndex].textContent;
+                        })
+                    </script>
                 </div>
             </div>
 
@@ -85,12 +92,19 @@
 
             <div class="row">
                 <div class="col">
+                    <input type="text" id="subjectTitleField" th:field="*{subjectTitle}" hidden>
                     <div class="form-floating">
                         <select class="form-select" id="subject-id" th:field="*{subjectId}">
                             <option th:each="subject : ${subjects}" th:value="${subject.getId()}" th:text="${subject.getTitle()}"></option>
                         </select>
                         <label for="subject-id">Субъект</label>
                     </div>
+                    <script>
+                        document.getElementById('subjectTitleField').value = document.getElementById('subject-id').options[document.getElementById('subject-id').selectedIndex].textContent;
+                        $('#subject-id').on('change', function (){
+                            document.getElementById('subjectTitleField').value = document.getElementById('subject-id').options[document.getElementById('subject-id').selectedIndex].textContent;
+                        })
+                    </script>
                 </div>
 
                 <div class="col" th:if="${#fields.hasErrors('city')} != true">

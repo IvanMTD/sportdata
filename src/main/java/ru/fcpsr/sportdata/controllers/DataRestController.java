@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
+import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.models.Qualification;
@@ -35,8 +36,14 @@ public class DataRestController {
     private final AgeGroupService groupService;
     private final SportSchoolService schoolService;
     private final SubjectService subjectService;
+    private final ContestService contestService;
     private final ArchiveSportService archiveSportService;
     private final PlaceService placeService;
+
+    @GetMapping("/search/contest-list")
+    public Flux<Contest> searchContestsBy(@RequestParam(name = "query") String query){
+        return contestService.searchBy(query).take(10);
+    }
 
     @GetMapping("/place/delete")
     public Mono<Place> deletePlace(@RequestParam(name = "query") String query){

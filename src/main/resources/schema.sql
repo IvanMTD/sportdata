@@ -84,7 +84,9 @@ create table if not exists contest(
     beginning date,
     ending date,
     subject_id int,
+    subject_title text,
     type_of_sport_id int,
+    sport_title text,
 
     total_subjects integer[],
     first_place integer[],

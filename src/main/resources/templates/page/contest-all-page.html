@@ -11,9 +11,25 @@
             <div class="row p-4">
                 <div class="col-11">
                     <div class="form-floating">
-                        <input type="search" class="form-control" id="form-search" placeholder="form-search">
+                        <input type="search" name="search" class="form-control" list="search-data" id="form-search" placeholder="form-search">
                         <label for="form-search">Поиск ... </label>
                     </div>
+                    <datalist id="search-data"></datalist>
+                    <script>
+                        $('#form-search').on('input', function (){
+                            let searchQuery = this.value;
+                            $.ajax({
+                                url: '/rest/database/search/contest-list',
+                                type: 'get',
+                                data: {
+                                    query: searchQuery
+                                },
+                                success: function(contestList) {
+                                    console.log(contestList);
+                                }
+                            });
+                        });
+                    </script>
                 </div>
                 <div class="col-1 d-flex justify-content-center">
                     <p class="fs-3 text-secondary"><i class="fs-2 bi bi-search"></i></p>

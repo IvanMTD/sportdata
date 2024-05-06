@@ -16,6 +16,8 @@ public class Contest {
     private int id;
     private int subjectId;
     private int typeOfSportId;
+    private String subjectTitle;
+    private String sportTitle;
     private String ekp;
     private String title;
     private String city;
@@ -79,6 +81,8 @@ public class Contest {
         setLocation(contestDTO.getLocation());
         setBeginning(contestDTO.getBeginning());
         setEnding(contestDTO.getEnding());
+        setSubjectTitle(contestDTO.getSubjectTitle());
+        setSportTitle(contestDTO.getSportTitle());
         for(Integer subjectId : contestDTO.getTotalSubjects()){
             if(subjectId != null){
                 totalSubjects.add(subjectId);
@@ -166,6 +170,7 @@ public class Contest {
     }
 
     public void updateContestData(ContestDTO contestDTO) {
+
         setParticipantTotal(contestDTO.getParticipantTotal());
         setBoyTotal(contestDTO.getBoyTotal());
         setGirlTotal(contestDTO.getGirlTotal());
