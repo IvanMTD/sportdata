@@ -337,14 +337,14 @@ public class ContestController {
             return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
                 return getCompleteContest(contest.getId());
             }).collectList().flatMapMany(cl -> {
-                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
+                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getSportTitle)).collect(Collectors.toList());
                 return Flux.fromIterable(cl);
             }).flatMapSequential(Mono::just);
         }else{
             return contestService.getAllBy(pageable,search).flatMap(contest -> {
                 return getCompleteContest(contest.getId());
             }).collectList().flatMapMany(cl -> {
-                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getId)).collect(Collectors.toList());
+                cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getSportTitle)).collect(Collectors.toList());
                 return Flux.fromIterable(cl);
             }).flatMapSequential(Mono::just);
         }
