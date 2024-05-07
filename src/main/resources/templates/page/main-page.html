@@ -38,7 +38,9 @@
                     var options = {
                         region: 'RU', // Россия
                         resolution: 'provinces', // регионы
-                        colorAxis: {colors: ['red', 'yellow', 'green']}, // цвета
+                        /*colorAxis: {colors: ['#d52121','#f58745','#eee771','#56cb56',
+                                '#59bef8','#2f76e3','#9c63d3']}, // цвета*/
+                        colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
                     };
 
                     var chart = new google.visualization.GeoChart(document.getElementById('geochart_ru'));
@@ -75,7 +77,7 @@
                     var optionsUA = {
                         region: 'UA', // Россия
                         resolution: 'provinces', // регионы
-                        colorAxis: {colors: ['red', 'yellow', 'green']}, // цвета
+                        colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
                     };
 
                     var chart = new google.visualization.GeoChart(document.getElementById('geochart_ua'));

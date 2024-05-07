@@ -25,6 +25,46 @@
                                     query: searchQuery
                                 },
                                 success: function(contestList) {
+                                    // фильтруем массив contestList и удаляем повторяющиеся значения
+                                    let uniqueContestList = contestList.filter((contest, index, self) =>
+                                            index === self.findIndex((t) => (
+                                                t.ekp === contest.ekp && t.sportTitle === contest.sportTitle && t.subjectTitle === contest.subjectTitle
+                                            ))
+                                    );
+
+                                    // очищаем список option
+                                    $('#search-data').empty();
+
+                                    // добавляем оригинальные записи в option
+                                    uniqueContestList.forEach(function (contest){
+                                        let value;
+                                        if (contest.ekp.indexOf(searchQuery) !== -1) {
+                                            value = contest.ekp;
+                                        } else if (contest.sportTitle.indexOf(searchQuery) !== -1) {
+                                            value = contest.sportTitle;
+                                        } else if (contest.subjectTitle.indexOf(searchQuery) !== -1) {
+                                            value = contest.subjectTitle;
+                                        } else {
+                                            value = contest.ekp; // default value
+                                        }
+                                        $('#search-data').append(
+                                            '<option value="' + value + '"></option>'
+                                        );
+                                    });
+                                }
+                            });
+                        });
+                    </script>
+                    <!--<script>
+                        $('#form-search').on('input', function (){
+                            let searchQuery = this.value;
+                            $.ajax({
+                                url: '/rest/database/search/contest-list',
+                                type: 'get',
+                                data: {
+                                    query: searchQuery
+                                },
+                                success: function(contestList) {
                                     $('#search-data').empty();
                                     contestList.forEach(function (contest){
                                         let value;
@@ -44,7 +84,7 @@
                                 }
                             });
                         });
-                    </script>
+                    </script>-->
                 </div>
                 <div class="col-1 d-flex justify-content-center">
                     <p class="fs-3 text-secondary"><i class="fs-2 bi bi-search"></i></p>
@@ -131,31 +171,31 @@
             <nav>
                 <ul class="pagination">
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=0)}">Первая</a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=0,search=${search})}">Первая</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 1})}"><i class="bi bi-arrow-left"></i></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 1},search=${search})}"><i class="bi bi-arrow-left"></i></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 2})}" th:if="${page - 2 >= 0}" th:text="${page - 1}"></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 2},search=${search})}" th:if="${page - 2 >= 0}" th:text="${page - 1}"></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 1})}" th:if="${page - 1 >= 0}" th:text="${page}"></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page - 1},search=${search})}" th:if="${page - 1 >= 0}" th:text="${page}"></a>
                     </li>
                     <li class="page-item active">
                         <a class="page-link disabled" href="#" th:text="${page + 1}"></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 1})}" th:if="${page + 1} <= ${lastPage}" th:text="${page + 2}"></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 1}, search=${search})}" th:if="${page + 1} <= ${lastPage}" th:text="${page + 2}"></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 2})}" th:if="${page + 2} <= ${lastPage}" th:text="${page + 3}"></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 2}, search=${search})}" th:if="${page + 2} <= ${lastPage}" th:text="${page + 3}"></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 1})}"><i class="bi bi-arrow-right"></i></a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${page + 1}, search=${search})}"><i class="bi bi-arrow-right"></i></a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" th:href="@{/contest/get/all(page=${lastPage})}">Последняя</a>
+                        <a class="page-link" th:href="@{/contest/get/all(page=${lastPage},search=${search})}">Последняя</a>
                     </li>
                 </ul>
             </nav>
