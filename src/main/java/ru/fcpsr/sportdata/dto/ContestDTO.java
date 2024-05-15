@@ -287,31 +287,37 @@ public class ContestDTO {
         int msCount = 0;
         int msmkCount = 0;
         int zmsCount = 0;
-        for(SportDTO discipline : sports){
-            for(PlaceDTO place : discipline.getPlaces()){
-                Category category = place.getQualification().getCategory();
-                if(category.equals(Category.BR)){
-                    brCount++;
-                }else if(category.equals(Category.YN3)){
-                    yn3Count++;
-                }else if(category.equals(Category.YN2)){
-                    yn2Count++;
-                }else if(category.equals(Category.YN1)){
-                    yn1Count++;
-                }else if(category.equals(Category.R3)){
-                    r3Count++;
-                }else if(category.equals(Category.R2)){
-                    r2Count++;
-                }else if(category.equals(Category.R1)){
-                    r1Count++;
-                }else if(category.equals(Category.KMS)){
-                    kmsCount++;
-                }else if(category.equals(Category.MS)){
-                    msCount++;
-                }else if(category.equals(Category.MSMK)){
-                    msmkCount++;
-                }else if(category.equals(Category.ZMS)){
-                    zmsCount++;
+        if(sports.size() != 0) {
+            for (SportDTO discipline : sports) {
+                for (PlaceDTO place : discipline.getPlaces()) {
+                    if(place != null) {
+                        Category category = place.getQualification().getCategory();
+                        if(category != null) {
+                            if (category.equals(Category.BR)) {
+                                brCount++;
+                            } else if (category.equals(Category.YN3)) {
+                                yn3Count++;
+                            } else if (category.equals(Category.YN2)) {
+                                yn2Count++;
+                            } else if (category.equals(Category.YN1)) {
+                                yn1Count++;
+                            } else if (category.equals(Category.R3)) {
+                                r3Count++;
+                            } else if (category.equals(Category.R2)) {
+                                r2Count++;
+                            } else if (category.equals(Category.R1)) {
+                                r1Count++;
+                            } else if (category.equals(Category.KMS)) {
+                                kmsCount++;
+                            } else if (category.equals(Category.MS)) {
+                                msCount++;
+                            } else if (category.equals(Category.MSMK)) {
+                                msmkCount++;
+                            } else if (category.equals(Category.ZMS)) {
+                                zmsCount++;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -411,107 +417,113 @@ public class ContestDTO {
         int zmsAllow = 0;
         int zmsNotAllow = 0;
 
-        for(SportDTO discipline : sports){
-            for(PlaceDTO place : discipline.getPlaces()){
-                Category category = place.getQualification().getCategory();
-                if(category.equals(Category.BR)){
-                    brCount++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        brDone++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        brAllow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        brNotAllow++;
-                    }
-                }else if(category.equals(Category.YN3)){
-                    yn3Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        yn3Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        yn3Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        yn3NotAllow++;
-                    }
-                }else if(category.equals(Category.YN2)){
-                    yn2Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        yn2Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        yn2Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        yn2NotAllow++;
-                    }
-                }else if(category.equals(Category.YN1)){
-                    yn1Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        yn1Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        yn1Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        yn1NotAllow++;
-                    }
-                }else if(category.equals(Category.R3)){
-                    r3Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        r3Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        r3Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        r3NotAllow++;
-                    }
-                }else if(category.equals(Category.R2)){
-                    r2Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        r2Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        r2Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        r2NotAllow++;
-                    }
-                }else if(category.equals(Category.R1)){
-                    r1Count++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        r1Done++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        r1Allow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        r1NotAllow++;
-                    }
-                }else if(category.equals(Category.KMS)){
-                    kmsCount++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        kmsDone++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        kmsAllow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        kmsNotAllow++;
-                    }
-                }else if(category.equals(Category.MS)){
-                    msCount++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        msDone++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        msAllow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        msNotAllow++;
-                    }
-                }else if(category.equals(Category.MSMK)){
-                    msmkCount++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        msmkDone++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        msmkAllow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        msmkNotAllow++;
-                    }
-                }else if(category.equals(Category.ZMS)){
-                    zmsCount++;
-                    if(place.getCondition().equals(Condition.DONE)){
-                        zmsDone++;
-                    }else if(place.getCondition().equals(Condition.ALLOW)){
-                        zmsAllow++;
-                    }else if(place.getCondition().equals(Condition.NOT_ALLOW)){
-                        zmsNotAllow++;
+        if(sports.size() != 0) {
+            for (SportDTO discipline : sports) {
+                for (PlaceDTO place : discipline.getPlaces()) {
+                    if(place != null) {
+                        Category category = place.getQualification().getCategory();
+                        if(category != null) {
+                            if (category.equals(Category.BR)) {
+                                brCount++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    brDone++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    brAllow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    brNotAllow++;
+                                }
+                            } else if (category.equals(Category.YN3)) {
+                                yn3Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    yn3Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    yn3Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    yn3NotAllow++;
+                                }
+                            } else if (category.equals(Category.YN2)) {
+                                yn2Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    yn2Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    yn2Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    yn2NotAllow++;
+                                }
+                            } else if (category.equals(Category.YN1)) {
+                                yn1Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    yn1Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    yn1Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    yn1NotAllow++;
+                                }
+                            } else if (category.equals(Category.R3)) {
+                                r3Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    r3Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    r3Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    r3NotAllow++;
+                                }
+                            } else if (category.equals(Category.R2)) {
+                                r2Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    r2Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    r2Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    r2NotAllow++;
+                                }
+                            } else if (category.equals(Category.R1)) {
+                                r1Count++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    r1Done++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    r1Allow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    r1NotAllow++;
+                                }
+                            } else if (category.equals(Category.KMS)) {
+                                kmsCount++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    kmsDone++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    kmsAllow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    kmsNotAllow++;
+                                }
+                            } else if (category.equals(Category.MS)) {
+                                msCount++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    msDone++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    msAllow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    msNotAllow++;
+                                }
+                            } else if (category.equals(Category.MSMK)) {
+                                msmkCount++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    msmkDone++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    msmkAllow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    msmkNotAllow++;
+                                }
+                            } else if (category.equals(Category.ZMS)) {
+                                zmsCount++;
+                                if (place.getCondition().equals(Condition.DONE)) {
+                                    zmsDone++;
+                                } else if (place.getCondition().equals(Condition.ALLOW)) {
+                                    zmsAllow++;
+                                } else if (place.getCondition().equals(Condition.NOT_ALLOW)) {
+                                    zmsNotAllow++;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -557,30 +569,38 @@ public class ContestDTO {
     }
 
     public String getAgeControl(){
-        int minimal = 100;
-        int maximal = 0;
-        int violation = 0;
-        for(SportDTO discipline : sports){
-            int minAge = discipline.getGroup().getMinAge();
-            int maxAge = discipline.getGroup().getMaxAge();
-            for(PlaceDTO place : discipline.getPlaces()){
-                int age = place.getParticipant().getAge();
-                if(age < minimal){
-                    minimal = age;
-                }
-                if(age > maximal){
-                    maximal = age;
-                }
-                if(minAge > age && age > maxAge){
-                    violation++;
+        if(sports.size() != 0) {
+            int minimal = 100;
+            int maximal = 0;
+            int violation = 0;
+            for (SportDTO discipline : sports) {
+                if(discipline.getGroup() != null) {
+                    int minAge = discipline.getGroup().getMinAge();
+                    int maxAge = discipline.getGroup().getMaxAge();
+                    for (PlaceDTO place : discipline.getPlaces()) {
+                        int age = place.getParticipant().getAge();
+                        if (age < minimal) {
+                            minimal = age;
+                        }
+                        if (age > maximal) {
+                            maximal = age;
+                        }
+                        if (minAge > age && age > maxAge) {
+                            violation++;
+                        }
+                    }
+                }else{
+                    return "";
                 }
             }
-        }
 
-        if(violation == 0){
-            return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что соответствует требованиям Положения о спортивных соревнованиях.";
+            if (violation == 0) {
+                return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что соответствует требованиям Положения о спортивных соревнованиях.";
+            } else {
+                return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что не соответствует требованиям Положения о спортивных соревнованиях.";
+            }
         }else{
-            return "от " + minimal + " до " + maximal + " (" + (LocalDate.now().getYear() - maximal) + "-" + (LocalDate.now().getYear() - minimal) + " годов рождения), что не соответствует требованиям Положения о спортивных соревнованиях.";
+            return "";
         }
     }
 

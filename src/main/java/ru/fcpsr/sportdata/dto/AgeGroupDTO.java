@@ -41,6 +41,10 @@ public class AgeGroupDTO {
     }
 
     public String getLowTitle(){
-        return title.toLowerCase();
+        if(title != null) {
+            return title.toLowerCase();
+        }else{
+            return "";
+        }
     }
 }
