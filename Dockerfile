@@ -11,5 +11,5 @@ FROM bellsoft/liberica-openjdk-alpine
 EXPOSE 8060 8080
 WORKDIR /app
 COPY --from=1 /app/target/sportdata-1.0.0.jar /app
-CMD ["java","-Xms64m","-Xmx1000m","-jar","infosec-1.0.0.jar"]
-#CMD ["java","-jar","sportdata-1.0.0.jar"]
+#CMD ["java","-Xms64m","-Xmx1000m","-jar","infosec-1.0.0.jar"]
+CMD ["java","-jar","sportdata-1.0.0.jar"]
