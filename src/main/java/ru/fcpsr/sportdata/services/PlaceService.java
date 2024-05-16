@@ -65,7 +65,8 @@ public class PlaceService {
                 .findAllByIdIn(placeIds)
                 .collectList()
                 .flatMap(list -> placeRepository.deleteAll(list).then(Mono.just(list)))
-                .flatMapMany(Flux::fromIterable);
+                .flatMapMany(Flux::fromIterable)
+                .switchIfEmpty(Flux.fromIterable(new ArrayList<>()));
     }
 
     public Flux<Place> getAllWhereParticipantIdIs(int participantId) {

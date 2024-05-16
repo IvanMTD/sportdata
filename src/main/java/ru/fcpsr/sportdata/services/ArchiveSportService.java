@@ -56,4 +56,10 @@ public class ArchiveSportService {
                 .flatMap(list -> archiveSportRepository.deleteAll(list).then(Mono.just(list)))
                 .flatMapMany(Flux::fromIterable);
     }
+
+    public Mono<ArchiveSport> deleteBy(int id) {
+        return archiveSportRepository.findById(id).flatMap(archiveSport -> {
+            return archiveSportRepository.delete(archiveSport).then(Mono.just(archiveSport));
+        });
+    }
 }

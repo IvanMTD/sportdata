@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
 import ru.fcpsr.sportdata.dto.ParticipantContestDTO;
+import ru.fcpsr.sportdata.models.ArchiveSport;
 import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.repositories.ContestRepository;
@@ -168,5 +169,12 @@ public class ContestService {
         fluxes.add(contestRepository.findAllBySportTitle(pageable,search));
         fluxes.add(contestRepository.findAllBySubjectTitle(pageable,search));
         return Flux.merge(fluxes).distinct().flatMap(contest -> Mono.just(new ContestDTO(contest)));
+    }
+
+    public Mono<Contest> deleteArchiveSportFromContest(ArchiveSport deleted) {
+        return contestRepository.findById(deleted.getContestId()).flatMap(contest -> {
+            contest.getASportIds().remove(deleted.getId());
+            return contestRepository.save(contest);
+        });
     }
 }

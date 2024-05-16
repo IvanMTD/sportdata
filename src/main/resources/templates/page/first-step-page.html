@@ -139,7 +139,11 @@
             </div>
 
             <div class="row pb-4">
-                <div class="col-8"></div>
+                <div class="col-4"></div>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <input type="number" value="0" id="save" name="save" hidden>
+                    <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="document.getElementById('save').value = 1">Сохранить</button>
+                </div>
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <button class="btn btn-outline-secondary btn-lg" type="submit">Далее</button>
                 </div>

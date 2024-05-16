@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
@@ -53,42 +54,54 @@ public class ContestController {
     }
 
     @PostMapping("/first-step")
-    public Mono<Rendering> firstStepComplete(@ModelAttribute(name = "contest") @Valid ContestDTO contestDTO, Errors errors){
-        return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(contest -> {
-            if(contest.getId() != contestDTO.getId()){
-                if(contest.getId() != 0) {
-                    if (contestDTO.getBeginning() != null) {
-                        int year = contest.getBeginning().getYear();
-                        int yearDTO = contestDTO.getBeginning().getYear();
-                        if (year == yearDTO) {
-                            errors.rejectValue("ekp", "", "Такой ЕКП уже зарегистрирован в системе!");
+    public Mono<Rendering> firstStepComplete(@ModelAttribute(name = "contest") @Valid ContestDTO contestDTO, Errors errors, ServerWebExchange exchange){
+        return exchange.getFormData().flatMap(form -> {
+            return contestService.getContestByEkp(contestDTO.getEkp()).flatMap(contest -> {
+                if(contest.getId() != contestDTO.getId()){
+                    if(contest.getId() != 0) {
+                        if (contestDTO.getBeginning() != null) {
+                            int year = contest.getBeginning().getYear();
+                            int yearDTO = contestDTO.getBeginning().getYear();
+                            if (year == yearDTO) {
+                                errors.rejectValue("ekp", "", "Такой ЕКП уже зарегистрирован в системе!");
+                            }
                         }
                     }
                 }
-            }
-            if(errors.hasErrors()){
-                return Mono.just(
-                        Rendering.view("template")
-                                .modelAttribute("title","First step")
-                                .modelAttribute("index","first-step-page")
-                                .modelAttribute("contest", contestDTO)
-                                .modelAttribute("sports", sportService.getAll())
-                                .modelAttribute("subjects", subjectService.getAll())
-                                .build()
-                );
-            }
+                if(errors.hasErrors()){
+                    return Mono.just(
+                            Rendering.view("template")
+                                    .modelAttribute("title","First step")
+                                    .modelAttribute("index","first-step-page")
+                                    .modelAttribute("contest", contestDTO)
+                                    .modelAttribute("sports", sportService.getAll())
+                                    .modelAttribute("subjects", subjectService.getAll())
+                                    .build()
+                    );
+                }
 
-            if(contestDTO.getId() != 0){
-                return contestService.updateContestFirstStep(contestDTO).flatMap(updatedContest -> {
-                    log.info("step first done contest {} primary updated", updatedContest.getId());
-                    return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + updatedContest.getId()).build());
-                });
-            }else {
-                return contestService.createContestFirstStep(contestDTO).flatMap(savedContest -> {
-                    log.info("step first done contest {} primary saved", savedContest.getId());
-                    return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + savedContest.getId()).build());
-                });
-            }
+                int save = Integer.parseInt(form.get("save").get(0));
+
+                if(contestDTO.getId() != 0){
+                    return contestService.updateContestFirstStep(contestDTO).flatMap(updatedContest -> {
+                        log.info("step first done contest {} primary updated", updatedContest.getId());
+                        if(save == 0) {
+                            return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + updatedContest.getId()).build());
+                        }else{
+                            return Mono.just(Rendering.redirectTo("/contest/first-step?contest=" + updatedContest.getId()).build());
+                        }
+                    });
+                }else {
+                    return contestService.createContestFirstStep(contestDTO).flatMap(savedContest -> {
+                        log.info("step first done contest {} primary saved", savedContest.getId());
+                        if(save == 0) {
+                            return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + savedContest.getId()).build());
+                        }else{
+                            return Mono.just(Rendering.redirectTo("/contest/first-step?contest=" + savedContest.getId()).build());
+                        }
+                    });
+                }
+            });
         });
     }
 
@@ -108,10 +121,17 @@ public class ContestController {
     }
 
     @PostMapping("/second-step")
-    public Mono<Rendering> secondStepComplete(@ModelAttribute(name = "contest") ContestDTO contestDTO) {
-        return contestService.updateContestSecondStep(contestDTO).flatMap(contest -> {
-            log.info("contest {} updated", contest.getId());
-            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+    public Mono<Rendering> secondStepComplete(@ModelAttribute(name = "contest") ContestDTO contestDTO, ServerWebExchange exchange) {
+        return exchange.getFormData().flatMap(form -> {
+            return contestService.updateContestSecondStep(contestDTO).flatMap(contest -> {
+                int save = Integer.parseInt(form.get("save").get(0));
+                log.info("contest {} updated", contest.getId());
+                if(save == 0) {
+                    return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                }else{
+                    return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + contest.getId()).build());
+                }
+            });
         });
     }
 
@@ -231,6 +251,32 @@ public class ContestController {
                 }
             });
         });
+    }
+
+    @GetMapping("/last-step/discipline/delete")
+    public Mono<Rendering> disciplineDeleteFromLastStep(@RequestParam(name = "discipline") int did, @RequestParam(name = "contest") int cid){
+        if(did != 0) {
+            return archiveSportService.deleteBy(did).flatMap(deleted -> {
+                log.info("discipline has been deleted [{}]", deleted);
+                return placeService.deleteAllCurrent(deleted.getPlaceIds()).collectList().flatMap(l -> {
+                    for (Place place : l) {
+                        log.info("place has been deleted [{}]", place);
+                    }
+                    return contestService.deleteArchiveSportFromContest(deleted).flatMap(contest -> {
+                        log.info("discipline has been removed from contest [{}]", contest);
+                        return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                    });
+                });
+            });
+        }else{
+            return contestService.getById(cid).flatMap(contest -> {
+                contest.setComplete(true);
+                return contestService.saveContest(contest);
+            }).flatMap(contest -> {
+                log.info("contest set done [{}]", contest);
+                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+            });
+        }
     }
 
     @GetMapping("/monitor")

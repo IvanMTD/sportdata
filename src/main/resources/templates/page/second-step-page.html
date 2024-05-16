@@ -659,7 +659,10 @@
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <a class="btn btn-outline-secondary btn-lg" th:href="@{/contest/first-step(contest=${contest.getId()})}">Назад</a>
                 </div>
-                <div class="col-4"></div>
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <input type="number" value="0" id="save" name="save" hidden>
+                    <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="document.getElementById('save').value = 1">Сохранить</button>
+                </div>
                 <div class="d-grid gap-2 col-4 mx-auto">
                     <button class="btn btn-outline-secondary btn-lg" type="submit">Далее</button>
                 </div>
