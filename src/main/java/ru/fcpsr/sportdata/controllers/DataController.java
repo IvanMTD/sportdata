@@ -62,6 +62,9 @@ public class DataController {
                         .modelAttribute("title","Summary information")
                         .modelAttribute("index","data-sum-page")
                         .modelAttribute("dbStat", getTotalStatistic())
+                        .modelAttribute("baseSportChart", getBaseSportData())
+                        .modelAttribute("baseSubjectChart", getBaseSubjectData())
+                        .modelAttribute("baseSportForSubjectChart", getBaseSportForSubjectData())
                         .build()
         );
     }
@@ -1104,6 +1107,61 @@ public class DataController {
             form.setBaseSportTotal(Math.toIntExact(count));
             return Mono.just(form);
         }));
+    }
+
+    private Flux<BaseChartDTO> getBaseSportData(){
+        return sportService.getAll().flatMap(sport -> {
+            BaseChartDTO baseChartDTO = new BaseChartDTO();
+            baseChartDTO.setTitle(sport.getTitle());
+            return baseSportService.getAllByIds(sport.getBaseSportIds()).collectList().flatMap(l -> {
+                long count = 0;
+                for(BaseSport baseSport : l){
+                    if(LocalDate.now().getYear() < baseSport.getExpiration()){
+                        count++;
+                    }
+                }
+                baseChartDTO.setCount(count);
+                return Mono.just(baseChartDTO);
+            });
+        }).collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(BaseChartDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
+    }
+
+    private Flux<BaseChartDTO> getBaseSubjectData(){
+        return subjectService.getAll().flatMap(subject -> {
+            BaseChartDTO baseChartDTO = new BaseChartDTO();
+            baseChartDTO.setTitle(subject.getTitle());
+            return schoolService.getAllByIdIn(subject.getSportSchoolIds()).collectList().flatMap(l -> {
+                long count = l.size();
+                baseChartDTO.setCount(count);
+                return Mono.just(baseChartDTO);
+            });
+        }).collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(BaseChartDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
+    }
+
+    private Flux<BaseChartDTO> getBaseSportForSubjectData(){
+        return subjectService.getAll().flatMap(subject -> {
+            BaseChartDTO baseChartDTO = new BaseChartDTO();
+            baseChartDTO.setTitle(subject.getTitle());
+            return baseSportService.getAllByIds(subject.getBaseSportIds()).collectList().flatMap(l -> {
+                long count = 0;
+                for(BaseSport baseSport : l){
+                    if(LocalDate.now().getYear() < baseSport.getExpiration()){
+                        count++;
+                    }
+                }
+                baseChartDTO.setCount(count);
+                return Mono.just(baseChartDTO);
+            });
+        }).collectList().flatMapMany(l -> {
+            l = l.stream().sorted(Comparator.comparing(BaseChartDTO::getTitle)).collect(Collectors.toList());
+            return Flux.fromIterable(l);
+        }).flatMapSequential(Mono::just);
     }
 
     private Mono<Rendering> getBaseSportErrorRendering(String letter, TypeOfSportDTO sportDTO){

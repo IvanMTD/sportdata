@@ -1,13 +1,3 @@
-<!--
-form
-private int sportTotal;
-private int disciplineTotal;
-private int groupTotal;
-private int subjectTotal;
-private int schoolTotal;
-private int participantTotal;
--->
-
 <div class="container">
     <div class="row">
         <div class="col"></div>
@@ -21,10 +11,115 @@ private int participantTotal;
         <div class="col"></div>
     </div>
     <div class="row">
+        <div class="col my-4 rounded-4 shadow">
+            <script th:inline="javascript">
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    let baseSportList = [[${baseSportChart}]];
+                    let baseSportArray = [];
+                    for(let i=0; i<baseSportList.length; i++){
+                        if(i==0){
+                            baseSportArray[i] = ['Название','Вид спорта является базовым в'];
+                        }else{
+                            baseSportArray[i] = [baseSportList[i].title, baseSportList[i].count];
+                        }
+                    }
+                    let baseSportData = google.visualization.arrayToDataTable(baseSportArray,false);
+
+                    let baseSportOptions = {
+                        title: 'Количество субъектов по видам спорта',
+                        legend: 'none',
+                        bar: {
+                            groupWidth: '100%'
+                        }
+                    };
+
+                    let baseSportChart = new google.visualization.ColumnChart(document.getElementById('baseSportChart'));
+
+                    baseSportChart.draw(baseSportData, baseSportOptions);
+                }
+            </script>
+            <div id="baseSportChart" style="height: 300px"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col my-4 rounded-4 shadow">
+            <script th:inline="javascript">
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    let baseSportSubjectList = [[${baseSportForSubjectChart}]];
+                    let baseSportSubjectArray = [];
+                    for(let i=0; i<baseSportSubjectList.length; i++){
+                        if(i==0){
+                            baseSportSubjectArray[i] = ['Название','Всего базовых видов спорта в субъекте'];
+                        }else{
+                            baseSportSubjectArray[i] = [baseSportSubjectList[i].title, baseSportSubjectList[i].count];
+                        }
+                    }
+                    let baseSportSubjectData = google.visualization.arrayToDataTable(baseSportSubjectArray,false);
+
+                    let baseSportSubjectOptions = {
+                        title: 'Количество базовых видов спорта в субъектах',
+                        legend: 'none',
+                        bar: {
+                            groupWidth: '65%'
+                        }
+                    };
+
+                    let baseSportSubjectChart = new google.visualization.ColumnChart(document.getElementById('baseSportSubjectChart'));
+
+                    baseSportSubjectChart.draw(baseSportSubjectData, baseSportSubjectOptions);
+                }
+            </script>
+            <div id="baseSportSubjectChart" style="height: 300px"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col my-4 rounded-4 shadow">
+            <script th:inline="javascript">
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    let baseSubjectList = [[${baseSubjectChart}]];
+                    let baseSubjectArray = [];
+                    for(let i=0; i<baseSubjectList.length; i++){
+                        if(i==0){
+                            baseSubjectArray[i] = ['Название','Всего школ в субъекте'];
+                        }else{
+                            baseSubjectArray[i] = [baseSubjectList[i].title, baseSubjectList[i].count];
+                        }
+                    }
+                    let baseSubjectData = google.visualization.arrayToDataTable(baseSubjectArray,false);
+
+                    let baseSubjectOptions = {
+                        title: 'Количество школ в субъектах',
+                        legend: 'none',
+                        bar: {
+                            groupWidth: '65%'
+                        }
+                    };
+
+                    let baseSubjectChart = new google.visualization.ColumnChart(document.getElementById('baseSubjectChart'));
+
+                    baseSubjectChart.draw(baseSubjectData, baseSubjectOptions);
+                }
+            </script>
+            <div id="baseSubjectChart" style="height: 300px"></div>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-3">
             <ol class="list-group">
                 <li id="sportList" class="list-group-item d-flex justify-content-between align-items-start"
-                    onclick="showSport()">
+                    onclick="showSport()" style="cursor: pointer">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">Виды спорта</div>
                         Информация по видам спорта
@@ -32,7 +127,7 @@ private int participantTotal;
                     <span class="badge text-bg-primary rounded-pill" th:text="${dbStat.getSportTotal()}"></span>
                 </li>
                 <li id="subjectList" class="list-group-item d-flex justify-content-between align-items-start"
-                    onclick="showSubject()">
+                    onclick="showSubject()" style="cursor: pointer">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">Субъекты</div>
                         Информация по субъектам
@@ -40,7 +135,7 @@ private int participantTotal;
                     <span class="badge text-bg-primary rounded-pill" th:text="${dbStat.getSubjectTotal()}"></span>
                 </li>
                 <li id="personList" class="list-group-item d-flex justify-content-between align-items-start"
-                    onclick="showPerson()">
+                    onclick="showPerson()" style="cursor: pointer">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">Участники</div>
                         Информация по участникам финалистам

@@ -67,3 +67,12 @@
     justify-content: center;
     align-items: center;
 }
+
+.geochart-scale {
+    overflow: hidden; /* Это свойство обрезает всё, что выходит за пределы элемента */
+}
+
+.google-visualization-geochart {
+    transform: scale(6); /* Увеличивает размер карты в 2 раза */
+    transform-origin: 10% 70%; /* Центр увеличения карты */
+}

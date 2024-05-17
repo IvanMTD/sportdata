@@ -9,84 +9,116 @@
         <div class="col"></div>
     </div>
     <div class="container py-2 rounded-4 shadow">
-        <div class="col">
-            <script th:inline="javascript">
-                let subjects = [[${subjects}]];
-                google.charts.load('current', {
-                    'packages':['geochart'],
-                    // Note: you will need to get a mapsApiKey for your project.
-                    // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
-                    'mapsApiKey': 'YOUR_KEY'
-                });
-                google.charts.setOnLoadCallback(drawRegionsMap);
+        <div class="row">
+            <div class="col">
+                <script th:inline="javascript">
+                    let subjects = [[${subjects}]];
+                    google.charts.load('current', {
+                        'packages':['geochart'],
+                        // Note: you will need to get a mapsApiKey for your project.
+                        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+                        'mapsApiKey': 'YOUR_KEY'
+                    });
+                    google.charts.setOnLoadCallback(drawRegionsMap);
 
-                function drawRegionsMap(){
-                    let dataTable = new google.visualization.DataTable();
-                    console.log(subjects);
-                    dataTable.addColumn('string','Субъект');
-                    dataTable.addColumn('number','Количество базовых видов спорта>');
-                    dataTable.addColumn({type: 'string', role: 'tooltip'});
+                    function drawRegionsMap(){
+                        let dataTable = new google.visualization.DataTable();
+                        console.log(subjects);
+                        dataTable.addColumn('string','Субъект');
+                        dataTable.addColumn('number','Количество базовых видов спорта>');
+                        dataTable.addColumn({type: 'string', role: 'tooltip'});
 
-                    for(let i=0; i<subjects.length; i++){
-                        let row = [];
-                        row[0] = subjects[i].iso;
-                        row[1] = subjects[i].baseSports.length
-                        row[2] = subjects[i].title + '\n' + 'Всего базовых видов спорта: ' + subjects[i].baseSports.length;
-                        dataTable.addRows([row]);
+                        for(let i=0; i<subjects.length; i++){
+                            let row = [];
+                            row[0] = subjects[i].iso;
+                            row[1] = subjects[i].baseSports.length
+                            row[2] = subjects[i].title + '\n' + 'Всего базовых видов спорта: ' + subjects[i].baseSports.length;
+                            dataTable.addRows([row]);
+                        }
+
+                        var options = {
+                            region: 'RU', // Россия
+                            resolution: 'provinces', // регионы
+                            /*colorAxis: {colors: ['#d52121','#f58745','#eee771','#56cb56',
+                                    '#59bef8','#2f76e3','#9c63d3']}, // цвета*/
+                            colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
+                        };
+
+                        var chart = new google.visualization.GeoChart(document.getElementById('geochart_ru'));
+                        chart.draw(dataTable, options);
                     }
-
-                    var options = {
-                        region: 'RU', // Россия
-                        resolution: 'provinces', // регионы
-                        /*colorAxis: {colors: ['#d52121','#f58745','#eee771','#56cb56',
-                                '#59bef8','#2f76e3','#9c63d3']}, // цвета*/
-                        colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
-                    };
-
-                    var chart = new google.visualization.GeoChart(document.getElementById('geochart_ru'));
-                    chart.draw(dataTable, options);
-                }
-            </script>
-            <div class="row">
-                <div id="geochart_ru" style="width: 100%; height: auto"></div>
+                </script>
+                <div id="geochart_ru"></div>
             </div>
-            <script th:inline="javascript">
-                let subjectsUA = [[${subjects}]];
-                google.charts.load('current', {
-                    'packages':['geochart'],
-                    // Note: you will need to get a mapsApiKey for your project.
-                    // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
-                    'mapsApiKey': 'YOUR_KEY'
-                });
-                google.charts.setOnLoadCallback(drawRegionsMap);
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <script th:inline="javascript">
+                    let subjectsUA = [[${subjects}]];
+                    google.charts.load('current', {
+                        'packages':['geochart'],
+                        // Note: you will need to get a mapsApiKey for your project.
+                        // See: https://developers.google.com/chart/interactive/docs/basic_load_libs#load-settings
+                        'mapsApiKey': 'YOUR_KEY'
+                    });
+                    google.charts.setOnLoadCallback(drawRegionsMap);
 
-                function drawRegionsMap(){
-                    let dataTableUA = new google.visualization.DataTable();
-                    dataTableUA.addColumn('string','Субъект');
-                    dataTableUA.addColumn('number','Количество базовых видов спорта>');
-                    dataTableUA.addColumn({type: 'string', role: 'tooltip'});
+                    function drawRegionsMap(){
+                        let dataTableUA = new google.visualization.DataTable();
+                        dataTableUA.addColumn('string','Субъект');
+                        dataTableUA.addColumn('number','Количество базовых видов спорта>');
+                        dataTableUA.addColumn({type: 'string', role: 'tooltip'});
 
-                    for(let i=0; i<subjectsUA.length; i++){
-                        let row = [];
-                        row[0] = subjectsUA[i].iso;
-                        row[1] = subjectsUA[i].baseSports.length
-                        row[2] = subjectsUA[i].title + '\n' + 'Всего базовых видов спорта: ' + subjectsUA[i].baseSports.length;
-                        dataTableUA.addRows([row]);
+                        for(let i=0; i<subjectsUA.length; i++){
+                            let row = [];
+                            row[0] = subjectsUA[i].iso;
+                            row[1] = subjectsUA[i].baseSports.length
+                            row[2] = subjectsUA[i].title + '\n' + 'Всего базовых видов спорта: ' + subjectsUA[i].baseSports.length;
+                            dataTableUA.addRows([row]);
+                        }
+
+                        var optionsUA = {
+                            region: 'UA', // Россия
+                            resolution: 'provinces', // регионы
+                            colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
+                        };
+
+                        var chart = new google.visualization.GeoChart(document.getElementById('geochart_ua'));
+                        chart.draw(dataTableUA, optionsUA);
                     }
-
-                    var optionsUA = {
-                        region: 'UA', // Россия
-                        resolution: 'provinces', // регионы
-                        colorAxis: {colors: ['#f58745','#eee771','#12b05a']}, // цвета
-                    };
-
-                    var chart = new google.visualization.GeoChart(document.getElementById('geochart_ua'));
-                    chart.draw(dataTableUA, optionsUA);
-                }
-            </script>
-            <div class="row">
-                <div id="geochart_ua" style="width: 30%; height: auto"></div>
+                </script>
+                <div id="geochart_ua"></div>
                 <p>Новые территории</p>
+            </div>
+            <div class="col-3">
+                <!--<script type="text/javascript">
+                    google.charts.load('current', {'packages':['geochart']});
+                    google.charts.setOnLoadCallback(drawRegionsMap);
+
+                    function drawRegionsMap() {
+                        let dataMO = google.visualization.arrayToDataTable([
+                            ['Region', 'Value', {type: 'string', role: 'tooltip'}],
+                            ['Moscow', 100, 'Тест']
+                        ]);
+
+                        let optionsMO = {
+                            region: 'RU',
+                            resolution: 'provinces',
+                            colorAxis: {colors: ['#f58745', '#eee771', '#12b05a']}
+                        };
+
+                        let chartMO = new google.visualization.GeoChart(document.getElementById('geochart_mo'));
+                        chartMO.draw(dataMO, optionsMO);
+                    }
+                </script>
+                <div id="geochart_mo"></div>
+                <p>Москва</p>-->
+            </div>
+            <div class="col-3">
+
+            </div>
+            <div class="col-3">
+
             </div>
         </div>
     </div>
