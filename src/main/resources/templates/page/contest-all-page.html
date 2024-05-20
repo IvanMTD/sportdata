@@ -45,11 +45,11 @@
                                     // добавляем оригинальные записи в option
                                     uniqueContestList.forEach(function (contest){
                                         let value;
-                                        if (contest.ekp.toLowerCase().indexOf(searchQuery) !== -1) {
+                                        if (contest.ekp.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
                                             value = contest.ekp;
-                                        } else if (contest.sportTitle.toLowerCase().indexOf(searchQuery) !== -1) {
+                                        } else if (contest.sportTitle.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
                                             value = contest.sportTitle;
-                                        } else if (contest.subjectTitle.toLowerCase().indexOf(searchQuery) !== -1) {
+                                        } else if (contest.subjectTitle.toLowerCase().indexOf(searchQuery.toLowerCase()) !== -1) {
                                             value = contest.subjectTitle;
                                         } else {
                                             value = contest.ekp; // default value
