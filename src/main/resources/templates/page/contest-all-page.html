@@ -26,13 +26,18 @@
                                 },
                                 success: function(contestList) {
                                     // фильтруем массив contestList и удаляем повторяющиеся значения
-                                    let uniqueContestList = contestList.filter((contest, index, self) =>
-                                            index === self.findIndex((t) => (
-                                                t.ekp.toLowerCase() === contest.ekp.toLowerCase() &&
-                                                t.sportTitle.toLowerCase() === contest.sportTitle.toLowerCase() &&
-                                                t.subjectTitle.toLowerCase() === contest.subjectTitle.toLowerCase()
-                                            ))
-                                    );
+                                    let uniqueContestList;
+
+                                    if (!isNaN(searchQuery)) {
+                                        uniqueContestList = contestList;
+                                    } else {
+                                        uniqueContestList = contestList.filter((contest, index, self) =>
+                                                index === self.findIndex((t) => (
+                                                    t.sportTitle.toLowerCase() === contest.sportTitle.toLowerCase() ||
+                                                    t.subjectTitle.toLowerCase() === contest.subjectTitle.toLowerCase()
+                                                ))
+                                        );
+                                    }
 
                                     // очищаем список option
                                     $('#search-data').empty();
