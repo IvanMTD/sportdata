@@ -264,7 +264,15 @@ public class ContestController {
                     }
                     return contestService.deleteArchiveSportFromContest(deleted).flatMap(contest -> {
                         log.info("discipline has been removed from contest [{}]", contest);
-                        return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                        if(contest.getASportIds().size() == 0){
+                            contest.setComplete(false);
+                            return contestService.saveContest(contest).flatMap(saved -> {
+                                log.info("contest has been updated [{}]",saved);
+                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                            });
+                        }else{
+                            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                        }
                     });
                 });
             });
