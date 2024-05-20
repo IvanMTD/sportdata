@@ -531,8 +531,11 @@
                     <div class="accordion-item" th:each="as, as_stat : ${contest.getSports()}" th:if="${as.id} != 0">
                         <h2 class="accordion-header">
                             <button th:id="'accordion-btn-' + ${as_stat.index}" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse" aria-expanded="false" aria-controls="collapse">
-                                <div class="col">
+                                <div class="col-4">
                                     <i class="bi bi-flag fs-5 text-danger"></i><span class="fs-5 text-uppercase text-secondary" th:text="' ' + ${as.discipline.title}"></span>
+                                </div>
+                                <div class="col-5 d-flex">
+                                    <p class="fs-5 text-uppercase text-secondary my-auto" th:text="${as.group.title} + ' (' + ${as.group.minAge} + '-' + ${as.group.maxAge} + ' лет)'"></p>
                                 </div>
                                 <div class="col-1">
                                     <span th:id="'allow-' + ${as_stat.index}" data-bs-toggle="tooltip" data-bs-title=""><i class="bi bi-bookmark-check fs-4 text-success"></i></span>
@@ -702,6 +705,8 @@
                 <div class="col">
                     <div class="d-grid gap-2 col-6 mx-auto">
                         <a class="btn btn-lg btn-outline-secondary" th:href="@{/contest/monitor(monitor=${contest.id})}">Подготовить анализ данных</a>
+                        <!-- th:href="@{/contest/monitor(monitor=${contest.id})}" -->
+                        <!-- th:href="@{/analytics/contest(contest=${contest.id})}" -->
                     </div>
                 </div>
             </div>
