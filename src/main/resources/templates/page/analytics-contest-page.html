@@ -30,18 +30,21 @@
             </p>
 
             <p id="point-2-1" class="fs-5 text-dark">
-                2. В спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> приняло участие спортсменов: <span></span> (участников - <span></span>, участниц - <span></span>) и тренеров (представителей) - <span></span> из <span></span> субъект(-а/ -ов) Российской Федерации, в том числе из <span></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:text="${monitoring.subjectMonitoring.formatSubjectsTookPart}"></span>.
+                2. В спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> приняло участие спортсменов: <span th:text="${monitoring.athletesTookPart}"></span> (участников - <span th:text="${monitoring.athletesTookPartBoy}"></span>, участниц - <span th:text="${monitoring.athletesTookPartGirl}"></span>) и тренеров (представителей) - <span th:text="${monitoring.trainerTotal}"></span> из <span th:text="${monitoring.subjectMonitoring.subjectsTookPart.size()}"></span> субъект<span th:text="${monitoring.subjectMonitoring.endingForSubjectsTookPart}"></span> Российской Федерации, в том числе из <span th:text="${monitoring.subjectMonitoring.subjectsTookPartAndSportIsBasic.size()}"></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:text="${monitoring.subjectMonitoring.formatSubjectsTookPart}"></span>.
             </p>
             <small id="footnote" class="text-secondary">
                 *субъекты Российской Федерации, для которых вид спорта является базовым.
             </small>
             <br>
-            <p id="point-2-2" class="fs-5 text-dark"><!-- При 0 значении возможно иная формулировка -->
-                По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях <span th:text="${monitoring.formatContestTitleInQuotes}"></span> отсутствовали спортсмены из <span></span> субъектов Российской Федерации, для которых вид спорта является базовым.
+            <p id="point-2-2" class="fs-5 text-dark" th:if="${monitoring.subjectMonitoring.subjectsDidNotPartAndSportIsBasic.size() != 0}">
+                По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях <span th:text="${monitoring.formatContestTitleInQuotes}"></span> отсутствовали спортсмены из <span th:text="${monitoring.subjectMonitoring.subjectsDidNotPartAndSportIsBasic.size()}"></span> субъект<span th:text="${monitoring.subjectMonitoring.endingForSubjectDidNonTookPartAndSportIsBasic}"></span> Российской Федерации, для которых вид спорта является базовым: <span th:text="${monitoring.subjectMonitoring.formatSubjectDidNotTookPartAndSportIsBasic}"></span>.
+            </p>
+            <p id="point-2-3" class="fs-5 text-dark" th:if="${monitoring.subjectMonitoring.subjectsDidNotPartAndSportIsBasic.size() == 0}">
+                По итогам результатов отборочных спортивных соревнований, на спортивных соревнованиях <span th:text="${monitoring.formatContestTitleInQuotes}"></span> были представлены все спортсмены из всех субъектов Российской Федерации для которых вид спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> является базовым.
             </p>
 
             <p id="point-3" class="fs-5 text-dark">
-                3. К участию в спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> допускались спортсмены возрастных групп: <span></span>, имеющие спортивные квалификации:<span></span>.
+                3. К участию в спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> допускались спортсмены возрастных групп: <span th:text="${monitoring.formatAgeGroups}"></span>, имеющие спортивные квалификации: <span th:text="${monitoring.formatContestQualificationAllow}"></span>.
             </p>
 
             <p id="point-4" class="fs-5 text-dark">

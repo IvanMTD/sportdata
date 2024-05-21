@@ -24,6 +24,31 @@ public class ContestMonitoringDTO {
     private LocalDate beginning;
     private LocalDate ending;
 
+    private int athletesTookPart;
+    private int athletesTookPartBoy;
+    private int athletesTookPartGirl;
+
+    private int trainerTotal;
+    private int judgeTotal;
+    private int nonresidentJudge;
+    private int mc;
+    private int vrc;
+    private int fc;
+    private int sc;
+    private int tc;
+    private int bc;
+
+    private int yn1Date;
+    private int yn2Date;
+    private int yn3Date;
+    private int r1Date;
+    private int r2Date;
+    private int r3Date;
+    private int kmsDate;
+    private int msDate;
+    private int msmkDate;
+    private int zmsDate;
+
     private List<SportDTO> disciplines = new ArrayList<>();
     private SubjectMonitoringDTO subjectMonitoring;
 
@@ -107,5 +132,27 @@ public class ContestMonitoringDTO {
 
     public String getFullLocation(){
         return subjectTitle + ", " + city;
+    }
+
+    public String getFormatContestQualificationAllow(){
+        StringBuilder builder = new StringBuilder();
+        String[] titles = {"третий юношеский разряд", "второй юношеский разряд", "первый юношеский разряд",
+                "третий разряд", "второй разряд", "первый разряд",
+                "кандидаты в мастера спорта", "мастера спорта России", "мастера спорта международного класса",
+                "заслуженные мастера спорта"};
+        int[] dates = {yn3Date, yn2Date, yn1Date, r3Date, r2Date, r1Date, kmsDate, msDate, msmkDate, zmsDate};
+
+        for (int i = 0; i < dates.length; i++) {
+            int date = dates[i];
+            if (date != 0) {
+                builder.append(titles[i]);
+                if (date == 1 || date == 21 || date == 31 || date == 41) {
+                    builder.append(" с ").append(date).append(" года, ");
+                } else {
+                    builder.append(" с ").append(date).append(" лет, ");
+                }
+            }
+        }
+        return builder.toString().substring(0,builder.toString().length() - 2);
     }
 }

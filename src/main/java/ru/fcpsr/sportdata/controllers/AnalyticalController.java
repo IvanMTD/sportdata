@@ -52,6 +52,32 @@ public class AnalyticalController {
             monitoringDTO.setContestTitle(contest.getTitle());
             monitoringDTO.setSportTitle(contest.getSportTitle());
             monitoringDTO.setCity(contest.getCity());
+
+            monitoringDTO.setAthletesTookPart(contest.getParticipantTotal());
+            monitoringDTO.setAthletesTookPartBoy(contest.getBoyTotal());
+            monitoringDTO.setAthletesTookPartGirl(contest.getGirlTotal());
+
+            monitoringDTO.setTrainerTotal(contest.getTrainerTotal());
+            monitoringDTO.setJudgeTotal(contest.getJudgeTotal());
+            monitoringDTO.setNonresidentJudge(contest.getNonresidentJudge());
+            monitoringDTO.setMc(contest.getMc());
+            monitoringDTO.setVrc(contest.getVrc());
+            monitoringDTO.setFc(contest.getFc());
+            monitoringDTO.setSc(contest.getSc());
+            monitoringDTO.setTc(contest.getTc());
+            monitoringDTO.setBc(contest.getBc());
+
+            monitoringDTO.setYn1Date(contest.getYn1Date());
+            monitoringDTO.setYn2Date(contest.getYn2Date());
+            monitoringDTO.setYn3Date(contest.getYn3Date());
+            monitoringDTO.setR1Date(contest.getR1Date());
+            monitoringDTO.setR2Date(contest.getR2Date());
+            monitoringDTO.setR3Date(contest.getR3Date());
+            monitoringDTO.setKmsDate(contest.getKmsDate());
+            monitoringDTO.setMsDate(contest.getMsDate());
+            monitoringDTO.setMsmkDate(contest.getMsmkDate());
+            monitoringDTO.setZmsDate(contest.getZmsDate());
+
             return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
                 SportDTO sportDTO = new SportDTO(archiveSport);
                 return disciplineService.getById(archiveSport.getDisciplineId()).flatMap(discipline -> {

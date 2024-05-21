@@ -297,7 +297,7 @@
                     <div class="col">
                         <div class="form-floating mb-3">
                             <input type="number" class="form-control" id="girl-total" placeholder="girl-total" th:field="*{girlTotal}" disabled>
-                            <label for="girl-total">Участников <i class="bi bi-gender-female"></i></label>
+                            <label for="girl-total">Участниц <i class="bi bi-gender-female"></i></label>
                         </div>
                     </div>
                 </div>
@@ -587,7 +587,7 @@
                                                                     <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
                                                                     <script th:inline="javascript">
                                                                         $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                            '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Год рождения: ' + [[${place}]].participant.date + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
+                                                                            '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
                                                                         );
                                                                         document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
                                                                     </script>
@@ -713,7 +713,7 @@
             <div class="row pb-4" th:if="${contest.sports[0].id} != 0">
                 <div class="col">
                     <div class="d-grid gap-2 col-6 mx-auto">
-                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/contest/monitor(monitor=${contest.id})}">Подготовить анализ данных</a>
+                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/analytics/contest(contest=${contest.id})}">Подготовить анализ данных</a>
                         <!-- th:href="@{/contest/monitor(monitor=${contest.id})}" -->
                         <!-- th:href="@{/analytics/contest(contest=${contest.id})}" -->
                     </div>

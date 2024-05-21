@@ -62,16 +62,28 @@ public class SubjectMonitoringDTO {
     }
 
     public String getEndingForBaseSportSubjects(){
+        return getFormat(subjectsForSportIsBasic);
+    }
+
+    public String getEndingForSubjectsTookPart(){
+        return getFormat(subjectsTookPart);
+    }
+
+    public String getEndingForSubjectDidNonTookPartAndSportIsBasic(){
+        return getFormat(subjectsDidNotPartAndSportIsBasic);
+    }
+
+    private String getFormat(List<SubjectDTO> subjectList) {
         if(
-            subjectsForSportIsBasic.size() == 1 ||
-            subjectsForSportIsBasic.size() == 21 ||
-            subjectsForSportIsBasic.size() == 31 ||
-            subjectsForSportIsBasic.size() == 41 ||
-            subjectsForSportIsBasic.size() == 51 ||
-            subjectsForSportIsBasic.size() == 61 ||
-            subjectsForSportIsBasic.size() == 71 ||
-            subjectsForSportIsBasic.size() == 81 ||
-            subjectsForSportIsBasic.size() == 91
+            subjectList.size() == 1 ||
+            subjectList.size() == 21 ||
+            subjectList.size() == 31 ||
+            subjectList.size() == 41 ||
+            subjectList.size() == 51 ||
+            subjectList.size() == 61 ||
+            subjectList.size() == 71 ||
+            subjectList.size() == 81 ||
+            subjectList.size() == 91
         ){
             return "а";
         }else{
@@ -96,5 +108,21 @@ public class SubjectMonitoringDTO {
             stringBuilder.append(subjectTitle).append(", ");
         }
         return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+    }
+
+    public String getFormatSubjectDidNotTookPartAndSportIsBasic(){
+        if(subjectsDidNotPartAndSportIsBasic.size() == 0){
+            return "";
+        }else {
+            List<String> subjectTitles = new ArrayList<>();
+            for (SubjectDTO subjectDidNotTookPartAndSportIsBasic : subjectsDidNotPartAndSportIsBasic) {
+                subjectTitles.add(subjectDidNotTookPartAndSportIsBasic.getTitle());
+            }
+            StringBuilder stringBuilder = new StringBuilder();
+            for (String subjectTitle : subjectTitles) {
+                stringBuilder.append(subjectTitle).append(", ");
+            }
+            return stringBuilder.substring(0, stringBuilder.toString().length() - 2);
+        }
     }
 }
