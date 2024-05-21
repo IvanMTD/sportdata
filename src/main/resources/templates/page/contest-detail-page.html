@@ -417,8 +417,17 @@
                     </div>
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="fc" placeholder="fc" th:field="*{fc}" disabled>
-                            <label for="fc">Судей 1 категории</label>
+                            <input type="number" class="form-control" id="mc" placeholder="mc" th:field="*{mc}" disabled>
+                            <label for="mc">Судей МК</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3">
+                            <input type="number" class="form-control" id="tc" placeholder="tc" th:field="*{tc}" disabled>
+                            <label for="tc">Судей 3 категории</label>
                         </div>
                     </div>
                     <div class="col">
@@ -429,8 +438,8 @@
                     </div>
                     <div class="col">
                         <div class="form-floating mb-3">
-                            <input type="number" class="form-control" id="tc" placeholder="tc" th:field="*{tc}" disabled>
-                            <label for="tc">Судей 3 категории</label>
+                            <input type="number" class="form-control" id="fc" placeholder="fc" th:field="*{fc}" disabled>
+                            <label for="fc">Судей 1 категории</label>
                         </div>
                     </div>
                 </div>
@@ -704,7 +713,7 @@
             <div class="row pb-4" th:if="${contest.sports[0].id} != 0">
                 <div class="col">
                     <div class="d-grid gap-2 col-6 mx-auto">
-                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/analytics/contest(contest=${contest.id})}">Подготовить анализ данных</a>
+                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/contest/monitor(monitor=${contest.id})}">Подготовить анализ данных</a>
                         <!-- th:href="@{/contest/monitor(monitor=${contest.id})}" -->
                         <!-- th:href="@{/analytics/contest(contest=${contest.id})}" -->
                     </div>

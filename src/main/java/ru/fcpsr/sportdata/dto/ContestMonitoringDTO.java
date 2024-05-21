@@ -2,17 +2,25 @@ package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Data
 @NoArgsConstructor
 public class ContestMonitoringDTO {
     private String contestTitle;
     private String sportTitle;
+    private String ekp;
+    private String subjectTitle;
+    private String location;
+    private LocalDate beginning;
+    private LocalDate ending;
 
     private List<SportDTO> disciplines = new ArrayList<>();
 
@@ -45,13 +53,39 @@ public class ContestMonitoringDTO {
     public String getFormatAgeGroups(){
         Set<String> groupSet = new HashSet<>();
         for(SportDTO discipline : disciplines){
-            String formatData = discipline.getGroup().getTitle().toLowerCase() + " до " + discipline.getGroup().getMaxAge() + " лет";
+            String formatData = discipline.getGroup().getTitle().toLowerCase();
             groupSet.add(formatData);
         }
 
         StringBuilder stringBuilder = new StringBuilder();
         for(String group : groupSet){
             stringBuilder.append(group).append(", ");
+        }
+        return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+    }
+
+    public String getFormatDisciplines(){
+        Set<String> disciplineSet = new HashSet<>();
+        for(SportDTO discipline : disciplines){
+            String formatData = discipline.getDiscipline().getTitle().toLowerCase();
+            disciplineSet.add(formatData);
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String discipline : disciplineSet){
+            stringBuilder.append(discipline).append(", ");
+        }
+        return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+    }
+
+    public String getFormatDisciplinesInQuotes(){
+        Set<String> disciplineSet = new HashSet<>();
+        for(SportDTO discipline : disciplines){
+            String formatData = discipline.getDiscipline().getTitle().toLowerCase();
+            disciplineSet.add("«" + formatData + "»");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String discipline : disciplineSet){
+            stringBuilder.append(discipline).append(", ");
         }
         return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
     }

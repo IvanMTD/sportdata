@@ -113,6 +113,7 @@ create table if not exists contest(
     trainer_total int,
     judge_total int,
     nonresident_judge int,
+    mc int,
     vrc int,
     fc int,
     sc int,

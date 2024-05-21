@@ -43,6 +43,11 @@ public class AnalyticalController {
     private Mono<ContestMonitoringDTO> getContestMonitoring(int id){
         return contestService.getById(id).flatMap(contest -> {
             ContestMonitoringDTO monitoringDTO = new ContestMonitoringDTO();
+            monitoringDTO.setEkp(contest.getEkp());
+            monitoringDTO.setSubjectTitle(contest.getSubjectTitle());
+            monitoringDTO.setBeginning(contest.getBeginning());
+            monitoringDTO.setEnding(contest.getEnding());
+            monitoringDTO.setLocation(contest.getLocation());
             monitoringDTO.setContestTitle(contest.getTitle());
             monitoringDTO.setSportTitle(contest.getSportTitle());
             return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {

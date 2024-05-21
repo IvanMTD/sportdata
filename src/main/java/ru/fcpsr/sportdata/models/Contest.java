@@ -51,6 +51,7 @@ public class Contest {
     private int trainerTotal;
     private int judgeTotal;
     private int nonresidentJudge;
+    private int mc;
     private int vrc;
     private int fc;
     private int sc;
@@ -123,6 +124,7 @@ public class Contest {
         setTrainerTotal(contestDTO.getTrainerTotal());
         setJudgeTotal(contestDTO.getJudgeTotal());
         setNonresidentJudge(contestDTO.getNonresidentJudge());
+        setMc(contestDTO.getMc());
         setVrc(contestDTO.getVrc());
         setFc(contestDTO.getFc());
         setSc(contestDTO.getSc());
@@ -190,6 +192,7 @@ public class Contest {
         setTrainerTotal(contestDTO.getTrainerTotal());
         setJudgeTotal(contestDTO.getJudgeTotal());
         setNonresidentJudge(contestDTO.getNonresidentJudge());
+        setMc(contestDTO.getMc());
         setVrc(contestDTO.getVrc());
         setFc(contestDTO.getFc());
         setSc(contestDTO.getSc());
