@@ -7,16 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Mono;
-import ru.fcpsr.sportdata.dto.AgeGroupDTO;
-import ru.fcpsr.sportdata.dto.ContestMonitoringDTO;
-import ru.fcpsr.sportdata.dto.DisciplineDTO;
-import ru.fcpsr.sportdata.dto.SportDTO;
-import ru.fcpsr.sportdata.services.AgeGroupService;
-import ru.fcpsr.sportdata.services.ArchiveSportService;
-import ru.fcpsr.sportdata.services.ContestService;
-import ru.fcpsr.sportdata.services.DisciplineService;
+import ru.fcpsr.sportdata.dto.*;
+import ru.fcpsr.sportdata.models.Contest;
+import ru.fcpsr.sportdata.services.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,6 +26,9 @@ public class AnalyticalController {
     private final ArchiveSportService archiveSportService;
     private final DisciplineService disciplineService;
     private final AgeGroupService groupService;
+    private final SubjectService subjectService;
+    private final BaseSportService baseSportService;
+    private final TypeOfSportService sportService;
 
     @GetMapping("/contest")
     public Mono<Rendering> getContestAnalytics(@RequestParam(name = "contest") int id){
@@ -50,6 +51,7 @@ public class AnalyticalController {
             monitoringDTO.setLocation(contest.getLocation());
             monitoringDTO.setContestTitle(contest.getTitle());
             monitoringDTO.setSportTitle(contest.getSportTitle());
+            monitoringDTO.setCity(contest.getCity());
             return archiveSportService.getAllByIdIn(contest.getASportIds()).flatMap(archiveSport -> {
                 SportDTO sportDTO = new SportDTO(archiveSport);
                 return disciplineService.getById(archiveSport.getDisciplineId()).flatMap(discipline -> {
@@ -62,8 +64,62 @@ public class AnalyticalController {
             }).collectList().flatMap(l -> {
                 l = l.stream().sorted(Comparator.comparing(SportDTO::getId)).collect(Collectors.toList());
                 monitoringDTO.setDisciplines(l);
-                return Mono.just(monitoringDTO);
+                return getSubjectMonitoring(contest).flatMap(subjectMonitoring -> {
+                    monitoringDTO.setSubjectMonitoring(subjectMonitoring);
+                    return Mono.just(monitoringDTO);
+                });
             });
+        });
+    }
+
+    private Mono<SubjectMonitoringDTO> getSubjectMonitoring(Contest contest){
+        return Mono.just(new SubjectMonitoringDTO()).flatMap(subjectMonitoring -> {
+            return subjectService.getByIds(contest.getTotalSubjects()).flatMap(subject -> {
+                return Mono.just(new SubjectDTO(subject));
+            }).collectList().flatMap(l -> {
+                l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+                subjectMonitoring.setSubjectsTookPart(l);
+                return Mono.just(subjectMonitoring);
+            });
+        }).flatMap(subjectMonitoring -> {
+            return sportService.findById(contest.getTypeOfSportId()).flatMap(sport -> {
+                return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
+                    if(contest.getBeginning().getYear() < baseSport.getExpiration()) {
+                        return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
+                            return Mono.just(new SubjectDTO(subject));
+                        });
+                    }else{
+                        return Mono.empty();
+                    }
+                }).collectList().flatMap(l -> {
+                    l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+                    subjectMonitoring.setSubjectsForSportIsBasic(l);
+                    return Mono.just(subjectMonitoring);
+                });
+            });
+        }).flatMap(subjectMonitoring -> {
+            return getSubjectsBy(contest.getFirstPlace()).flatMap(fl -> {
+                subjectMonitoring.setSubjectFirstPlace(fl);
+                return getSubjectsBy(contest.getSecondPlace()).flatMap(sl -> {
+                    subjectMonitoring.setSubjectSecondPlace(sl);
+                    return getSubjectsBy(contest.getLastPlace()).flatMap(ll -> {
+                        subjectMonitoring.setSubjectLastPlace(ll);
+                        return Mono.just(subjectMonitoring);
+                    });
+                });
+            });
+        }).flatMap(subjectMonitoring -> {
+            subjectMonitoring.setupSubjects();
+            return Mono.just(subjectMonitoring);
+        });
+    }
+
+    private Mono<List<SubjectDTO>> getSubjectsBy(Set<Integer> ids){
+        return subjectService.getByIds(ids).flatMap(subject -> {
+            return Mono.just(new SubjectDTO(subject));
+        }).collectList().flatMap(l -> {
+            l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+            return Mono.just(l);
         });
     }
 }

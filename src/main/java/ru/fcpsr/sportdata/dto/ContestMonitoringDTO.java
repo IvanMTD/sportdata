@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,11 +19,13 @@ public class ContestMonitoringDTO {
     private String sportTitle;
     private String ekp;
     private String subjectTitle;
+    private String city;
     private String location;
     private LocalDate beginning;
     private LocalDate ending;
 
     private List<SportDTO> disciplines = new ArrayList<>();
+    private SubjectMonitoringDTO subjectMonitoring;
 
     public String getFormatContestTitle(){
         String[] words = contestTitle.split("\\s");
@@ -88,5 +91,21 @@ public class ContestMonitoringDTO {
             stringBuilder.append(discipline).append(", ");
         }
         return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+    }
+
+    public String getBeginningDate(){
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(beginning);
+    }
+
+    public String getEndingDate(){
+        return DateTimeFormatter.ofPattern("dd.MM.yyyy").format(ending);
+    }
+
+    public String getContestDate(){
+        return getBeginningDate() + " - " + getEndingDate();
+    }
+
+    public String getFullLocation(){
+        return subjectTitle + ", " + city;
     }
 }

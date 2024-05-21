@@ -3,6 +3,7 @@ package ru.fcpsr.sportdata.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.FederalDistrict;
 import ru.fcpsr.sportdata.models.Subject;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode
 public class SubjectDTO {
     private int id;
     @NotBlank(message = "Поле не может быть пустым!")

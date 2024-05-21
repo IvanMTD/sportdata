@@ -822,15 +822,8 @@ public class DataController {
                 CategoryDTO categoryDTO = new CategoryDTO(qualification.getCategory());
                 pc.setMainCategory(categoryDTO);
                 pc.setCondition(new ConditionDTO(place.getCondition()));
-                if(place.getCondition().equals(Condition.DONE)){
-                    return qualificationService.getById(place.getNewQualificationId()).flatMap(qualification2 -> {
-                        pc.setNewCategory(new CategoryDTO(qualification2.getCategory()));
-                        return Mono.just(pc);
-                    });
-                }else{
-                    pc.setNewCategory(new CategoryDTO(qualification.getCategory()));
-                    return Mono.just(pc);
-                }
+                pc.setNewCategory(new CategoryDTO(place.getResultCategory()));
+                return Mono.just(pc);
             }).flatMap(pc2 -> {
                 return archiveSportService.getById(place.getASportId()).flatMap(archiveSport -> {
                     return disciplineService.getById(archiveSport.getDisciplineId()).flatMap(discipline -> {

@@ -12,25 +12,25 @@
             </p>
 
             <p id="contest-ekp" class="fs-5 text-dark">
-                Спортивное мероприятие в Едином календарном плане: № <span></span>
+                Спортивное мероприятие в Едином календарном плане: № <span th:text="${monitoring.ekp}"></span>
             </p>
             <p id="contest-date" class="fs-5 text-dark">
-                Сроки проведения: <span></span>
+                Сроки проведения: <span th:text="${monitoring.contestDate}"></span>
             </p>
             <p id="contest-location" class="fs-5 text-dark">
-                Место проведения: <span></span>
+                Место проведения: <span th:text="${monitoring.fullLocation}"></span>
             </p>
 
             <p id="contest-introductory" class="fs-5 text-dark">
-                Согласно Положения о межрегиональных и всероссийских официальных спортивных соревнованиях по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> на <span></span> год (далее – Положение о спортивных соревнованиях), Единой всероссийской спортивной классификации, Федеральному стандарту спортивной подготовки по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span>, официальных протоколов спортивных соревнований и отчета главной судейской коллегии по виду спорта, были сделаны следующие выводы:
+                Согласно Положения о межрегиональных и всероссийских официальных спортивных соревнованиях по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> на <span th:text="${monitoring.beginning.year}"></span> год (далее – Положение о спортивных соревнованиях), Единой всероссийской спортивной классификации, Федеральному стандарту спортивной подготовки по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span>, официальных протоколов спортивных соревнований и отчета главной судейской коллегии по виду спорта, были сделаны следующие выводы:
             </p>
 
             <p id="point-1" class="fs-5 text-dark">
-                1. Вид спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> является базовым для <span></span> субъект(-а /-ов) Российской Федерации.
+                1. Вид спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> является базовым для <span th:text="${monitoring.subjectMonitoring.subjectsForSportIsBasic.size()}"></span> субъект<span th:text="${monitoring.subjectMonitoring.endingForBaseSportSubjects}"></span> Российской Федерации.
             </p>
 
             <p id="point-2-1" class="fs-5 text-dark">
-                2. В спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> приняло участие спортсменов: <span></span> (участников - <span></span>, участниц - <span></span>) и тренеров (представителей) - <span></span> из <span></span> субъект(-а/ -ов) Российской Федерации, в том числе из <span></span> субъектов Российской Федерации, для которых вид спорта является базовым:<span></span>.
+                2. В спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> приняло участие спортсменов: <span></span> (участников - <span></span>, участниц - <span></span>) и тренеров (представителей) - <span></span> из <span></span> субъект(-а/ -ов) Российской Федерации, в том числе из <span></span> субъектов Российской Федерации, для которых вид спорта является базовым: <span th:text="${monitoring.subjectMonitoring.formatSubjectsTookPart}"></span>.
             </p>
             <small id="footnote" class="text-secondary">
                 *субъекты Российской Федерации, для которых вид спорта является базовым.
