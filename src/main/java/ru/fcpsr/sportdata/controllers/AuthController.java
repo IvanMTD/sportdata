@@ -3,6 +3,7 @@ package ru.fcpsr.sportdata.controllers;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -52,6 +53,7 @@ public class AuthController {
      ********************************/
 
     @GetMapping("/user/reg")
+    @PreAuthorize("hasRole('ADMIN')")
     public Mono<Rendering> userReg(){
         return Mono.just(
                 Rendering.view("template")
@@ -64,6 +66,7 @@ public class AuthController {
     }
 
     @PostMapping("/user/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public Mono<Rendering> userAdd(@ModelAttribute(name = "user") @Valid UserDTO user, Errors errors){
         return userService.getAll().collectList().flatMap(users -> {
             userValidator.validate(user,errors);
@@ -101,6 +104,7 @@ public class AuthController {
     }
 
     @PostMapping("/user/update")
+    @PreAuthorize("hasAnyRole('USER','MANAGER','ADMIN')")
     public Mono<Rendering> update(ServerWebExchange exchange, @ModelAttribute(name = "user") @Valid UserDTO user, Errors errors){
         return userService.getAll().collectList().flatMap(users -> {
             userValidator.validateWithOutUser(user,errors,users);
@@ -126,6 +130,7 @@ public class AuthController {
     }
 
     @PostMapping("/user/update/password")
+    @PreAuthorize("hasAnyRole('USER','MANAGER','ADMIN')")
     public Mono<Rendering> updateUserPassword(@AuthenticationPrincipal SysUser user, @ModelAttribute(name = "password") @Valid PasswordDTO passwordDTO, Errors errors){
         return userService.getById(user.getId()).flatMap(u -> {
             passwordValidation.validate(passwordDTO,errors);

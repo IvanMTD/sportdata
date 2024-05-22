@@ -713,9 +713,8 @@
             <div class="row pb-4" th:if="${contest.sports[0].id} != 0">
                 <div class="col">
                     <div class="d-grid gap-2 col-6 mx-auto">
-                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/analytics/contest(contest=${contest.id})}">Подготовить анализ данных</a>
-                        <!-- th:href="@{/contest/monitor(monitor=${contest.id})}" -->
-                        <!-- th:href="@{/analytics/contest(contest=${contest.id})}" -->
+                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/contest/monitor(monitor=${contest.id})}">Подготовить анализ данных</a>
+                        <a class="btn btn-lg btn-outline-secondary" th:href="@{/analytics/contest(contest=${contest.id})}" th:if="@{admin}">Подготовить анализ данных</a>
                     </div>
                 </div>
             </div>

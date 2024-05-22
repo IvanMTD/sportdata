@@ -306,11 +306,16 @@ public class ContestController {
     @GetMapping("/get/all")
     public Mono<Rendering> getAll(@RequestParam(name = "page") int page, @RequestParam(name = "search") String search){
         return contestService.getCountBy(search).flatMap(count -> {
+            int pageSize = 12;
+
             int pageControl = page;
             if(pageControl < 0){
                 pageControl = 0;
             }
-            long lastPage = count / 12;
+            long lastPage = count / pageSize;
+            if(count == pageSize){
+                lastPage = 0;
+            }
             if(pageControl >= lastPage){
                 pageControl = (int)lastPage;
             }
@@ -318,7 +323,7 @@ public class ContestController {
                     Rendering.view("template")
                             .modelAttribute("title", "Contest information")
                             .modelAttribute("index","contest-all-page")
-                            .modelAttribute("contests", getAllCompleteContest(PageRequest.of(pageControl,12),search))
+                            .modelAttribute("contests", getAllCompleteContest(PageRequest.of(pageControl,pageSize),search))
                             .modelAttribute("page",pageControl)
                             .modelAttribute("lastPage", lastPage)
                             .modelAttribute("search",search)

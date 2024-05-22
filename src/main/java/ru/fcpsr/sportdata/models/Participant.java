@@ -36,9 +36,9 @@ public class Participant {
     private Set<Integer> qualificationIds = new HashSet<>();
 
     public Participant(ParticipantDTO participantDTO) {
-        setLastname(participantDTO.getLastname());
-        setName(participantDTO.getName());
-        setMiddleName(participantDTO.getMiddleName());
+        setLastname(participantDTO.getLastname().trim());
+        setName(participantDTO.getName().trim());
+        setMiddleName(participantDTO.getMiddleName().trim());
         setBirthday(participantDTO.getBirthday());
     }
 

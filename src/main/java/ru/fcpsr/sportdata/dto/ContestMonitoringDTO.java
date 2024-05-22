@@ -3,13 +3,12 @@ package ru.fcpsr.sportdata.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.fcpsr.sportdata.models.FederalStandard;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Data
@@ -89,7 +88,7 @@ public class ContestMonitoringDTO {
         for(String group : groupSet){
             stringBuilder.append(group).append(", ");
         }
-        return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
     }
 
     public String getFormatDisciplines(){
@@ -102,7 +101,7 @@ public class ContestMonitoringDTO {
         for(String discipline : disciplineSet){
             stringBuilder.append(discipline).append(", ");
         }
-        return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
     }
 
     public String getFormatDisciplinesInQuotes(){
@@ -115,7 +114,7 @@ public class ContestMonitoringDTO {
         for(String discipline : disciplineSet){
             stringBuilder.append(discipline).append(", ");
         }
-        return stringBuilder.toString().substring(0,stringBuilder.toString().length() - 2);
+        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
     }
 
     public String getBeginningDate(){
@@ -131,7 +130,12 @@ public class ContestMonitoringDTO {
     }
 
     public String getFullLocation(){
-        return subjectTitle + ", " + city;
+        Set<String> stringSet = new HashSet<>(Arrays.asList(subjectTitle,city));
+        StringBuilder stringBuilder = new StringBuilder();
+        for(String s : stringSet){
+            stringBuilder.append(s).append(", ");
+        }
+        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
     }
 
     public String getFormatContestQualificationAllow(){
@@ -153,6 +157,23 @@ public class ContestMonitoringDTO {
                 }
             }
         }
-        return builder.toString().substring(0,builder.toString().length() - 2);
+        return builder.substring(0,builder.toString().length() - 2);
+    }
+
+    public String getFederalStandard(){
+        List<FederalStandard> fsl = new ArrayList<>();
+        for(SportDTO discipline : disciplines){
+            for(FederalStandard fs : discipline.getStandards()){
+                if(fs != null){
+                    fsl.add(fs);
+                }
+            }
+        }
+        fsl = fsl.stream().sorted(Comparator.comparing(FederalStandard::getCount)).distinct().collect(Collectors.toList());
+        StringBuilder builder = new StringBuilder();
+        for(FederalStandard fs : fsl){
+            builder.append(fs.getTitle().toLowerCase()).append(", ");
+        }
+        return builder.substring(0,builder.toString().length() - 2);
     }
 }

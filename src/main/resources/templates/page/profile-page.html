@@ -25,6 +25,7 @@
                         <div class="d-grid gap-2 p-2 m-0">
                             <button class="btn btn-primary" type="button" onclick="edit()">Редактировать</button>
                             <button class="btn btn-primary" type="button" onclick="password()">Обновить пароль</button>
+                            <a class="btn btn-outline-primary" th:href="@{/auth/user/reg}" th:if="${admin}">Регистрация</a>
                         </div>
                     </div>
                 </li>
