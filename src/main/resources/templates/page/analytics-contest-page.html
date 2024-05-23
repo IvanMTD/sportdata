@@ -44,7 +44,7 @@
             </p>
 
             <p id="point-3" class="fs-5 text-dark">
-                3. К участию в спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> допускались спортсмены возрастных групп: <span th:text="${monitoring.formatAgeGroups}"></span>, имеющие спортивные квалификации: <span th:text="${monitoring.formatContestQualificationAllow}"></span>.
+                3. К участию в спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> допускались спортсмены возрастных групп: <span th:text="${monitoring.formatAgeGroups}"></span>, имеющие спортивные квалификации: <span th:text="${monitoring.allowed}"></span>.
             </p>
 
             <p id="point-4" class="fs-5 text-dark">
@@ -52,14 +52,14 @@
             </p>
 
             <p id="point-5" class="fs-5 text-dark">
-                5. Согласно Единой всероссийской спортивной классификации, выполнение для присвоения спортивных разрядов/званий осуществляется: <span></span>.
+                5. Согласно Единой всероссийской спортивной классификации, выполнение для присвоения спортивных разрядов/званий осуществляется: <span th:text="${monitoring.formatContestQualificationDateAllow}"></span>.
             </p>
 
             <p id="point-6" class="fs-5 text-dark">
                 6. Спортивная квалификация спортсменов соревнования <span th:text="${monitoring.formatContestTitle}"></span>:
             </p>
-            <p id="point-6-" class="fs-5 text-dark">
-                <span></span>
+            <p id="point-6-" class="fs-5 text-dark" th:each="q : ${monitoring.totalCountContestQualifications}">
+                <span th:text="${q}"></span>
             </p>
 
             <p id="point-7" class="fs-5 text-dark">

@@ -30,6 +30,9 @@ public class AnalyticalController {
     private final BaseSportService baseSportService;
     private final TypeOfSportService sportService;
 
+    private final PlaceService placeService;
+    private final QualificationService qualificationService;
+
     @GetMapping("/contest")
     public Mono<Rendering> getContestAnalytics(@RequestParam(name = "contest") int id){
         return Mono.just(
@@ -56,6 +59,18 @@ public class AnalyticalController {
             monitoringDTO.setAthletesTookPart(contest.getParticipantTotal());
             monitoringDTO.setAthletesTookPartBoy(contest.getBoyTotal());
             monitoringDTO.setAthletesTookPartGirl(contest.getGirlTotal());
+
+            monitoringDTO.setBr(contest.getBr());
+            monitoringDTO.setYn1(contest.getYn1());
+            monitoringDTO.setYn2(contest.getYn2());
+            monitoringDTO.setYn3(contest.getYn3());
+            monitoringDTO.setR1(contest.getR1());
+            monitoringDTO.setR2(contest.getR2());
+            monitoringDTO.setR3(contest.getR3());
+            monitoringDTO.setKms(contest.getKms());
+            monitoringDTO.setMs(contest.getMs());
+            monitoringDTO.setMsmk(contest.getMsmk());
+            monitoringDTO.setZms(contest.getZms());
 
             monitoringDTO.setTrainerTotal(contest.getTrainerTotal());
             monitoringDTO.setJudgeTotal(contest.getJudgeTotal());
@@ -84,7 +99,18 @@ public class AnalyticalController {
                     sportDTO.setDiscipline(new DisciplineDTO(discipline));
                     return groupService.getById(archiveSport.getAgeGroupId()).flatMap(group -> {
                         sportDTO.setGroup(new AgeGroupDTO(group));
-                        return Mono.just(sportDTO);
+                        return placeService.getAllByIdIn(archiveSport.getPlaceIds()).flatMap(place -> {
+                            PlaceDTO placeDTO = new PlaceDTO(place);
+                            return qualificationService.getById(place.getQualificationId()).flatMap(qualification -> {
+                                QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                                placeDTO.setQualification(qualificationDTO);
+                                return Mono.just(placeDTO);
+                            });
+                        }).collectList().flatMap(l -> {
+                            l = l.stream().sorted(Comparator.comparing(PlaceDTO::getPlace)).collect(Collectors.toList());
+                            sportDTO.setPlaces(l);
+                            return Mono.just(sportDTO);
+                        });
                     });
                 });
             }).collectList().flatMap(l -> {

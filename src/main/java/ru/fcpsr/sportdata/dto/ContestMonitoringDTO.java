@@ -3,6 +3,7 @@ package ru.fcpsr.sportdata.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.FederalStandard;
 
 import java.time.LocalDate;
@@ -26,6 +27,18 @@ public class ContestMonitoringDTO {
     private int athletesTookPart;
     private int athletesTookPartBoy;
     private int athletesTookPartGirl;
+
+    private int br;
+    private int yn1;
+    private int yn2;
+    private int yn3;
+    private int r1;
+    private int r2;
+    private int r3;
+    private int kms;
+    private int ms;
+    private int msmk;
+    private int zms;
 
     private int trainerTotal;
     private int judgeTotal;
@@ -138,7 +151,7 @@ public class ContestMonitoringDTO {
         return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
     }
 
-    public String getFormatContestQualificationAllow(){
+    public String getFormatContestQualificationDateAllow(){
         StringBuilder builder = new StringBuilder();
         String[] titles = {"третий юношеский разряд", "второй юношеский разряд", "первый юношеский разряд",
                 "третий разряд", "второй разряд", "первый разряд",
@@ -175,5 +188,102 @@ public class ContestMonitoringDTO {
             builder.append(fs.getTitle().toLowerCase()).append(", ");
         }
         return builder.substring(0,builder.toString().length() - 2);
+    }
+
+    public String getAllowed(){
+        List<Category> al = new ArrayList<>();
+        for(SportDTO discipline :disciplines){
+            for(Category c : discipline.getAllowed()){
+                if(c != null){
+                    al.add(c);
+                }
+            }
+        }
+        al = al.stream().sorted(Comparator.comparing(Category::getCount)).distinct().collect(Collectors.toList());
+        StringBuilder builder = new StringBuilder();
+        for(Category category : al){
+            String title = category.getTitle();
+            String firstChar = title.substring(0,1).toLowerCase();
+            String restOfTitle = title.substring(1);
+            title = firstChar + restOfTitle;
+            builder.append(title).append(", ");
+        }
+        return builder.substring(0,builder.toString().length() - 2);
+    }
+
+    public List<String> getTotalCountContestQualifications(){
+        List<Integer> ql = new ArrayList<>(List.of(br,yn3,yn2,yn1,r3,r2,r1,kms,ms,msmk,zms));
+        List<String> tl = new ArrayList<>(List.of(
+                "без разряда",
+                "юношеский третий разряд",
+                "юношеский второй разряд",
+                "юношеский первый разряд",
+                "третий разряд",
+                "второй разряд",
+                "первый разряд",
+                "кандидат в мастера спорта",
+                "мастер спорта России",
+                "мастер спорта международного класса",
+                "заслуженный мастер спорта"
+                ));
+
+        List<String> answer = new ArrayList<>();
+        for(int i=0; i<ql.size(); i++){
+            int n = ql.get(i);
+            if(n != 0){
+                StringBuilder builder = new StringBuilder();
+                if(n == 2 || n == 3 || n == 4){
+                    builder.append(tl.get(i)).append(" - ").append(n).append(" человека;");
+                }else{
+                    if(n < 9){
+                        builder.append(tl.get(i)).append(" - ").append(n).append(" человек;");
+                    }else{
+                        int b = n - ((n / 10) * 10);
+                        if(b == 2 || b == 3 || b == 4){
+                            builder.append(tl.get(i)).append(" - ").append(n).append(" человека;");
+                        }else{
+                            builder.append(tl.get(i)).append(" - ").append(n).append(" человек;");
+                        }
+                    }
+                }
+                if(i == ql.size() -1){
+                    answer.add(builder.substring(0, builder.toString().length() - 1) + ".");
+                }else{
+                    answer.add(builder.toString());
+                }
+            }
+        }
+        getFinalistsQualification();
+        return answer;
+    }
+
+    public List<String> getFinalistsQualification(){
+
+        List<PlaceDTO> pl = new ArrayList<>();
+
+        for(SportDTO d : disciplines){
+            for(PlaceDTO p : d.getPlaces()){
+                if(p != null){
+                    pl.add(p);
+                }
+            }
+        }
+
+        List<PlaceDTO> distinctPlaces = pl.stream()
+                .filter(p -> pl.stream()
+                        .filter(p::myEquals) // сравнить объекты с помощью вашего метода
+                        .limit(1) // оставить только один элемент
+                        .count() == 1 // проверить, что элемент уникален
+                ).toList();
+
+        for(int i=0; i<distinctPlaces.size(); i ++){
+            String title = distinctPlaces.get(i).getQualification().getCategoryTitle();
+            String firstChar = title.substring(0,1).toLowerCase();
+            String restOfTitle = title.substring(1);
+            title = firstChar + restOfTitle;
+            log.info("" + title);
+        }
+
+        return null;
     }
 }

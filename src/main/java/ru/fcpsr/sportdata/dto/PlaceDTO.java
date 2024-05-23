@@ -40,4 +40,8 @@ public class PlaceDTO {
             setCondition(place.getCondition());
         }
     }
+
+    public boolean myEquals(PlaceDTO placeDTO){
+        return participantId == placeDTO.getParticipantId();
+    }
 }
