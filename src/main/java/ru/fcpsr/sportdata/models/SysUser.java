@@ -31,7 +31,7 @@ public class SysUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(getRole().toString()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + getRole().toString()));
     }
 
     @Override

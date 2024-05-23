@@ -11,6 +11,7 @@ import org.springframework.security.web.server.savedrequest.ServerRequestCache;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.component.JWT;
+import ru.fcpsr.sportdata.util.NamingUtil;
 
 import java.net.URI;
 import java.time.Duration;
@@ -30,12 +31,12 @@ public class JwtAuthenticationSuccessHandler implements ServerAuthenticationSucc
         String refreshToken = jwt.generateRefreshToken(username, digitalSignature);
 
         // Add tokens to cookies
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
+        ResponseCookie accessCookie = ResponseCookie.from(NamingUtil.getInstance().getAccessName(), accessToken)
                 .httpOnly(true)
                 .maxAge(Duration.ofHours(1))
                 .path("/")
                 .build();
-        ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
+        ResponseCookie refreshCookie = ResponseCookie.from(NamingUtil.getInstance().getRefreshName(), refreshToken)
                 .httpOnly(true)
                 .maxAge(Duration.ofDays(30))
                 .path("/")

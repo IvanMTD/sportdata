@@ -377,7 +377,7 @@
                     <div class="col">
                         <div class="d-grid gap-2">
                             <!-- Button trigger modal -->
-                            <button type="button" th:id="'discipline-modal-del-' + ${as_stat.index}" class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modal-">
+                            <button type="button" th:id="'discipline-modal-del-' + ${as_stat.index}" class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#modal-" th:if="${admin} or ${manager}">
                                 Удалить дисциплину
                             </button>
 

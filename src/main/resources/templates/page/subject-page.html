@@ -132,7 +132,7 @@
                             <p th:text="${baseSport.getSport().getTitle()}"></p>
                         </div>
                         <div class="col-2" style="padding: 5px">
-                            <button th:id="'b-' + ${subject.id} + '-' + ${bs_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                            <button th:id="'b-' + ${subject.id} + '-' + ${bs_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close" th:if="${admin} or ${manager}"></button>
                             <div class="modal fade" th:id="'modal-' + ${subject.id} + '-' + ${bs_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -321,7 +321,7 @@
                                                     <p th:text="${p.getFullName()}"></p>
                                                 </div>
                                                 <div class="col-2" style="padding: 5px">
-                                                    <button th:id="'b-1-' + ${subject.id} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                                    <button th:id="'b-1-' + ${subject.id} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close" th:if="${admin} or ${manager}"></button>
                                                     <div class="modal fade" th:id="'modal-1-' + ${subject.id} + '-' + ${school_stat.index} + '-' + ${p_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog">
                                                             <div class="modal-content">

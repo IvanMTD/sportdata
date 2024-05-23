@@ -12,6 +12,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.component.JWT;
 import ru.fcpsr.sportdata.services.UserService;
+import ru.fcpsr.sportdata.util.NamingUtil;
 
 import java.time.Duration;
 
@@ -37,12 +38,12 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
                     String digitalSignature = exchange.getRequest().getHeaders().getFirst("User-Agent");
                     String newAccessToken = jwt.generateAccessToken(username, digitalSignature);
                     String newRefreshToken = jwt.generateRefreshToken(username, digitalSignature);
-                    ResponseCookie accessCookie = ResponseCookie.from("access_token", newAccessToken)
+                    ResponseCookie accessCookie = ResponseCookie.from(NamingUtil.getInstance().getAccessName(), newAccessToken)
                             .httpOnly(true)
                             .maxAge(Duration.ofHours(1))
                             .path("/")
                             .build();
-                    ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", newRefreshToken)
+                    ResponseCookie refreshCookie = ResponseCookie.from(NamingUtil.getInstance().getRefreshName(), newRefreshToken)
                             .httpOnly(true)
                             .maxAge(Duration.ofDays(30))
                             .path("/")

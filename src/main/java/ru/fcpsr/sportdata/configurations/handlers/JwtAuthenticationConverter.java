@@ -7,12 +7,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import ru.fcpsr.sportdata.util.NamingUtil;
 
 public class JwtAuthenticationConverter implements ServerAuthenticationConverter {
     @Override
     public Mono<Authentication> convert(ServerWebExchange exchange) {
-        String accessToken = extractTokenFromCookie(exchange.getRequest(), "access_token");
-        String refreshToken = extractTokenFromCookie(exchange.getRequest(), "refresh_token");
+        String accessToken = extractTokenFromCookie(exchange.getRequest(), NamingUtil.getInstance().getAccessName());
+        String refreshToken = extractTokenFromCookie(exchange.getRequest(), NamingUtil.getInstance().getRefreshName());
         if(accessToken.equals("") && refreshToken.equals("")){
             return Mono.empty();
         }else{

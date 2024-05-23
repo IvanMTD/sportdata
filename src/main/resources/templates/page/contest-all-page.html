@@ -106,7 +106,7 @@
                             <span data-bs-toggle="tooltip" data-bs-title="Редактировать данные"><i class="bi bi-pencil"></i></i></span>
                         </a>
                         <!-- Button trigger modal -->
-                        <button th:id="'delete-modal-btn-' + ${c_stat.index}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#delete-modal">
+                        <button th:id="'delete-modal-btn-' + ${c_stat.index}" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#delete-modal" th:if="${manager} or ${admin}">
                             <span data-bs-toggle="tooltip" data-bs-title="Удалить данные"><i class="bi bi-trash"></i></i></span>
                         </button>
                     </div>

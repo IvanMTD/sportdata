@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid my-5">
     <div class="row" th:if="${participant.getId()} != 0">
         <div class="col"></div>
         <div class="col-6">
@@ -522,7 +522,7 @@
 
                 <div class="container">
                     <div class="row py-2">
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal">Удалить спортсмена</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal" th:if="${admin} or ${manager}">Удалить спортсмена</button>
                         <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">

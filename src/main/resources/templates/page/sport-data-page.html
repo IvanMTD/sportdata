@@ -449,7 +449,7 @@
                                             <p>Описание</p>
                                         </div>
                                         <div class="col-2" style="padding: 5px">
-                                            <button th:id="'b-' + ${sport_stat.index} + '-' + ${d_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <button th:id="'b-' + ${sport_stat.index} + '-' + ${d_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close" th:if="${admin} or ${manager}"></button>
                                             <div class="modal fade" th:id="'modal-' + ${sport_stat.index} + '-' + ${d_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
@@ -493,7 +493,7 @@
                                             <p th:text="${group.getTitle()}"></p>
                                         </div>
                                         <div class="col-2" style="padding: 5px">
-                                            <button th:id="'b-1-' + ${sport_stat.index} + '-' + ${g_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close"></button>
+                                            <button th:id="'b-1-' + ${sport_stat.index} + '-' + ${g_stat.index}" type="button" class="btn btn-primary btn-close" data-bs-toggle="modal" data-bs-target="#modal" aria-label="Close" th:if="${admin} or ${manager}"></button>
                                             <div class="modal fade" th:id="'modal-1-' + ${sport_stat.index} + '-' + ${g_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
