@@ -29,9 +29,10 @@ public class AnalyticalController {
     private final SubjectService subjectService;
     private final BaseSportService baseSportService;
     private final TypeOfSportService sportService;
-
+    private final ParticipantService participantService;
     private final PlaceService placeService;
     private final QualificationService qualificationService;
+    private final SportSchoolService schoolService;
 
     @GetMapping("/contest")
     public Mono<Rendering> getContestAnalytics(@RequestParam(name = "contest") int id){
@@ -104,7 +105,19 @@ public class AnalyticalController {
                             return qualificationService.getById(place.getQualificationId()).flatMap(qualification -> {
                                 QualificationDTO qualificationDTO = new QualificationDTO(qualification);
                                 placeDTO.setQualification(qualificationDTO);
-                                return Mono.just(placeDTO);
+                                return participantService.getById(place.getParticipantId()).flatMap(participant -> {
+                                    ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                                    placeDTO.setParticipant(participantDTO);
+                                    return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
+                                        SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
+                                        return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                            SubjectDTO subjectDTO = new SubjectDTO(subject);
+                                            schoolDTO.setSubject(subjectDTO);
+                                            placeDTO.setSchool(schoolDTO);
+                                            return Mono.just(placeDTO);
+                                        });
+                                    });
+                                });
                             });
                         }).collectList().flatMap(l -> {
                             l = l.stream().sorted(Comparator.comparing(PlaceDTO::getPlace)).collect(Collectors.toList());

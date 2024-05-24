@@ -1,19 +1,25 @@
 package ru.fcpsr.sportdata.models;
 
 public enum Condition {
-    DONE("Выполнение"),
-    ALLOW("Подтверждение"),
-    NOT_ALLOW("Не подтверждение"),
+    DONE("Выполнение", 3),
+    ALLOW("Подтверждение", 2),
+    NOT_ALLOW("Не подтверждение", 1),
 
-    NO("Отсутствует");
+    NO("Отсутствует", 0);
 
     private final String title;
+    private final int count;
 
-    Condition(String title){
+    Condition(String title, int count){
         this.title = title;
+        this.count = count;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public int getCount() {
+        return count;
     }
 }

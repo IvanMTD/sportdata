@@ -665,6 +665,7 @@ public class DataController {
                                 .modelAttribute("participant", getCompletedParticipant(participantDTO.getId()))
                                 .modelAttribute("participantForm", participantDTO)
                                 .modelAttribute("subjects", getCompletedSubjects())
+                                .modelAttribute("contests", getContests(participant.getId()))
                                 .modelAttribute("qualificationForm", new QualificationDTO())
                                 .modelAttribute("sports", sportService.getAll())
                                 .modelAttribute("category", Category.values())

@@ -6,6 +6,8 @@ import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageMar;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.services.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -176,7 +179,7 @@ public class DataRestController {
         return getCompletedParticipantBySportId(sportId);
     }
 
-    @PostMapping("/monitor")
+    /*@PostMapping("/monitor")
     public Mono<ResponseEntity<InputStreamResource>> monitoring(@RequestBody String data) throws IOException {
         try {
             System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "UTF-8"));
@@ -213,6 +216,79 @@ public class DataRestController {
                 } else {
                     paragraph.setAlignment(ParagraphAlignment.BOTH);
                     paragraph.setIndentationFirstLine(720);
+                }
+
+                // Создаем Run
+                XWPFRun run = paragraph.createRun();
+                run.setText(paragraphString);
+                run.setFontFamily("Times New Roman");
+                run.setFontSize(14);
+
+                // Делаем текст жирным и устанавливаем размер шрифта для первого параграфа
+                if (i == 0) {
+                    run.setBold(true);
+                }
+                if (i == 14) {
+                    run.setFontSize(8);
+                }
+            }
+        }
+
+        // Конвертируем документ в поток байтов
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        document.write(out);
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+        // Возвращаем поток байтов как ответ
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(new InputStreamResource(in));
+    }*/
+
+    @PostMapping("/monitor")
+    public Mono<ResponseEntity<InputStreamResource>> monitoring(@RequestBody String data) throws IOException {
+        try {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            throw new InternalError("VM does not support mandatory encoding UTF-8");
+        }
+
+        String[] paragraphs = data.split("\\\\n");
+        String additionally = paragraphs[paragraphs.length - 1];
+        List<String> paragraphList = new ArrayList<>();
+        for (int i = 0; i < paragraphs.length - 2; i++) {
+            String p = paragraphs[i].replace("\\", "");
+            if (i == 18) {
+                paragraphList.add(p + additionally.substring(0, additionally.length() - 1));
+            } else {
+                paragraphList.add(p);
+            }
+        }
+
+        return Mono.just(createWord(paragraphList));
+    }
+
+    public ResponseEntity<InputStreamResource> createWord(List<String> paragraphList) throws IOException {
+        // Создаем документ
+        XWPFDocument document = new XWPFDocument();
+
+        // Настройка отступов страницы
+        CTSectPr sectPr = document.getDocument().getBody().addNewSectPr();
+        CTPageMar pageMar = sectPr.addNewPgMar();
+        pageMar.setLeft(1200); // 2 см = 1440 twentieths of a point
+        //pageMar.setRight(1440); // 2 см = 1440 twentieths of a point
+
+        for (int i = 0; i < paragraphList.size(); i++) {
+            String paragraphString = paragraphList.get(i);
+            if (!paragraphString.equals("") || i == 1 || i == 7) {
+                XWPFParagraph paragraph = document.createParagraph();
+
+                if (i == 0) {
+                    paragraph.setAlignment(ParagraphAlignment.CENTER);
+                    paragraphString = paragraphString.substring(1);
+                } else {
+                    paragraph.setAlignment(ParagraphAlignment.BOTH);
+                    paragraph.setIndentationFirstLine(600);
                 }
 
                 // Создаем Run

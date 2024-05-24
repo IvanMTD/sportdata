@@ -1,12 +1,16 @@
 package ru.fcpsr.sportdata.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.fcpsr.sportdata.models.Category;
+import ru.fcpsr.sportdata.models.Condition;
 import ru.fcpsr.sportdata.models.FederalStandard;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,6 +67,77 @@ public class ContestMonitoringDTO {
 
     private List<SportDTO> disciplines = new ArrayList<>();
     private SubjectMonitoringDTO subjectMonitoring;
+
+    public List<String> judgeCategories(){
+        List<Integer> judges = new ArrayList<>(List.of(bc,tc,sc,fc,vrc,mc));
+        List<String> naming = new ArrayList<>(List.of("без категории", "третий категории", "второй категории", "первой категории", "всероссийской категории", "международной категории"));
+        List<String> summary = new ArrayList<>();
+        for(int i=0; i<judges.size(); i++){
+            if(judges.get(i) != 0 && judges.get(i) > 0){
+                summary.add(naming.get(i) + " - " + judges.get(i) + " " + humanFormat(judges.get(i)) + ";");
+            }
+        }
+
+        String last = summary.get(summary.size() - 1);
+        last = last.substring(0,last.length() - 1) + ".";
+        summary.set(summary.size() - 1, last);
+
+        return summary;
+    }
+
+    public String getAges(){
+        List<SupportPart> dis = distinctParts(getParts());
+        int minAge = 100;
+        int maxAge = 0;
+        for(SupportPart sp : dis){
+            LocalDate today = beginning;
+            LocalDate birthday = sp.getBirthday();
+
+            Period age = Period.between(birthday, today);
+
+            int years = age.getYears();
+            if(years > maxAge){
+                maxAge = years;
+            }
+            if(years < minAge){
+                minAge = years;
+            }
+        }
+
+        return minAge + " - " + yearsForm(maxAge);
+    }
+
+    public String getYears(){
+        List<SupportPart> dis = distinctParts(getParts());
+        int minYear = 10000;
+        int maxYear = 0;
+        for(SupportPart sp : dis){
+            int years = sp.getBirthday().getYear();
+            if(years > maxYear){
+                maxYear = years;
+            }
+            if(years < minYear){
+                minYear = years;
+            }
+        }
+
+        return minYear + " - " + maxYear;
+    }
+
+    private String yearsForm(int year){
+        String answer = year + " лет";
+        if(year < 21){
+            if(year == 1){
+                answer = year + " года";
+            }
+        }else{
+            int b = year - ((year / 10) * 10);
+            if(b == 1){
+                answer = year + " года";
+            }
+        }
+        return answer;
+    }
 
     public String getFormatContestTitle(){
         String[] words = contestTitle.split("\\s");
@@ -202,10 +277,7 @@ public class ContestMonitoringDTO {
         al = al.stream().sorted(Comparator.comparing(Category::getCount)).distinct().collect(Collectors.toList());
         StringBuilder builder = new StringBuilder();
         for(Category category : al){
-            String title = category.getTitle();
-            String firstChar = title.substring(0,1).toLowerCase();
-            String restOfTitle = title.substring(1);
-            title = firstChar + restOfTitle;
+            String title = firstLetterLow(category.getTitle());
             builder.append(title).append(", ");
         }
         return builder.substring(0,builder.toString().length() - 2);
@@ -246,44 +318,186 @@ public class ContestMonitoringDTO {
                         }
                     }
                 }
-                if(i == ql.size() -1){
-                    answer.add(builder.substring(0, builder.toString().length() - 1) + ".");
-                }else{
-                    answer.add(builder.toString());
-                }
+                answer.add(builder.toString());
             }
         }
+
+        String last = answer.get(answer.size() - 1);
+        last = last.substring(0,last.length() - 1) + ".";
+        answer.set(answer.size() - 1, last);
 
         return answer;
     }
 
     public List<String> getFinalistsQualification(){
 
-        List<PlaceDTO> pl = new ArrayList<>();
+        Set<SupportPart> supportParts = getParts();
 
-        for(SportDTO d : disciplines){
-            for(PlaceDTO p : d.getPlaces()){
-                if(p != null){
-                    pl.add(p);
+        // удаляем все повторные записи сохраняя старшинство квалификации
+        List<SupportPart> dis = distinctParts(supportParts);
+
+        Map<String, Long> results = dis.stream()
+                .collect(Collectors.groupingBy(sp -> sp.getCategory().getTitle(), Collectors.counting()));
+
+        List<String> condition = new ArrayList<>();
+        for(String key : results.keySet()){
+            String title = firstLetterLow(key);
+            if(title.equals("отсутствует")){
+                title = "квалификация не была указана";
+            }
+            int n = Math.toIntExact(results.get(key));
+            if(n == 2 || n == 3 || n == 4){
+                condition.add(title + " - " + results.get(key) + " человека;");
+            }else{
+                if(n < 9){
+                    condition.add(title + " - " + results.get(key) + " человек;");
+                }else{
+                    int b = n - ((n / 10) * 10);
+                    if(b == 2 || b == 3 || b == 4){
+                        condition.add(title + " - " + results.get(key) + " человека;");
+                    }else{
+                        condition.add(title + " - " + results.get(key) + " человек;");
+                    }
                 }
             }
         }
 
-       /* List<PlaceDTO> distinctPlaces = pl.stream()
-                .filter(p -> pl.stream()
-                        .filter(p::myEquals) // сравнить объекты с помощью вашего метода
-                        .limit(1) // оставить только один элемент
-                        .count() == 1 // проверить, что элемент уникален
-                ).toList();
+        String last = condition.get(condition.size() - 1);
+        last = last.substring(0,last.length() - 1) + ".";
+        condition.set(condition.size() - 1, last);
 
-        for(int i=0; i<distinctPlaces.size(); i ++){
-            String title = distinctPlaces.get(i).getQualification().getCategoryTitle();
-            String firstChar = title.substring(0,1).toLowerCase();
-            String restOfTitle = title.substring(1);
-            title = firstChar + restOfTitle;
-            log.info("" + title);
-        }*/
-
-        return new ArrayList<>();
+        return condition;
     }
+
+    public List<String> getAnalyticsAboutFinalists(){
+        Set<SupportPart> supportParts = getParts();
+        List<SupportPart> dis = distinctParts(supportParts);
+        return generateAnalytics(dis);
+    }
+
+    private List<String> generateAnalytics(List<SupportPart> supportParts) {
+        Map<Category, List<SupportPart>> groupedByCategory = supportParts.stream()
+                .collect(Collectors.groupingBy(SupportPart::getCategory));
+
+        List<String> analytics = new ArrayList<>();
+
+        for (Map.Entry<Category, List<SupportPart>> entry : groupedByCategory.entrySet()) {
+            Category category = entry.getKey();
+            List<SupportPart> parts = entry.getValue();
+
+            long count = parts.size();
+            long doneCount = parts.stream().filter(p -> p.getCondition() == Condition.DONE).count();
+            long allowCount = parts.stream().filter(p -> p.getCondition() == Condition.ALLOW).count();
+            long notAllowCount = parts.stream().filter(p -> p.getCondition() == Condition.NOT_ALLOW).count();
+
+            Map<Category, Long> doneResults = parts.stream()
+                    .filter(p -> p.getCondition() == Condition.DONE)
+                    .collect(Collectors.groupingBy(SupportPart::getNewCategory, Collectors.counting()));
+
+            Map<Category, Long> notAllowResults = parts.stream()
+                    .filter(p -> p.getCondition() == Condition.NOT_ALLOW)
+                    .collect(Collectors.groupingBy(SupportPart::getNewCategory, Collectors.counting()));
+
+            StringBuilder result = new StringBuilder();
+            result.append("участники с квалификацией - ").append(firstLetterLow(category.getTitle())).append(" - ").append(count).append(humanFormat(count));
+
+            if (allowCount > 0) {
+                result.append(", подтвердили: ").append(allowCount).append(humanFormat(count));
+            }
+
+            if (notAllowCount > 0) {
+                result.append(", не подтвердили: ").append(notAllowCount);
+                appendCategoryResults(result, notAllowResults);
+            }
+
+            if (doneCount > 0) {
+                result.append(", выполнили: ").append(doneCount);
+                appendCategoryResults(result, doneResults);
+            }
+            String res = result.toString() + ";";
+            analytics.add(res);
+        }
+
+        String last = analytics.get(analytics.size() - 1);
+        last = last.substring(0,last.length() - 1) + ".";
+        analytics.set(analytics.size() - 1, last);
+
+        return analytics;
+    }
+
+    private void appendCategoryResults(StringBuilder result, Map<Category, Long> results) {
+        results.forEach((category, count) -> result.append(", из них: ").append(count).append(" с результатом ").append(firstLetterLow(category.getTitle())));
+    }
+
+    private List<SupportPart> distinctParts(Set<SupportPart> supportParts){
+        List<SupportPart> dis = supportParts.stream()
+                .collect(Collectors.groupingBy(SupportPart::getPid))
+                .values()
+                .stream()
+                .map(parts -> parts.stream().max(Comparator.comparingInt(sp -> sp.getCategory().getCount())).orElse(null))
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(sp -> sp.getCategory().getCount()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        return dis;
+    }
+
+    private Set<SupportPart> getParts(){
+        Set<SupportPart> supportParts = new HashSet<>();
+
+        for(SportDTO d : disciplines){
+            for(PlaceDTO p : d.getPlaces()){
+                if(p != null){
+                    if(p.getParticipantId() != 0) {
+                        SupportPart supportPart = new SupportPart();
+                        supportPart.setPid(p.getParticipantId());
+                        supportPart.setCategory(p.getQualification().getCategory());
+                        supportPart.setCondition(p.getCondition());
+                        supportPart.setNewCategory(p.getNewQualificationData());
+                        supportPart.setBirthday(p.getParticipant().getBirthday());
+                        supportParts.add(supportPart);
+                    }
+                }
+            }
+        }
+        return supportParts;
+    }
+
+    private String firstLetterLow(String word){
+        String title = word;
+        String firstChar = title.substring(0,1).toLowerCase();
+        String restOfTitle = title.substring(1);
+        title = firstChar + restOfTitle;
+        return title;
+    }
+
+    private String humanFormat(long n){
+        String human = "человек";
+        if(n == 2 || n == 3 || n == 4){
+            human = " человека";
+        }else{
+            if(n < 9){
+                human = " человек";
+            }else{
+                long b = n - ((n / 10) * 10);
+                if(b == 2 || b == 3 || b == 4){
+                    human = " человека";
+                }else{
+                    human = " человек";
+                }
+            }
+        }
+        return human;
+    }
+}
+
+@Data
+@NoArgsConstructor
+class SupportPart {
+    private int pid;
+    private Category category;
+
+    private Condition condition;
+    private Category newCategory;
+
+    private LocalDate birthday;
 }

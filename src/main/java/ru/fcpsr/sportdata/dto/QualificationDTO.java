@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Qualification;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 public class QualificationDTO {
@@ -26,5 +28,9 @@ public class QualificationDTO {
     public void setCategory(Category category){
         this.category = category;
         this.categoryTitle = category.getTitle();
+    }
+
+    public Category getCategory() {
+        return Objects.requireNonNullElse(category, Category.NO);
     }
 }

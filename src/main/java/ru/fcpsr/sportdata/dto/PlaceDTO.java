@@ -6,6 +6,8 @@ import ru.fcpsr.sportdata.models.Category;
 import ru.fcpsr.sportdata.models.Condition;
 import ru.fcpsr.sportdata.models.Place;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 public class PlaceDTO {
@@ -41,7 +43,11 @@ public class PlaceDTO {
         }
     }
 
-    public boolean myEquals(PlaceDTO placeDTO){
-        return participantId == placeDTO.getParticipantId();
+    public Category getNewQualificationData() {
+        return Objects.requireNonNullElse(newQualificationData, Category.NO);
+    }
+
+    public Condition getCondition() {
+        return Objects.requireNonNullElse(condition, Condition.NO);
     }
 }

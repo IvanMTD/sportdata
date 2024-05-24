@@ -6,7 +6,10 @@
     </div>
     <hr>
     <div class="row">
-        <div class="col-8" id="analytics">
+        <div class="col-2">
+
+        </div>
+        <div class="col-8 border-start" id="analytics">
             <p id="contest-header" class="fs-3 text-dark">
                 Мониторинг и анализ данных спортивного соревнования <span th:text="${monitoring.formatContestTitle}"></span> по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span> среди спортсменов возрастных групп: <span th:text="${monitoring.formatAgeGroups}"></span> в спортивных дисциплинах: <span th:text="${monitoring.formatDisciplinesInQuotes}"></span>.
             </p>
@@ -46,6 +49,9 @@
             <p id="point-3" class="fs-5 text-dark">
                 3. К участию в спортивных соревнованиях <span th:text="${monitoring.formatContestTitle}"></span> допускались спортсмены возрастных групп: <span th:text="${monitoring.formatAgeGroups}"></span>, имеющие спортивные квалификации: <span th:text="${monitoring.allowed}"></span>.
             </p>
+            <p class="fs-4 text-dark">
+                <input type="text" id="additionally" placeholder="Дополнительное поле" style="width: 100%">
+            </p>
 
             <p id="point-4" class="fs-5 text-dark">
                 4. В соответствии с Федеральным стандартом спортивной подготовки по виду спорта <span th:text="${monitoring.sportTitleLowerCaseInQuotes}"></span>, спортсмены данного возраста могут проходить спортивную подготовку в группах на следующих этапах спортивной подготовки: <span th:text="${monitoring.federalStandard}"></span>
@@ -58,76 +64,112 @@
             <p id="point-6" class="fs-5 text-dark">
                 6. Спортивная квалификация спортсменов соревнования <span th:text="${monitoring.formatContestTitle}"></span>:
             </p>
-            <p id="point-6-" class="fs-5 text-dark" th:each="q : ${monitoring.totalCountContestQualifications}">
+            <p class="fs-5 text-dark" th:each="q, q_stat : ${monitoring.totalCountContestQualifications}" th:id="'point-6-' + ${q_stat.index}">
                 <span th:text="${q}"></span>
             </p>
 
             <p id="point-7" class="fs-5 text-dark">
                 7. Спортивная квалификация победителей и призеров соревнования <span th:text="${monitoring.formatContestTitle}"></span>:
             </p>
-            <p id="point-7-" class="fs-5 text-dark">
-                <span th:text="${monitoring.finalistsQualification}"></span>
+            <p class="fs-5 text-dark" th:each = "sum, sum_stat : ${monitoring.finalistsQualification}" th:id="'point-7-' + ${sum_stat.index}">
+                <span th:text="${sum}"></span>
             </p>
 
             <p id="point-8" class="fs-5 text-dark">
                 8. Выполнение (подтверждение) победителями и призерами соревнования <span th:text="${monitoring.formatContestTitle}"></span> спортивной квалификации:
             </p>
-            <p id="point-8-">
-                <span></span>
+            <p class="fs-5 text-dark" th:each="anal, anal_stat : ${monitoring.analyticsAboutFinalists}" th:id="'point-8-' + ${anal_stat.index}">
+                <span th:text="${anal}"></span>
             </p>
 
             <p id="point-9" class="fs-5 text-dark">
-                9. Возраст спортсменов – победителей и призеров соревнования <span th:text="${monitoring.formatContestTitle}"></span> составил от <span></span> до <span></span> (<span></span> годов рождения), что <span></span> соответствует требованиям Положения о спортивных соревнованиях.
+                9. Возраст спортсменов – победителей и призеров соревнования <span th:text="${monitoring.formatContestTitle}"></span> составил <span th:text="${monitoring.ages}"></span> (<span th:text="${monitoring.years}"></span> годов рождения), что <span></span> соответствует требованиям Положения о спортивных соревнованиях.
             </p>
 
             <p id="point-10" class="fs-5 text-dark">
                 10. Победители и призеры соревнования <span th:text="${monitoring.formatContestTitle}"></span> среди субъектов Российской Федерации:
             </p>
-            <p id="point-10-1" class="fs-5 text-dark">
-                Первое место:
-            </p>
-            <p id="point-10-1-" class="fs-5 text-dark">
-                <span></span>
-            </p>
-            <p id="point-10-2" class="fs-5 text-dark">
-                Второе место:
-            </p>
-            <p id="point-10-2-" v="fs-5 text-dark">
-                <span></span>
-            </p>
-            <p id="point-10-3" class="fs-5 text-dark">
-                Третье место:
-            </p>
-            <p id="point-10-3-" class="fs-5 text-dark">
-                <span></span>
-            </p>
+            <p class="fs-5 text-dark"><b>Первое место:</b></p>
+            <p th:each="f, f_stat : ${monitoring.subjectMonitoring.subjectFirstPlace}" th:id="'point-10-1-' + ${f_stat.index}" class="fs-5 text-dark" th:text="${f.title}"></p>
+
+            <p class="fs-5 text-dark"><b>Второе место:</b></p>
+            <p th:each="s, s_stat : ${monitoring.subjectMonitoring.subjectSecondPlace}" th:id="'point-10-2-' + ${s_stat.index}" class="fs-5 text-dark" th:text="${s.title}"></p>
+
+            <p class="fs-5 text-dark"><b>Третье место:</b></p>
+            <p th:each="l, l_stat : ${monitoring.subjectMonitoring.subjectLastPlace}" th:id="'point-10-3-' + ${l_stat.index}" class="fs-5 text-dark" th:text="${l.title}"></p>
 
             <p id="point-11" class="fs-5 text-dark">
                 11. Победители и призеры соревнования <span th:text="${monitoring.formatContestTitle}"></span> в спортивных дисциплинах вида спорта представляли следующие организации, осуществляющие спортивную подготовку в субъектах Российской Федерации:
             </p>
-            <div id="point-11-">
-                <p class="fs-5 text-dark">
-                    <span></span>
+
+            <div class="border-start border-top border-end my-2" th:each="asp, asp_stat : ${monitoring.disciplines}">
+                <p class="bg-secondary-subtle border-bottom p-2" th:id="'point-11-' + ${asp_stat.index}">
+                    <span class="fs-5 text-dark">
+                        <b th:text="${asp.discipline.title.toLowerCase()} + ' (' + ${asp.group.title.toLowerCase()} + ')'"></b>
+                    </span>
                 </p>
-                <p id="point-11--" class="fs-5 text-dark">
-                    <span></span>
-                </p>
+                <div th:each="finalyst, finalyst_stat : ${asp.places}">
+                    <p class="fs-5 text-dark border-bottom p-2" th:id="'point-11-' + ${asp_stat.index} + '-' + ${finalyst_stat.index}" th:text="${finalyst.place} + ' место - ' + ${finalyst.school.title} + ' - ' + ${finalyst.school.subject.title}"></p>
+                </div>
             </div>
+
             <p id="point-11-final" class="fs-5 text-dark">
                 Детализированная информация о победителях и призерах соревнования <span th:text="${monitoring.formatContestTitleInQuotes}"></span> содержится в официальных протоколах спортивных соревнований, на основе которых создается база данных ФГБУ ФЦПСР для дальнейшего использования в работе.
             </p>
             <p id="point-12" class="fs-5 text-dark">
-                12. Спортивное соревнование <span th:text="${monitoring.formatContestTitleInQuotes}"></span> обслуживали, спортивных судей: <span></span> в том числе иногородних: <span></span>.
+                12. Спортивное соревнование <span th:text="${monitoring.formatContestTitleInQuotes}"></span> обслуживали, спортивных судей: <span th:text="${monitoring.judgeTotal}"></span> в том числе иногородних: <span th:text="${monitoring.nonresidentJudge}"></span>.
             </p>
             <p id="point-13" class="fs-5 text-dark">
                 13. Квалификационные категории спортивных судей:
             </p>
-            <p id="point-13-" class="fs-5 text-dark">
-                <span></span>
-            </p>
+            <div th:each="j, j_stat : ${monitoring.judgeCategories}">
+                <p class="fs-5 text-dark" th:text="${j}" th:id="'point-13-' + ${j_stat.index}"></p>
+            </div>
+
+            <div class="row pt-4">
+                <div class="col">
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-outline-secondary" type="button" onclick="sendData()">Получить данные</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col">
+        <div class="col-2">
 
         </div>
     </div>
 </div>
+
+<script th:inline="javascript">
+    function sendData(){
+        let additionally = document.getElementById('additionally').value;
+        let data = document.getElementById('analytics').innerText;
+        let csrf = [[${_csrf}]];
+        let header = csrf.headerName;
+        let token = csrf.token;
+        $.ajax({
+            url:'/rest/database/monitor',
+            type:'POST',
+            data: JSON.stringify(data + '\n' + additionally),
+            contentType: 'application/json',
+            xhrFields: {
+                responseType: 'blob'  // для получения данных в виде файла
+            },
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader(header, token);
+            },
+            success: function (response, status, xhr){
+                let filename = 'Мониторинг по ЕКП №' + [[${monitoring.ekp}]] + '.doc';
+
+                let blob = new Blob([response]);
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        })
+    }
+</script>
