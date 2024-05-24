@@ -11,7 +11,12 @@ public class CategoryDTO {
     private String title;
 
     public CategoryDTO(Category category){
-        this.category = category;
-        this.title = category.getTitle();
+        if(category != null) {
+            this.category = category;
+            this.title = category.getTitle();
+        }else{
+            this.category = Category.NO;
+            this.title = this.category.getTitle();
+        }
     }
 }

@@ -359,7 +359,7 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="d-grid gap-2 my-4">
-                                            <button th:id="'subject-delete-button-' + ${subject_stat.index}" type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal">Удалить регион</button>
+                                            <button th:id="'subject-delete-button-' + ${subject_stat.index}" type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal" th:if="${admin}" or ${manager}>Удалить регион</button>
                                             <div class="modal fade" th:id="'subject-delete-modal-' + ${subject_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">

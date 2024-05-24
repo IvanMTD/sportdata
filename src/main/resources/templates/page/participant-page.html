@@ -487,30 +487,30 @@
                 </div>
 
                 <div th:each="contest, stat : ${contests}">
-                    <a th:href="@{/contest/show(contest=${contest.contestId})}">
-                        <div class="row rounded-4 shadow m-1">
-                            <div class="col border-end">
+                    <a class="text-dark" th:href="@{/contest/show(contest=${contest.contestId})}" style="text-decoration: none">
+                        <div class="row border border-dark m-1">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.date}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.ekpNum}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.contestTitle}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.sportTitle}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.disciplineTitle}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.place}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.mainCategory.title}"></small>
                             </div>
-                            <div class="col border-end">
+                            <div class="col border-end border-dark">
                                 <small th:text="${contest.condition.title}"></small>
                             </div>
                             <div class="col">

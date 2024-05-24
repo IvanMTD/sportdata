@@ -253,7 +253,7 @@ public class ContestMonitoringDTO {
                 }
             }
         }
-        getFinalistsQualification();
+
         return answer;
     }
 
@@ -269,7 +269,7 @@ public class ContestMonitoringDTO {
             }
         }
 
-        List<PlaceDTO> distinctPlaces = pl.stream()
+       /* List<PlaceDTO> distinctPlaces = pl.stream()
                 .filter(p -> pl.stream()
                         .filter(p::myEquals) // сравнить объекты с помощью вашего метода
                         .limit(1) // оставить только один элемент
@@ -282,8 +282,8 @@ public class ContestMonitoringDTO {
             String restOfTitle = title.substring(1);
             title = firstChar + restOfTitle;
             log.info("" + title);
-        }
+        }*/
 
-        return null;
+        return new ArrayList<>();
     }
 }
