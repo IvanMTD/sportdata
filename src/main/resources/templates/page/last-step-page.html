@@ -337,7 +337,7 @@
                                                     <button th:id="'delete-' + ${as_stat.index} + '-' + ${p_stat.index} + '-' + ${place.getId()}"
                                                             type="button" class="btn-close mx-auto text-center border"
                                                             aria-label="Close"
-                                                            onclick="deleteParticipantFromDB(this.id)"></button>
+                                                            onclick="deleteParticipantFromDB(this.id)" th:if="${admin} or ${manager}"></button>
                                                 </div>
                                             </div>
                                         </div>

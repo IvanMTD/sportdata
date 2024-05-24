@@ -53,7 +53,7 @@
                                    aria-describedby="basic-addon1" th:field="*{email}">
                         </div>
                         <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
-                        <select class="form-select" th:field="*{role}" id="select">
+                        <select class="form-select" th:field="*{role}" id="select" th:if="${admin}">
                             <option th:each="r : ${roles}" th:text="${r.getName()}" th:value="${r}"></option>
                         </select>
                         <div class="d-grid gap-2 p-2 m-0">
