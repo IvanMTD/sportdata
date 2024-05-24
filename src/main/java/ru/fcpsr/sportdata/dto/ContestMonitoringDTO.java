@@ -339,6 +339,16 @@ public class ContestMonitoringDTO {
         Map<String, Long> results = dis.stream()
                 .collect(Collectors.groupingBy(sp -> sp.getCategory().getTitle(), Collectors.counting()));
 
+        // Сортируем Map по значению поля count в Category
+        results = results.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> getCategoryByTitle(e.getKey()).getCount()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
         List<String> condition = new ArrayList<>();
         for(String key : results.keySet()){
             String title = firstLetterLow(key);
@@ -369,6 +379,15 @@ public class ContestMonitoringDTO {
         return condition;
     }
 
+    private Category getCategoryByTitle(String title) {
+        for (Category category : Category.values()) {
+            if (category.getTitle().equals(title)) {
+                return category;
+            }
+        }
+        throw new IllegalArgumentException("Unknown category title: " + title);
+    }
+
     public List<String> getAnalyticsAboutFinalists(){
         Set<SupportPart> supportParts = getParts();
         List<SupportPart> dis = distinctParts(supportParts);
@@ -378,6 +397,16 @@ public class ContestMonitoringDTO {
     private List<String> generateAnalytics(List<SupportPart> supportParts) {
         Map<Category, List<SupportPart>> groupedByCategory = supportParts.stream()
                 .collect(Collectors.groupingBy(SupportPart::getCategory));
+
+        // Сортируем Map по count в Category
+        groupedByCategory = groupedByCategory.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> e.getKey().getCount()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
 
         List<String> analytics = new ArrayList<>();
 
