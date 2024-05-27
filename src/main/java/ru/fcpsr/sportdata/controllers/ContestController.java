@@ -294,13 +294,7 @@ public class ContestController {
                 });
             });
         }else{
-            return contestService.getById(cid).flatMap(contest -> {
-                contest.setComplete(true);
-                return contestService.saveContest(contest);
-            }).flatMap(contest -> {
-                log.info("contest set done [{}]", contest);
-                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
-            });
+            return contestService.getById(cid).flatMap(contest -> Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build()));
         }
     }
 
