@@ -587,9 +587,17 @@
                                                                     <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
                                                                     <script th:inline="javascript">
                                                                         $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                            '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
+                                                                            '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Возраст: ' + getContestAge([[${place}]].participant.birthday, [[${contest}]].beginning) + '</option>'
                                                                         );
                                                                         document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
+
+                                                                        function getContestAge(birthday, contestDate) {
+                                                                            let birthDate = new Date(birthday);
+                                                                            let contest = new Date(contestDate);
+                                                                            let ageDifMs = contest - birthDate;
+                                                                            let ageDate = new Date(ageDifMs); // miliseconds from epoch
+                                                                            return Math.abs(ageDate.getUTCFullYear() - 1970);
+                                                                        }
                                                                     </script>
                                                                 </div>
                                                             </a>

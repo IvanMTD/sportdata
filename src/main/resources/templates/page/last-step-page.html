@@ -227,7 +227,7 @@
                                                             <label th:for="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}">Спортсмен</label>
                                                             <script th:inline="javascript">
                                                                 $('#participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                    '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Год рождения: ' + [[${place}]].participant.date + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
+                                                                    '<option data-item="' + JSON.stringify([[${place}]]).replace(/"/g, '&quot;') + '" value="' + [[${place}]].participant.id + '">' + [[${place}]].participant.fullName + ' | Возраст: ' + [[${place}]].participant.age + '</option>'
                                                                 );
                                                                 document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].participantId
                                                             </script>
@@ -348,18 +348,24 @@
                     </div>
                 </div>
                 <div class="row py-4">
-                    <div class="d-grid gap-2 col-4 mx-auto">
+                    <div class="d-grid gap-2 col-3 mx-auto">
                         <a class="btn btn-outline-secondary btn-lg"
                            th:href="@{/contest/second-step(contest=${contest.getId()})}">Назад</a>
                     </div>
-                    <div class="d-grid gap-2 col-4 mx-auto">
-                        <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestEdit()">Добавить
-                            дисциплину
+                    <div class="d-grid gap-2 col-3 mx-auto">
+                        <input type="number" value="0" id="added" name="added" hidden>
+                        <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="document.getElementById('added').value = 1">
+                            Добавить дисциплину
                         </button>
                     </div>
-                    <div class="d-grid gap-2 col-4 mx-auto">
-                        <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">Завершить |
+                    <div class="d-grid gap-2 col-3 mx-auto">
+                        <button class="btn btn-outline-secondary btn-lg" type="submit">
                             Сохранить
+                        </button>
+                    </div>
+                    <div class="d-grid gap-2 col-3 mx-auto">
+                        <button class="btn btn-outline-secondary btn-lg" type="submit" onclick="contestDone()">
+                            Завершить
                         </button>
                     </div>
                     <script>
@@ -546,7 +552,7 @@
                 '       <div class="row">' +
                 '          <div class="col">' +
                 '              <div class="form-floating">' +
-                '                  <input type="text" class="form-control" value="' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Вораст: ' + participant.age + '" disabled>' +
+                '                  <input type="text" class="form-control" value="' + participant.fullName + ' | Год рождения: ' + participant.date + ' | Возраст: ' + participant.age + '" disabled>' +
                 '                  <input type="number" name="sports[' + index + '].places[' + pCount + '].participantId" value="' + participant.id + '" placeholder="pid" id="participant-' + index + '-' + pCount + '" class="form-control" hidden>' +
                 '                  <label for="participant-' + index + '-' + pCount + '">Спортсмен</label>' +
                 '              </div>' +
