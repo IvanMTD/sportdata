@@ -100,6 +100,10 @@ public class ContestService {
         return contestRepository.findAllByOrderByBeginningDesc(pageable);
     }
 
+    public Flux<Contest> getAllSortedBySportTitle(Pageable pageable) {
+        return contestRepository.findAllByOrderBySportTitle(pageable);
+    }
+
     public Mono<Long> getCount() {
         return contestRepository.count();
     }

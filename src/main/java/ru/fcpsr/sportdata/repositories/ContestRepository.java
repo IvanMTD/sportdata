@@ -11,6 +11,7 @@ public interface ContestRepository extends ReactiveCrudRepository<Contest,Intege
     Flux<Contest> findAllByEkp(Pageable pageable, String ekp);
 
     Flux<Contest> findAllByOrderByBeginningDesc(Pageable pageable);
+    Flux<Contest> findAllByOrderBySportTitle(Pageable pageable);
     Flux<Contest> findAllByEkpLikeIgnoreCase(String ekpPart);
     Flux<Contest> findAllBySportTitleLikeIgnoreCase(String sportPart);
     Flux<Contest> findAllBySubjectTitleLikeIgnoreCase(String sportPart);

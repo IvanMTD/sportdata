@@ -414,7 +414,7 @@ public class ContestController {
 
     private Flux<ContestDTO> getAllCompleteContest(Pageable pageable, String search) {
         if(search.equals("all") || search.equals("")) {
-            return contestService.getAllSortedByDate(pageable).flatMap(contest -> {
+            return contestService.getAllSortedBySportTitle(pageable).flatMap(contest -> {
                 return getCompleteContest(contest.getId(),0);
             }).collectList().flatMapMany(cl -> {
                 cl = cl.stream().sorted(Comparator.comparing(ContestDTO::getSportTitle)).collect(Collectors.toList());
