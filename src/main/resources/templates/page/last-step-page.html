@@ -184,11 +184,18 @@
                         <div class="form-floating">
                             <input th:id="'participant-search-' + ${as_stat.index}"
                                    th:list="'search-data-list-' + ${as_stat.index}" placeholder="search" type="search"
-                                   class="form-control" oninput="searchParticipants(this.id)">
+                                   class="form-control" oninput="searchParticipants(this.id)" onkeydown="preventEnterSubmit(event)">
                             <datalist th:id="'search-data-list-' + ${as_stat.index}"></datalist>
                             <label th:for="'participant-search-' + ${as_stat.index}">Поиск участника</label>
                         </div>
                     </div>
+                    <script>
+                        function preventEnterSubmit(event) {
+                            if (event.key === 'Enter') {
+                                event.preventDefault();
+                            }
+                        }
+                    </script>
                     <div class="col-2 mt-1">
                         <div class="d-grid">
                             <button th:id="'add-p-btn-' + ${as_stat.index}" class="btn btn-lg btn-outline-secondary"
