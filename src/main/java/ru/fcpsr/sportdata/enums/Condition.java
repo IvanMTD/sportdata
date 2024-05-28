@@ -1,4 +1,4 @@
-package ru.fcpsr.sportdata.models;
+package ru.fcpsr.sportdata.enums;
 
 public enum Condition {
     DONE("Выполнение", 3),

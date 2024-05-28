@@ -1,8 +1,8 @@
 package ru.fcpsr.sportdata.models;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
+import ru.fcpsr.sportdata.enums.FederalDistrict;
 
 import java.util.HashSet;
 import java.util.Set;

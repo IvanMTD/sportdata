@@ -1,13 +1,11 @@
 package ru.fcpsr.sportdata.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.fcpsr.sportdata.models.Category;
-import ru.fcpsr.sportdata.models.Condition;
-import ru.fcpsr.sportdata.models.FederalStandard;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.Condition;
+import ru.fcpsr.sportdata.enums.FederalStandard;
 
 import java.time.LocalDate;
 import java.time.Period;

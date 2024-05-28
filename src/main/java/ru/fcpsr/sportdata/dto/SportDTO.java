@@ -2,10 +2,9 @@ package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.poi.ss.formula.functions.T;
 import ru.fcpsr.sportdata.models.ArchiveSport;
-import ru.fcpsr.sportdata.models.Category;
-import ru.fcpsr.sportdata.models.FederalStandard;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.FederalStandard;
 
 import java.util.ArrayList;
 import java.util.Collections;

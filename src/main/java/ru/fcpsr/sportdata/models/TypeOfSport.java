@@ -2,6 +2,8 @@ package ru.fcpsr.sportdata.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import ru.fcpsr.sportdata.enums.Season;
+import ru.fcpsr.sportdata.enums.SportFilterType;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -2,8 +2,8 @@ package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.fcpsr.sportdata.models.Category;
-import ru.fcpsr.sportdata.models.Condition;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.Condition;
 import ru.fcpsr.sportdata.models.Place;
 
 import java.util.Objects;

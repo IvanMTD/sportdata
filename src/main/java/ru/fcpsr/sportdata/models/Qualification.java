@@ -2,8 +2,8 @@ package ru.fcpsr.sportdata.models;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
+import ru.fcpsr.sportdata.enums.Category;
 
 /*
 create table if not exists qualification(

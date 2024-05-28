@@ -5,13 +5,11 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ru.fcpsr.sportdata.models.FederalDistrict;
+import ru.fcpsr.sportdata.enums.FederalDistrict;
 import ru.fcpsr.sportdata.models.Subject;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

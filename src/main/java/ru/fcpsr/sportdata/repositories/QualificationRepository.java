@@ -3,7 +3,7 @@ package ru.fcpsr.sportdata.repositories;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.fcpsr.sportdata.models.Category;
+import ru.fcpsr.sportdata.enums.Category;
 import ru.fcpsr.sportdata.models.Qualification;
 
 import java.util.Set;

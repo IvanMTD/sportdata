@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.fcpsr.sportdata.models.Category;
-import ru.fcpsr.sportdata.models.Condition;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.Condition;
 import ru.fcpsr.sportdata.models.Contest;
 
 import java.time.LocalDate;

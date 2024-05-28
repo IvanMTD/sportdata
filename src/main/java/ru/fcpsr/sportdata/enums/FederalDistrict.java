@@ -1,4 +1,4 @@
-package ru.fcpsr.sportdata.models;
+package ru.fcpsr.sportdata.enums;
 
 import java.util.ArrayList;
 import java.util.Arrays;

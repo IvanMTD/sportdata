@@ -1,8 +1,8 @@
 package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
-import ru.fcpsr.sportdata.models.Season;
-import ru.fcpsr.sportdata.models.SportFilterType;
+import ru.fcpsr.sportdata.enums.Season;
+import ru.fcpsr.sportdata.enums.SportFilterType;
 
 @Data
 public class FilterDTO {

@@ -2,7 +2,7 @@ package ru.fcpsr.sportdata.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.fcpsr.sportdata.models.FederalStandard;
+import ru.fcpsr.sportdata.enums.FederalStandard;
 
 @Data
 @NoArgsConstructor

@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import ru.fcpsr.sportdata.dto.PlaceDTO;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.Condition;
 
 /*
 create table if not exists place(

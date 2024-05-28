@@ -1,4 +1,4 @@
-package ru.fcpsr.sportdata.models;
+package ru.fcpsr.sportdata.enums;
 
 public enum FederalStandard {
     NP("Этап начальной подготовки","НП", 1),

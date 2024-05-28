@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.fcpsr.sportdata.models.Role;
+import ru.fcpsr.sportdata.enums.Role;
 import ru.fcpsr.sportdata.models.SysUser;
 
 @Data

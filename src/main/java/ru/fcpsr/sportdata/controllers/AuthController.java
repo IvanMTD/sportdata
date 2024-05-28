@@ -16,7 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.PasswordDTO;
 import ru.fcpsr.sportdata.dto.UserDTO;
-import ru.fcpsr.sportdata.models.Role;
+import ru.fcpsr.sportdata.enums.Role;
 import ru.fcpsr.sportdata.models.SysUser;
 import ru.fcpsr.sportdata.services.UserService;
 import ru.fcpsr.sportdata.validators.PasswordValidation;

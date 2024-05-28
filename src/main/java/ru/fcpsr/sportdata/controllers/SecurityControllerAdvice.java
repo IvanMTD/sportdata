@@ -4,7 +4,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import reactor.core.publisher.Mono;
-import ru.fcpsr.sportdata.models.Role;
+import ru.fcpsr.sportdata.enums.Role;
 import ru.fcpsr.sportdata.models.SysUser;
 
 @ControllerAdvice

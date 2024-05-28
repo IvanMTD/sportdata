@@ -5,8 +5,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.QualificationDTO;
-import ru.fcpsr.sportdata.models.Category;
-import ru.fcpsr.sportdata.models.Place;
+import ru.fcpsr.sportdata.enums.Category;
 import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.repositories.QualificationRepository;
 

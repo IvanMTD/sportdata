@@ -13,6 +13,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.Condition;
+import ru.fcpsr.sportdata.enums.FederalStandard;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
@@ -37,6 +40,8 @@ public class ContestController {
     private final PlaceService placeService;
 
     private final BaseSportService baseSportService;
+
+    private final NewsService newsService;
 
     @GetMapping("/first-step")
     public Mono<Rendering> firstStepPage(@RequestParam("contest") int contestId){
@@ -246,9 +251,14 @@ public class ContestController {
                 }).flatMap(savedContest -> {
                     //log.info("contest fullish updated {}", savedContest);
                     int added = Integer.parseInt(form.get("added").get(0));
+                    int save = Integer.parseInt(form.get("save").get(0));
                     if(added == 0){
-                        if(savedContest.isComplete()){
-                            return Mono.just(Rendering.redirectTo("/contest/get/all?page=0&search=all").build());
+                        if(save == 0) {
+                            if (savedContest.isComplete()) {
+                                return Mono.just(Rendering.redirectTo("/contest/get/all?page=0&search=all").build());
+                            } else {
+                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
+                            }
                         }else{
                             return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
                         }

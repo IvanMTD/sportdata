@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import ru.fcpsr.sportdata.dto.SportDTO;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.enums.FederalStandard;
 
 import java.util.*;
 
