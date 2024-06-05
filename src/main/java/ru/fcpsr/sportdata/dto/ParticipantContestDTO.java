@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class ParticipantContestDTO {
-    private int contestId;
+    private long contestId;
     private String ekpNum;
     private String contestTitle;
     private String date;

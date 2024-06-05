@@ -16,7 +16,7 @@ public class ApplicationConfiguration {
     public WebSessionIdResolver webSessionIdResolver() {
         CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
         resolver.setCookieName(NamingUtil.getInstance().getSessionName());
-        resolver.setCookieMaxAge(Duration.ofHours(24));
+        //resolver.setCookieMaxAge(Duration.ofHours(24));
         return resolver;
     }
 }

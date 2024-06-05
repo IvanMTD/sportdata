@@ -430,7 +430,7 @@ public class ContestController {
         }
     }
 
-    private Mono<ContestDTO> getCompleteContest(int contestId, int added){
+    private Mono<ContestDTO> getCompleteContest(long contestId, int added){
         return contestService.getById(contestId).flatMap(contest -> {
             ContestDTO contestDTO = new ContestDTO(contest);
             return subjectService.getAll().collectList().flatMap(subjects -> {

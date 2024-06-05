@@ -51,6 +51,7 @@ public class ContestMonitoringDTO {
     private int sc;
     private int tc;
     private int bc;
+    private int dc;
 
     private int yn1Date;
     private int yn2Date;
@@ -67,8 +68,8 @@ public class ContestMonitoringDTO {
     private SubjectMonitoringDTO subjectMonitoring;
 
     public List<String> judgeCategories(){
-        List<Integer> judges = new ArrayList<>(List.of(bc,tc,sc,fc,vrc,mc));
-        List<String> naming = new ArrayList<>(List.of("без категории", "третий категории", "второй категории", "первой категории", "всероссийской категории", "международной категории"));
+        List<Integer> judges = new ArrayList<>(List.of(dc,bc,tc,sc,fc,vrc,mc));
+        List<String> naming = new ArrayList<>(List.of("без указанной категории","без категории", "третий категории", "второй категории", "первой категории", "всероссийской категории", "международной категории"));
         List<String> summary = new ArrayList<>();
         for(int i=0; i<judges.size(); i++){
             if(judges.get(i) != 0 && judges.get(i) > 0){

@@ -13,7 +13,7 @@ import java.util.*;
 @NoArgsConstructor
 public class Contest {
     @Id
-    private int id;
+    private long id;
     private int subjectId;
     private int typeOfSportId;
     private String subjectTitle;
@@ -57,6 +57,7 @@ public class Contest {
     private int sc;
     private int tc;
     private int bc;
+    private int dc;
 
     private int yn1Date;
     private int yn2Date;
@@ -130,6 +131,7 @@ public class Contest {
         setSc(contestDTO.getSc());
         setTc(contestDTO.getTc());
         setBc(contestDTO.getBc());
+        setDc(contestDTO.getDc());
 
         setYn1Date(contestDTO.getYn1Date());
         setYn2Date(contestDTO.getYn2Date());
@@ -198,6 +200,7 @@ public class Contest {
         setSc(contestDTO.getSc());
         setTc(contestDTO.getTc());
         setBc(contestDTO.getBc());
+        setDc(contestDTO.getDc());
 
         setYn1Date(contestDTO.getYn1Date());
         setYn2Date(contestDTO.getYn2Date());

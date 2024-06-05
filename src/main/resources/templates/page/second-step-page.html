@@ -353,19 +353,25 @@
             </div>
 
             <div class="row">
-                <div class="col">
+                <div class="col-2">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="dc" placeholder="bc" th:field="*{dc}">
+                        <label for="dc">Другое</label>
+                    </div>
+                </div>
+                <div class="col-2">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="bc" placeholder="bc" th:field="*{bc}">
                         <label for="bc">Судей без категории</label>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="vrc" placeholder="vrc" th:field="*{vrc}">
                         <label for="vrc">Судей ВРК</label>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-4">
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" id="mc" placeholder="mc" th:field="*{mc}">
                         <label for="mc">Судей МК</label>

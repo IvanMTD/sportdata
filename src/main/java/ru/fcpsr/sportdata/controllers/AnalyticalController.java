@@ -82,6 +82,7 @@ public class AnalyticalController {
             monitoringDTO.setSc(contest.getSc());
             monitoringDTO.setTc(contest.getTc());
             monitoringDTO.setBc(contest.getBc());
+            monitoringDTO.setDc(contest.getDc());
 
             monitoringDTO.setYn1Date(contest.getYn1Date());
             monitoringDTO.setYn2Date(contest.getYn2Date());

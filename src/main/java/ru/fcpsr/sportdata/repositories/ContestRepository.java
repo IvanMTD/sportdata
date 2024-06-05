@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.models.Contest;
 
 public interface ContestRepository extends ReactiveCrudRepository<Contest,Integer> {
+    Mono<Contest> findById(long id);
     Mono<Contest> findByEkp(String ekp);
     Flux<Contest> findAllByEkp(Pageable pageable, String ekp);
 

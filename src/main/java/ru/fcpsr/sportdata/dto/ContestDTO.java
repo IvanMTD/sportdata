@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class ContestDTO {
-    private int id;
+    private long id;
     @NotBlank(message = "Поле не может быть пустым! ЕКП обязателен!")
     private String ekp;
     @NotBlank(message = "Поле не может быть пустым! Укажите название!")
@@ -76,6 +76,7 @@ public class ContestDTO {
     private int sc;
     private int tc;
     private int bc;
+    private int dc;
 
     private int yn1Date;
     private int yn2Date;
@@ -139,6 +140,7 @@ public class ContestDTO {
         setSc(contest.getSc());
         setTc(contest.getTc());
         setBc(contest.getBc());
+        setDc(contest.getDc());
 
         setYn1Date(contest.getYn1Date());
         setYn2Date(contest.getYn2Date());

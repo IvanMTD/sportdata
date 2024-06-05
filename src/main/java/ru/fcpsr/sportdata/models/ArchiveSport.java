@@ -14,7 +14,7 @@ import java.util.*;
 public class ArchiveSport {
     @Id
     private int id;
-    private int contestId;
+    private long contestId;
     private int disciplineId;
     private int ageGroupId;
     private Set<FederalStandard> federalStandards = new HashSet<>();

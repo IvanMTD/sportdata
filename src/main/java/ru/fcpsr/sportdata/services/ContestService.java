@@ -1,19 +1,13 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
-import ru.fcpsr.sportdata.dto.ParticipantContestDTO;
 import ru.fcpsr.sportdata.models.ArchiveSport;
 import ru.fcpsr.sportdata.models.Contest;
-import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.repositories.ContestRepository;
 
 import java.util.ArrayList;
@@ -66,7 +60,7 @@ public class ContestService {
     }
 
     //@Cacheable("contests")
-    public Mono<Contest> getById(int contestId) {
+    public Mono<Contest> getById(long contestId) {
         return contestRepository.findById(contestId).defaultIfEmpty(new Contest());
     }
 
