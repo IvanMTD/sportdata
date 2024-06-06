@@ -123,7 +123,13 @@ public class DataRestController {
 
     @GetMapping("/participants")
     public Flux<Participant> getParticipants(@RequestParam(name = "query") String query){
-        return participantService.getAllBySearchQuery(query).take(10);
+        return participantService.getAllBySearchQuery(query).collectList().flatMapMany(l -> {
+            if(l.size() > 200) {
+                return Flux.fromIterable(l).take(10);
+            }else{
+                return Flux.fromIterable(l);
+            }
+        });
     }
 
     @GetMapping("/sport-participants")
