@@ -244,7 +244,12 @@ public class ContestMonitoringDTO {
                 }
             }
         }
-        return builder.substring(0,builder.toString().length() - 2);
+        System.out.println(builder.length());
+        if(builder.length() == 0){
+            return builder.toString();
+        }else {
+            return builder.substring(0, builder.toString().length() - 2);
+        }
     }
 
     public String getFederalStandard(){
