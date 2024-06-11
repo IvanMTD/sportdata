@@ -11,7 +11,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class PlaceDTO {
-    private int id;
+    private long id;
     private int participantId;
     private ParticipantDTO participant;
     private int qualificationId;

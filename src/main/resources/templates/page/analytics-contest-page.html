@@ -104,7 +104,7 @@
 
             <div class="border-start border-top border-end my-2" th:each="asp, asp_stat : ${monitoring.disciplines}">
                 <p class="bg-secondary-subtle border-bottom p-2" th:id="'point-11-' + ${asp_stat.index}">
-                    <span class="fs-5 text-dark">
+                    <span class="fs-5 text-dark" th:if="${asp.discipline.title} != null and ${asp.group.title} != null">
                         <b th:text="${asp.discipline.title.toLowerCase()} + ' (' + ${asp.group.title.toLowerCase()} + ')'"></b>
                     </span>
                 </p>

@@ -77,9 +77,11 @@ public class ContestMonitoringDTO {
             }
         }
 
-        String last = summary.get(summary.size() - 1);
-        last = last.substring(0,last.length() - 1) + ".";
-        summary.set(summary.size() - 1, last);
+        if(summary.size() > 0) {
+            String last = summary.get(summary.size() - 1);
+            last = last.substring(0, last.length() - 1) + ".";
+            summary.set(summary.size() - 1, last);
+        }
 
         return summary;
     }
@@ -167,7 +169,7 @@ public class ContestMonitoringDTO {
     public String getFormatAgeGroups(){
         Set<String> groupSet = new HashSet<>();
         for(SportDTO discipline : disciplines){
-            String formatData = discipline.getGroup().getTitle().toLowerCase();
+            String formatData = discipline.getGroup().getTitle() != null ? discipline.getGroup().getTitle().toLowerCase() : "";
             groupSet.add(formatData);
         }
 
@@ -175,7 +177,12 @@ public class ContestMonitoringDTO {
         for(String group : groupSet){
             stringBuilder.append(group).append(", ");
         }
-        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+
+        if(stringBuilder.length() == 0){
+            return stringBuilder.toString();
+        }else{
+            return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+        }
     }
 
     public String getFormatDisciplines(){
@@ -188,7 +195,12 @@ public class ContestMonitoringDTO {
         for(String discipline : disciplineSet){
             stringBuilder.append(discipline).append(", ");
         }
-        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+
+        if(stringBuilder.length() == 0){
+            return stringBuilder.toString();
+        }else {
+            return stringBuilder.substring(0, stringBuilder.toString().length() - 2);
+        }
     }
 
     public String getFormatDisciplinesInQuotes(){
@@ -201,7 +213,12 @@ public class ContestMonitoringDTO {
         for(String discipline : disciplineSet){
             stringBuilder.append(discipline).append(", ");
         }
-        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+
+        if(stringBuilder.length() == 0){
+            return stringBuilder.toString();
+        }else {
+            return stringBuilder.substring(0, stringBuilder.toString().length() - 2);
+        }
     }
 
     public String getBeginningDate(){
@@ -222,7 +239,11 @@ public class ContestMonitoringDTO {
         for(String s : stringSet){
             stringBuilder.append(s).append(", ");
         }
-        return stringBuilder.substring(0,stringBuilder.toString().length() - 2);
+        if(stringBuilder.length() == 0){
+            return stringBuilder.toString();
+        }else {
+            return stringBuilder.substring(0, stringBuilder.toString().length() - 2);
+        }
     }
 
     public String getFormatContestQualificationDateAllow(){
@@ -244,7 +265,7 @@ public class ContestMonitoringDTO {
                 }
             }
         }
-        System.out.println(builder.length());
+
         if(builder.length() == 0){
             return builder.toString();
         }else {
@@ -266,7 +287,11 @@ public class ContestMonitoringDTO {
         for(FederalStandard fs : fsl){
             builder.append(fs.getTitle().toLowerCase()).append(", ");
         }
-        return builder.substring(0,builder.toString().length() - 2);
+        if(builder.length() == 0){
+            return builder.toString();
+        }else {
+            return builder.substring(0, builder.toString().length() - 2);
+        }
     }
 
     public String getAllowed(){
@@ -284,7 +309,11 @@ public class ContestMonitoringDTO {
             String title = firstLetterLow(category.getTitle());
             builder.append(title).append(", ");
         }
-        return builder.substring(0,builder.toString().length() - 2);
+        if(builder.length() == 0){
+            return builder.toString();
+        }else {
+            return builder.substring(0, builder.toString().length() - 2);
+        }
     }
 
     public List<String> getTotalCountContestQualifications(){
@@ -326,9 +355,11 @@ public class ContestMonitoringDTO {
             }
         }
 
-        String last = answer.get(answer.size() - 1);
-        last = last.substring(0,last.length() - 1) + ".";
-        answer.set(answer.size() - 1, last);
+        if(answer.size() > 0) {
+            String last = answer.get(answer.size() - 1);
+            last = last.substring(0, last.length() - 1) + ".";
+            answer.set(answer.size() - 1, last);
+        }
 
         return answer;
     }
@@ -376,9 +407,11 @@ public class ContestMonitoringDTO {
             }
         }
 
-        String last = condition.get(condition.size() - 1);
-        last = last.substring(0,last.length() - 1) + ".";
-        condition.set(condition.size() - 1, last);
+        if(condition.size() > 0) {
+            String last = condition.get(condition.size() - 1);
+            last = last.substring(0, last.length() - 1) + ".";
+            condition.set(condition.size() - 1, last);
+        }
 
         return condition;
     }
@@ -451,9 +484,11 @@ public class ContestMonitoringDTO {
             analytics.add(res);
         }
 
-        String last = analytics.get(analytics.size() - 1);
-        last = last.substring(0,last.length() - 1) + ".";
-        analytics.set(analytics.size() - 1, last);
+        if(analytics.size() > 0) {
+            String last = analytics.get(analytics.size() - 1);
+            last = last.substring(0, last.length() - 1) + ".";
+            analytics.set(analytics.size() - 1, last);
+        }
 
         return analytics;
     }

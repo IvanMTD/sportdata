@@ -228,7 +228,7 @@ public class ContestController {
                                         return Mono.empty();
                                     }
                                 }).collectList().flatMap(pl -> {
-                                    Set<Integer> ids = new HashSet<>();
+                                    Set<Long> ids = new HashSet<>();
                                     for (Place place : pl) {
                                         ids.add(place.getId());
                                     }
@@ -241,7 +241,7 @@ public class ContestController {
                         return Mono.empty();
                     }
                 }).collectList().flatMap(archiveSports -> {
-                    Set<Integer> ids = new HashSet<>();
+                    Set<Long> ids = new HashSet<>();
                     for(ArchiveSport archiveSport : archiveSports){
                         ids.add(archiveSport.getId());
                     }
@@ -530,7 +530,10 @@ public class ContestController {
 
     private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest){
         return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-            if(baseSport.getExpiration() <= contest.getBeginning().getYear()){
+            int sy = baseSport.getIssueDate().getYear();
+            int ey = baseSport.getExpiration();
+            int cy = contest.getBeginning().getYear();
+            if(sy < cy && cy < ey){
                 return Mono.empty();
             }else{
                 return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {

@@ -26,12 +26,12 @@ public class ArchiveSportService {
     }
 
     //@Cacheable("archiveSport")
-    public Flux<ArchiveSport> getAllByIdIn(Set<Integer> aSportIds) {
+    public Flux<ArchiveSport> getAllByIdIn(Set<Long> aSportIds) {
         return archiveSportRepository.findAllByIdIn(aSportIds).defaultIfEmpty(new ArchiveSport());
     }
 
     //@Cacheable("archiveSport")
-    public Mono<ArchiveSport> getById(int id) {
+    public Mono<ArchiveSport> getById(long id) {
         return archiveSportRepository.findById(id).defaultIfEmpty(new ArchiveSport());
     }
 
@@ -43,7 +43,7 @@ public class ArchiveSportService {
         });
     }
 
-    public Flux<ArchiveSport> deleteAllCurrent(Set<Integer> aSportIds) {
+    public Flux<ArchiveSport> deleteAllCurrent(Set<Long> aSportIds) {
         return archiveSportRepository
                 .findAllByIdIn(aSportIds)
                 .collectList()

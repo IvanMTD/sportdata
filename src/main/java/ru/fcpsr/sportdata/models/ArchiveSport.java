@@ -13,13 +13,13 @@ import java.util.*;
 @NoArgsConstructor
 public class ArchiveSport {
     @Id
-    private int id;
+    private long id;
     private long contestId;
     private int disciplineId;
     private int ageGroupId;
     private Set<FederalStandard> federalStandards = new HashSet<>();
     private Set<Category> allowed = new HashSet<>();
-    private Set<Integer> placeIds = new HashSet<>();
+    private Set<Long> placeIds = new HashSet<>();
 
     public ArchiveSport(SportDTO sportDTO){
         setDisciplineId(sportDTO.getDisciplineId());

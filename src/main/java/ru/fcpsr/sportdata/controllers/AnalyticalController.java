@@ -150,7 +150,10 @@ public class AnalyticalController {
         }).flatMap(subjectMonitoring -> {
             return sportService.findById(contest.getTypeOfSportId()).flatMap(sport -> {
                 return baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
-                    if(contest.getBeginning().getYear() < baseSport.getExpiration()) {
+                    int sy = baseSport.getIssueDate().getYear();
+                    int ey = baseSport.getExpiration();
+                    int cy = contest.getBeginning().getYear();
+                    if(sy < cy && cy < ey) {
                         return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
                             return Mono.just(new SubjectDTO(subject));
                         });

@@ -70,7 +70,7 @@ public class Contest {
     private int msmkDate;
     private int zmsDate;
 
-    private Set<Integer> aSportIds = new HashSet<>();
+    private Set<Long> aSportIds = new HashSet<>();
 
     boolean complete;
 

@@ -33,12 +33,12 @@ public class PlaceService {
     }
 
     //@Cacheable("places")
-    public Flux<Place> getAllByIdIn(Set<Integer> placeIds) {
+    public Flux<Place> getAllByIdIn(Set<Long> placeIds) {
         return placeRepository.findAllByIdIn(placeIds).defaultIfEmpty(new Place());
     }
 
     //@Cacheable("places")
-    public Flux<Place> getAllByIdInTotal(List<Integer> placesIds) {
+    public Flux<Place> getAllByIdInTotal(List<Long> placesIds) {
         return placeRepository.findAllByIdIn(placesIds).switchIfEmpty(
                 Flux.fromIterable(placesIds).collectList().flatMapMany(l -> {
                     List<Place> places = new ArrayList<>();
@@ -51,7 +51,7 @@ public class PlaceService {
     }
 
     //@Cacheable("places")
-    public Mono<Place> getById(int id) {
+    public Mono<Place> getById(long id) {
         return placeRepository.findById(id).defaultIfEmpty(new Place());
     }
 
@@ -60,7 +60,7 @@ public class PlaceService {
         return placeRepository.findById(placeId).flatMap(place -> placeRepository.delete(place).then(Mono.just(place)));
     }
 
-    public Flux<Place> deleteAllCurrent(Set<Integer> placeIds) {
+    public Flux<Place> deleteAllCurrent(Set<Long> placeIds) {
         return placeRepository
                 .findAllByIdIn(placeIds)
                 .collectList()

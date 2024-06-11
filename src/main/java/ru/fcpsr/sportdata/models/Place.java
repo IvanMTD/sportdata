@@ -22,8 +22,8 @@ create table if not exists place(
 @NoArgsConstructor
 public class Place {
     @Id
-    private int id;
-    private int aSportId;
+    private long id;
+    private long aSportId;
     private int participantId;
     private int qualificationId;
     private int newQualificationId;

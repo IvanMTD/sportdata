@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class SportDTO {
-    private int id;
+    private long id;
 
     private int disciplineId;
     private DisciplineDTO discipline;
