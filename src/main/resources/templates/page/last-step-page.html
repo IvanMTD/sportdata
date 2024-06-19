@@ -9,8 +9,8 @@
     <form th:method="POST" th:action="@{/contest/last-step}" th:object="${contest}">
         <input type="number" th:field="*{id}" hidden>
         <input type="checkbox" id="complete" th:field="*{complete}" hidden>
-        <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}"
-             th:id="'contest-card-' + ${as_stat.index}" hidden>
+        <!-- th:id="'contest-card-' + ${as_stat.index}" id="view-contest-card" th:if="${as_stat.last}" -->
+        <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}" th:id="'contest-card-' + ${as_stat.index}" hidden>
             <!-- Картинка -->
             <div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
             </div>
@@ -729,6 +729,7 @@
         let list = [[${contest}]].sports;
         for (let i = 0; i < list.length; i++) {
             if (i == index) {
+                //setupViewContestCard(list[i],i);
                 document.getElementById('contest-card-' + i).hidden = false;
                 let button = document.getElementById('card-btn-' + i);
                 button.classList.remove("btn-outline-secondary");
@@ -740,5 +741,123 @@
                 button.classList.add("btn-outline-secondary");
             }
         }
+    }
+
+    function setupViewContestCard(a_sport, index){
+        $('#view-contest-card').empty();
+        $('#view-contest-card').append(
+            '<div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">' +
+            '</div>' +
+            '<div class="col-9 px-4">' +
+            '   <input type="number" name="sports[' + index + '].id" value="' + a_sport.id + '" hidden>' +
+            '   <div class="row">' +
+            '       <p class="fs-3 text-secondary text-center">Результаты соревнования</p>' +
+            '   </div>' +
+            '   <div class="row">' +
+            '       <div class="col-5">' +
+            '           <div class="form-floating">' +
+            '               <select class="form-select" id="discipline-id-' + index + '" name="sports[' + index + '].disciplineId">' +
+            '               </select>' +
+            '               <label for="discipline-id-' + index + '">Дисциплина</label>' +
+            '           </div>' +
+            '       </div>' +
+            '       <div class="col-1 mt-1">' +
+            '           <button id="btn-update-disciplines-' + index + '" type="button" class="btn btn-lg btn-outline-secondary" onclick="updateDisciplines(this.id)">' +
+            '               <div id="icon-update-discipline-' + index + '">' +
+            '                   <i class="bi bi-arrow-repeat"></i>' +
+            '               </div>' +
+            '           </button>' +
+            '       </div>' +
+            '       <div class="col-5">' +
+            '           <div class="form-floating">' +
+            '               <select class="form-select" id="group-id-' + index + '" name="sports[' + index + '].groupId">' +
+            '               </select>' +
+            '               <label for="group-id-' + index + '">Возрастная группа</label>' +
+            '           </div>' +
+            '       </div>' +
+            '       <div class="col-1 mt-1">' +
+            '           <button id="btn-update-groups-' + index + '" type="button" class="btn btn-lg btn-outline-secondary" onclick="updateGroups(this.id)">' +
+            '               <div id="icon-update-groups-' + index + '">' +
+            '                   <i class="bi bi-arrow-repeat"></i>' +
+            '               </div>' +
+            '           </button>' +
+            '       </div>' +
+            '   </div>' +
+            '   <div class="row">' +
+            '       <div class="col">' +
+            '           <div class="d-grid gap-2 mt-3">' +
+            '               <button id="category-modal-btn-' + index + '" type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#category-modal-">' +
+            '                   Допуски' +
+            '               </button>' +
+            '               <div class="modal fade" id="category-modal-' + index + '" tabindex="-1" aria-labelledby="modalLabel-0" aria-hidden="true">' +
+            '                   <div class="modal-dialog  modal-dialog-centered">' +
+            '                       <div class="modal-content">' +
+            '                           <div class="modal-header">' +
+            '                               <h1 class="modal-title fs-5" id="modalLabel-0">Укажите допуски</h1>\n' +
+            '                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+            '                           </div>' +
+            '                           <div class="modal-body">' +
+            '                               <div class="row">' +
+            '                                   <div class="col" id="categories-' + index + '">' +
+            '                                   </div>' +
+            '                               </div>' +
+            '                           </div>' +
+            '                       </div>' +
+            '                   </div>' +
+            '               </div>' +
+            '           </div>' +
+            '       </div>' +
+            '   </div>' +
+            '</div>'
+        );
+
+        $('#discipline-id-' + index).empty();
+        // Добавляем option в селект
+        sport.disciplines.forEach(function (discipline){
+            var option = $('<option></option>')
+                .val(discipline.id)
+                .text(discipline.title);
+
+            // Если discipline.id совпадает с a_sport.disciplineId, делаем option выбранным
+            if (discipline.id == a_sport.disciplineId) {
+                option.prop('selected', true);
+            }
+
+            // Добавляем option в селект
+            $('#discipline-id-' + index).append(option);
+        });
+
+        $('#group-id-' + index).empty();
+        // Добавляем option в селект
+        sport.groups.forEach(function (group){
+            var option = $('<option></option>')
+                .val(group.id)
+                .text(`${group.title} ${group.minAge}-${group.maxAge}`);
+
+            // Если group.id совпадает с a_sport.groupId, делаем option выбранным
+            if (group.id == a_sport.groupId) {
+                option.prop('selected', true);
+            }
+
+            // Добавляем option в селект
+            $('#group-id-' + index).append(option);
+        });
+
+        $('#categories-' + index).empty();
+        var n = 0;
+        [[${categories}]].forEach(function (category){
+            $('#categories-' + index).append(
+                '<div class="form-check">' +
+                '   <input type="checkbox" class="form-check-input" id="a-' + index + '-' + n + '" value="' + category.category + '" name="sports[' + index + '].allowed[' + n + ']">' +
+                '   <label class="form-check-label">' + category.category.title + '</label>' +
+                '</div>'
+            );
+            for (let i = 0; i < [[${as}]].allowed.length; i++) {
+                if (a_sport.allowed[i] === category.category) {
+                    document.getElementById('a-' + index + '-' + n).checked = true;
+                }
+            }
+            n++;
+        });
     }
 </script>
