@@ -132,7 +132,14 @@ public class ContestController {
                 int save = Integer.parseInt(form.get("save").get(0));
                 log.info("contest {} updated", contest.getId());
                 if(save == 0) {
-                    return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                    //return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                    List<Long> ids = contest.getASportIds().stream().toList();
+                    ids = ids.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+                    long last = 0;
+                    if(ids.size() > 0){
+                        last = ids.get(ids.size() - 1);
+                    }
+                    return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId() + "&aSport=" + last).build());
                 }else{
                     return Mono.just(Rendering.redirectTo("/contest/second-step?contest=" + contest.getId()).build());
                 }
@@ -141,32 +148,27 @@ public class ContestController {
     }
 
     @GetMapping("/last-step")
-    public Mono<Rendering> lastStepPage(@RequestParam(name = "contest") int contestId){
-        return contestService.getById(contestId).flatMap(contest -> {
-            log.info("contest {} found", contest.getId());
+    public Mono<Rendering> lastStepPage(@RequestParam(name = "contest") long cid, @RequestParam(name = "aSport") long sid){
+        return contestService.getById(cid).flatMap(contest -> {
             return Mono.just(
                     Rendering.view("template")
                             .modelAttribute("title","Last step")
                             .modelAttribute("index","last-step-page")
-                            .modelAttribute("contest", getCompleteContest(contestId,0))
+                            .modelAttribute("contest", getCompleteContest(cid,0))
                             .modelAttribute("sport", getCompleteSport(contest.getTypeOfSportId()))
                             .modelAttribute("categories", getCategories())
                             .modelAttribute("federalStandards", getFedStandards())
                             .modelAttribute("conditions", getConditions())
+                            .modelAttribute("aSport",sid)
                             .build()
             );
         });
     }
 
-    @PostMapping("/last-step")
-    public Mono<Rendering> lastStepPage(ServerWebExchange exchange, @ModelAttribute(name = "contest") ContestDTO contestDTO){
+    @PostMapping("/last-step/{sid}")
+    public Mono<Rendering> lastStepPage(ServerWebExchange exchange, @ModelAttribute(name = "contest") ContestDTO contestDTO, @PathVariable(name = "sid") long ssid){
+        log.info("current sid is {}",ssid);
         return exchange.getFormData().flatMap(form -> {
-            //log.info("DETECTED DATA: [{}]",contestDTO);
-        /*for(SportDTO sportDTO : contestDTO.getSports()){
-            for(PlaceDTO placeDTO : sportDTO.getPlaces()){
-                log.info("PLACE IN DETECTED SPORTS: [{}]",placeDTO);
-            }
-        }*/
             return contestService.getById(contestDTO.getId()).flatMap(contest -> {
                 //log.info("1.FOUND CONTEST FULL INFO: [{}]", contest);
                 return Flux.fromIterable(contestDTO.getSports()).flatMap(sportDTO -> {
@@ -212,13 +214,13 @@ public class ContestController {
                                                                     //log.info("EXTRA: UPDATED PARTICIPANT [{}]",p);
                                                                     return sportService.addQualificationInSport(q).flatMap(s -> {
                                                                         //log.info("EXTRA: UPDATED SPORT [{}]",s);
-                                                                        place.setNewQualificationId(q.getId());
-                                                                        return placeService.setPlace(place);
+                                                                        savedPlace.setNewQualificationId(q.getId());
+                                                                        return placeService.setPlace(savedPlace);
                                                                     });
                                                                 });
                                                             });
                                                         }else{
-                                                            return Mono.just(place);
+                                                            return Mono.just(savedPlace);
                                                         }
                                                     });
                                                 }
@@ -245,22 +247,32 @@ public class ContestController {
                     for(ArchiveSport archiveSport : archiveSports){
                         ids.add(archiveSport.getId());
                     }
-                    contest.setASportIds(ids);
+                    contest.getASportIds().addAll(ids);
                     contest.setComplete(contestDTO.isComplete());
                     return contestService.saveContest(contest);
                 }).flatMap(savedContest -> {
                     //log.info("contest fullish updated {}", savedContest);
                     int added = Integer.parseInt(form.get("added").get(0));
                     int save = Integer.parseInt(form.get("save").get(0));
+
+                    List<Long> ids = savedContest.getASportIds().stream().toList();
+                    ids = ids.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+                    long newSID = ssid;
+                    if(ssid == 0){
+                        if(ids.size() > 0){
+                            newSID = ids.get(ids.size() - 1);
+                        }
+                    }
+
                     if(added == 0){
                         if(save == 0) {
                             if (savedContest.isComplete()) {
                                 return Mono.just(Rendering.redirectTo("/contest/get/all?page=0&search=all").build());
                             } else {
-                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
+                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId() + "&aSport=" + newSID).build());
                             }
                         }else{
-                            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId()).build());
+                            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + savedContest.getId() + "&aSport=" + newSID).build());
                         }
                     }else{
                         return Mono.just(
@@ -272,6 +284,7 @@ public class ContestController {
                                         .modelAttribute("categories", getCategories())
                                         .modelAttribute("federalStandards", getFedStandards())
                                         .modelAttribute("conditions", getConditions())
+                                        .modelAttribute("aSport",0)
                                         .build()
                         );
                     }
@@ -294,11 +307,23 @@ public class ContestController {
                         if(contest.getASportIds().size() == 0){
                             contest.setComplete(false);
                             return contestService.saveContest(contest).flatMap(saved -> {
+                                List<Long> ids = contest.getASportIds().stream().toList();
+                                ids = ids.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+                                long last = 0;
+                                if(ids.size() > 0){
+                                    last = ids.get(ids.size() - 1);
+                                }
                                 log.info("contest has been updated [{}]",saved);
-                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                                return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId() + "&aSport=" + last).build());
                             });
                         }else{
-                            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId()).build());
+                            List<Long> ids = contest.getASportIds().stream().toList();
+                            ids = ids.stream().sorted(Comparator.naturalOrder()).collect(Collectors.toList());
+                            long last = 0;
+                            if(ids.size() > 0){
+                                last = ids.get(ids.size() - 1);
+                            }
+                            return Mono.just(Rendering.redirectTo("/contest/last-step?contest=" + contest.getId() + "&aSport=" + last).build());
                         }
                     });
                 });
@@ -430,7 +455,7 @@ public class ContestController {
         }
     }
 
-    /*private Mono<ContestDTO> getCompleteContest(long contestId, int added){
+    private Mono<ContestDTO> getCompleteContest(long contestId, int added){
         long startTime = System.currentTimeMillis(); // Начало времени выполнения
         return contestService.getById(contestId).flatMap(contest -> {
             ContestDTO contestDTO = new ContestDTO(contest);
@@ -509,7 +534,7 @@ public class ContestController {
                             contestDTO.setSports(sportDTOS);
                             return getCalcSubjects(contestDTO,contest);
                         }else{
-                            sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(sportDTO -> sportDTO.getDiscipline().getTitle())).collect(Collectors.toList());
+                            sportDTOS = sportDTOS.stream().sorted(Comparator.comparing(SportDTO::getId)).collect(Collectors.toList());
                             if(added != 0) {
                                 sportDTOS.add(new SportDTO());
                             }
@@ -531,9 +556,9 @@ public class ContestController {
             long duration = endTime - startTime;
             log.info("getCompleteContest executed in {} ms", duration); // Логируем время выполнения
         });
-    }*/
+    }
 
-    private Mono<ContestDTO> getCompleteContest(long contestId, int added) {
+    /*private Mono<ContestDTO> getCompleteContest(long contestId, int added) {
 
         long startTime = System.currentTimeMillis(); // Начало времени выполнения
 
@@ -647,9 +672,9 @@ public class ContestController {
             long duration = endTime - startTime;
             log.info("getCompleteContest executed in {} ms", duration); // Логируем время выполнения
         });
-    }
+    }*/
 
-    /*private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest){
+    private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest){
         return sportService.getById(contest.getTypeOfSportId()).flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds()).flatMap(baseSport -> {
             int sy = baseSport.getIssueDate().getYear();
             int ey = baseSport.getExpiration();
@@ -678,9 +703,9 @@ public class ContestController {
             contestDTO.calcBaseIn();
             return Mono.just(contestDTO);
         }));
-    }*/
+    }
 
-    private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest) {
+   /* private Mono<ContestDTO> getCalcSubjects(ContestDTO contestDTO, Contest contest) {
         return sportService.getById(contest.getTypeOfSportId())
                 .flatMap(sport -> baseSportService.getAllByIds(sport.getBaseSportIds())
                         .flatMap(baseSport -> {
@@ -707,7 +732,7 @@ public class ContestController {
                     contestDTO.calcBaseIn();
                     return Mono.just(contestDTO);
                 });
-    }
+    }*/
 
     private List<ConditionDTO> getConditions(){
         List<ConditionDTO> cl = new ArrayList<>();

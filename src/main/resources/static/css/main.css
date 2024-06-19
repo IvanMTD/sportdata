@@ -76,3 +76,14 @@
     transform: scale(6); /* Увеличивает размер карты в 2 раза */
     transform-origin: 10% 70%; /* Центр увеличения карты */
 }
+
+.emulate-link{
+    color: #008ffb;
+    font-size: 1.2rem;
+}
+
+.emulate-link:hover{
+    color: #073f69;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
