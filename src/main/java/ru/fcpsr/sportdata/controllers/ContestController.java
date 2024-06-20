@@ -679,9 +679,8 @@ public class ContestController {
             int sy = baseSport.getIssueDate().getYear();
             int ey = baseSport.getExpiration();
             int cy = contest.getBeginning().getYear();
-            if(sy < cy && cy < ey){
-                return Mono.empty();
-            }else{
+
+            if(sy <= cy && cy < ey){
                 return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
                     int check = 0;
                     for(Integer id : subject.getBaseSportIds()){
@@ -697,6 +696,8 @@ public class ContestController {
                         return Mono.just(new SubjectDTO(subject));
                     }
                 });
+            }else{
+                return Mono.empty();
             }
         }).collectList().flatMap(subjectsDTO -> {
             contestDTO.setBaseSubjectTotal(subjectsDTO);
