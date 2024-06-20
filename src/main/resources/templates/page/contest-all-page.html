@@ -5,9 +5,9 @@
         </div>
     </div>
     <div class="row rounded-4 shadow">
-        <div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
+        <div class="col-2 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
         </div>
-        <div class="col-9 px-4">
+        <div class="col-10 px-4">
             <form class="row p-4" th:method="GET" th:action="@{/contest/search/{page}(page=${page})}">
                 <div class="col-11">
                     <div class="form-floating">
@@ -72,7 +72,7 @@
                     <p class="text-center"><b>ЕКП</b></p>
                 </div>
                 <div class="col border-end border-bottom">
-                    <p class="text-center"><b>Название</b></p>
+                    <p class="text-center"><b>Название и Даты</b></p>
                 </div>
                 <div class="col border-end border-bottom">
                     <p class="text-center"><b>Субъект</b></p>
@@ -80,7 +80,7 @@
                 <div class="col border-end border-bottom">
                     <p class="text-center"><b>Вид спорта</b></p>
                 </div>
-                <div class="col-3 border-bottom">
+                <div class="col border-bottom">
                     <p class="text-center"><b>Детали</b></p>
                 </div>
             </div>
@@ -90,6 +90,7 @@
                 </div>
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getTitle()}"></p>
+                    <p th:text="${contest.beginningDate} + ' - ' + ${contest.endingDate}"></p>
                 </div>
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getSubject().getTitle()}"></p>
@@ -97,7 +98,7 @@
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getSport().getTitle()}"></p>
                 </div>
-                <div class="col-3 border-bottom d-flex justify-content-center align-items-center">
+                <div class="col border-bottom d-flex justify-content-center align-items-center">
                     <div class="btn-group" role="group" aria-label="Basic example">
                         <a class="btn btn-outline-secondary" th:href="@{/contest/show(contest=${contest.getId()})}" th:if="${contest.complete}">
                             <span data-bs-toggle="tooltip" data-bs-title="Детальный просмотр"><i class="bi bi-card-text"></i></span>
