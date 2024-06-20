@@ -47,7 +47,15 @@ public class PlaceDTO {
         return Objects.requireNonNullElse(newQualificationData, Category.NO);
     }
 
+    public String getNewQualificationDataTitle(){
+        return Objects.requireNonNullElse(newQualificationData.getTitle(), Category.NO.getTitle());
+    }
+
     public Condition getCondition() {
         return Objects.requireNonNullElse(condition, Condition.NO);
+    }
+
+    public String getConditionTitle(){
+        return Objects.requireNonNullElse(condition.getTitle(), Condition.NO.getTitle());
     }
 }
