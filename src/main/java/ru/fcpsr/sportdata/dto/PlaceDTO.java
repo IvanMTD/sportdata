@@ -48,7 +48,7 @@ public class PlaceDTO {
     }
 
     public String getNewQualificationDataTitle(){
-        return Objects.requireNonNullElse(newQualificationData.getTitle(), Category.NO.getTitle());
+        return Objects.requireNonNullElse(newQualificationData, Category.NO).getTitle();
     }
 
     public Condition getCondition() {
@@ -56,6 +56,6 @@ public class PlaceDTO {
     }
 
     public String getConditionTitle(){
-        return Objects.requireNonNullElse(condition.getTitle(), Condition.NO.getTitle());
+        return Objects.requireNonNullElse(condition, Condition.NO).getTitle();
     }
 }
