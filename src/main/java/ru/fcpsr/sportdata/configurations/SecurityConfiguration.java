@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler))
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(auth -> auth
-                        .pathMatchers("/auth/login","/auth/user/*","/img/**","/favicon.ico").permitAll()
+                        .pathMatchers("/auth/login","/auth/user/*","/img/**","/favicon.ico","/api/subject/get/all").permitAll()
                         .anyExchange().authenticated())
                 .formLogin(loginSpec -> loginSpec.loginPage("/auth/login").authenticationSuccessHandler(authenticationSuccessHandler()))
                 .logout(logoutSpec -> logoutSpec.logoutSuccessHandler(logoutSuccessHandler()))
