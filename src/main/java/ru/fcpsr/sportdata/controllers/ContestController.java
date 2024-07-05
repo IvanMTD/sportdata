@@ -492,18 +492,18 @@ public class ContestController {
                                     sportDTO.setGroup(new AgeGroupDTO(ageGroup));
                                     return placeService.getAllByIdIn(archiveSport.getPlaceIds()).flatMap(place -> {
                                         PlaceDTO placeDTO = new PlaceDTO(place);
-                                        return participantService.getById(place.getParticipantId()).flatMap(participant -> {
-                                            placeDTO.setParticipant(new ParticipantDTO(participant));
+                                        return getCompletedParticipant(place.getParticipantId()).flatMap(participantDTO -> {
+                                            placeDTO.setParticipant(participantDTO);
                                             return qualificationService.getById(place.getQualificationId()).flatMap(qualification -> {
                                                 placeDTO.setQualification(new QualificationDTO(qualification));
                                                 return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
                                                     SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
                                                     return subjectService.getById(school.getSubjectId()).flatMap(subject2 -> {
-                                                        if(place.getParallelSchoolId() == 0) {
+                                                        if (place.getParallelSchoolId() == 0) {
                                                             sportSchoolDTO.setSubject(new SubjectDTO(subject2));
                                                             placeDTO.setSchool(sportSchoolDTO);
                                                             return Mono.just(placeDTO);
-                                                        }else{
+                                                        } else {
                                                             sportSchoolDTO.setSubject(new SubjectDTO(subject2));
                                                             placeDTO.setSchool(sportSchoolDTO);
                                                             return schoolService.getById(place.getParallelSchoolId()).flatMap(parallelSchool -> {
@@ -555,6 +555,29 @@ public class ContestController {
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
             log.info("getCompleteContest executed in {} ms", duration); // Логируем время выполнения
+        });
+    }
+
+    private Mono<ParticipantDTO> getCompletedParticipant(int id){
+        return participantService.getById(id).flatMap(participant -> {
+            ParticipantDTO participantDTO = new ParticipantDTO(participant);
+            return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
+                SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
+                return Mono.just(sportSchoolDTO);
+            }).collectList().flatMap(l -> {
+                l = l.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
+                participantDTO.setSchools(l);
+                return Mono.just(participantDTO);
+            }).flatMap(preparedParticipantDTO -> {
+                return qualificationService.getAllByIds(participant.getQualificationIds()).flatMap(qualification -> {
+                    QualificationDTO qualificationDTO = new QualificationDTO(qualification);
+                    return Mono.just(qualificationDTO);
+                }).collectList().flatMap(l -> {
+                    l = l.stream().sorted(Comparator.comparing(QualificationDTO::getId)).collect(Collectors.toList());
+                    participantDTO.setQualifications(l);
+                    return Mono.justOrEmpty(participantDTO);
+                });
+            });
         });
     }
 

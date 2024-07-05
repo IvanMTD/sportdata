@@ -254,6 +254,7 @@
                                             <div class="col">
                                                 <div class="row">
                                                     <div class="col">
+                                                        <!--<a class="text-dark text-decoration-none" th:href="@{/database/participant/{id}/show(id=${place.participantId})}" onclick="redirectToUrl(this.href)"></a>-->
                                                         <div class="form-floating">
                                                             <select class="form-select"
                                                                     th:id="'participant-' + ${as_stat.index} + '-' + ${p_stat.index}"
@@ -295,13 +296,24 @@
                                                         </div>
                                                     </div>
                                                     <script th:inline="javascript">
-                                                        console.log(JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')));
-                                                        $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                        console.log([[${place}]]);
+                                                        [[${place.participant.schools}]].forEach(function (school){
+                                                            $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                '<option value="' + school.id + '">' + school.title + '</option>'
+                                                            );
+                                                        });
+                                                        [[${place.participant.qualifications}]].forEach(function (qualification){
+                                                            $('#qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                '<option value="' + qualification.id + '">' + qualification.categoryTitle + '</option>'
+                                                            );
+                                                        });
+                                                        //console.log(JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')));
+                                                        /*$('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
                                                             '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).school.title + '</option>'
                                                         );
                                                         $('#qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
                                                             '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).qualification.id + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).qualification.categoryTitle + ' - ' + [[${contest}]].sport.title + '</option>'
-                                                        );
+                                                        );*/
                                                         document.getElementById('school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].schoolId;
                                                         document.getElementById('qualification-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].qualificationId;
                                                     </script>
@@ -350,13 +362,19 @@
                                                                 <option value="0">Отсутствует</option>
                                                             </select>
                                                             <script th:inline="javascript">
-                                                                if([[${place.parallelSchoolId}]] != 0) {
+                                                                [[${place.participant.schools}]].forEach(function(school){
+                                                                    $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
+                                                                        '<option value="' + school.id + '">' + school.title + '</option>'
+                                                                    );
+                                                                });
+                                                                document.getElementById('parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].parallelSchoolId;
+                                                                /*if([[${place.parallelSchoolId}]] != 0) {
                                                                     $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).empty();
                                                                     $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
                                                                         '<option value="' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchoolId + '">' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.subject.title + ' - ' + JSON.parse(document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).options[document.getElementById('participant-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).selectedIndex].getAttribute('data-item').replace(/&quot;/g, '"')).parallelSchool.title + '</option>' +
                                                                         '<option value="0">Отсутсвует</option>'
                                                                     );
-                                                                }
+                                                                }*/
                                                             </script>
                                                             <label th:for="'parallel-school-' + ${as_stat.index} + '-' + ${p_stat.index}">Параллельный зачет</label>
                                                         </div>
