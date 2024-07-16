@@ -6,6 +6,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.models.Contest;
 
+import java.time.LocalDate;
+
 public interface ContestRepository extends ReactiveCrudRepository<Contest,Integer> {
     Mono<Contest> findById(long id);
     Mono<Contest> findByEkp(String ekp);
@@ -22,4 +24,6 @@ public interface ContestRepository extends ReactiveCrudRepository<Contest,Intege
 
     Flux<Contest> findAllBySportTitle(Pageable pageable, String search);
     Flux<Contest> findAllBySubjectTitle(Pageable pageable, String search);
+
+    Flux<Contest> findAllByBeginningBetween(LocalDate startOfYear, LocalDate endOfYear);
 }

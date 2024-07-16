@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.ContestDTO;
+import ru.fcpsr.sportdata.dto.RestContest;
 import ru.fcpsr.sportdata.models.ArchiveSport;
 import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.repositories.ContestRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,5 +176,11 @@ public class ContestService {
             contest.getASportIds().remove(deleted.getId());
             return contestRepository.save(contest);
         });
+    }
+
+    public Flux<Contest> getAllByYear(int year) {
+        LocalDate startOfYear = LocalDate.of(year, 1, 1);
+        LocalDate endOfYear = LocalDate.of(year, 12, 31);
+        return contestRepository.findAllByBeginningBetween(startOfYear,endOfYear);
     }
 }
