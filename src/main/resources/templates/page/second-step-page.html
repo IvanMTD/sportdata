@@ -5,9 +5,9 @@
         </div>
     </div>
     <div class="row rounded-4 shadow">
-        <div class="col-3 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden"></div>
+        <div class="col-2 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden"></div>
 
-        <form class="col-9 px-4" th:method="POST" th:action="@{/contest/second-step}" th:object="${contest}">
+        <form class="col-10 px-4" th:method="POST" th:action="@{/contest/second-step}" th:object="${contest}">
             <input type="number" th:field="*{id}" hidden>
             <div class="row">
                 <p class="fs-3 text-secondary text-center">Общая оценка</p>

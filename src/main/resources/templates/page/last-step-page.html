@@ -12,10 +12,10 @@
         <!-- th:id="'contest-card-' + ${as_stat.index}" id="view-contest-card" th:if="${as_stat.last}" -->
         <div class="row rounded-4 shadow" th:each="as, as_stat : ${contest.getSports()}" th:id="'contest-card-' + ${as_stat.index}" th:if="${as.id} == ${aSport}">
             <!-- Картинка -->
-            <div class="col-3 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
+            <div class="col-2 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
             </div>
             <!-- Форма -->
-            <div class="col-9 px-4">
+            <div class="col-10 px-4">
                 <input type="number" th:id="'as_h-' + ${as_stat.index}" th:field="*{sports[__${as_stat.index}__].id}"
                        hidden>
                 <script th:inline="javascript">

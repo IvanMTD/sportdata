@@ -38,9 +38,9 @@
 
                     var data = google.visualization.arrayToDataTable([
                         ['Категории видов спорта', 'Количество прошедших соревнований'],
-                        ['Олимпийские', response.olympic.length],
-                        ['Не олимпийские', response.noOlympic.length],
-                        ['Адаптивные', response.adaptive.length]
+                        ['Олимпийские: ' + response.olympic.length, response.olympic.length],
+                        ['Не олимпийские: ' + response.noOlympic.length, response.noOlympic.length],
+                        ['Адаптивные: ' + response.adaptive.length, response.adaptive.length]
                     ]);
 
                     var options = {
@@ -48,7 +48,7 @@
                             position: 'bottom'
                         },
                         chartArea: {
-                            width: '75%',
+                            width: '100%',
                             height: '75%'
                         }
                     };
