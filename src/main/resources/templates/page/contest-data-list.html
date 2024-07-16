@@ -1,5 +1,63 @@
 <div class="container">
-    <div class="row">
+    <div id="charts" class="row row-cols-sm-1 row-cols-dm-3 row-cols-lg-4">
 
     </div>
 </div>
+
+<script>
+
+    setupContestChart(new Date().getFullYear());
+
+    function setupContestChart(year){
+        $.ajax({
+            url:'/api/contest/get/all?year=' + year,
+            type:'get',
+            success:function (response){
+                let htmlIn = `
+                <div class="col-sm-12 col-md-4 col-lg-3 m-auto">
+                    <div class="m-2 shadow border rounded-4" style="height: 300px">
+                        <div class="row border-bottom">
+                            <div class="col d-flex">
+                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Прошедшие соревнования</strong></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div id="chart-1" class="w-100 h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+                $('#charts').append(htmlIn);
+
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+
+                    var data = google.visualization.arrayToDataTable([
+                        ['Категории видов спорта', 'Количество прошедших соревнований'],
+                        ['Олимпийские', response.olympic.length],
+                        ['Не олимпийские', response.noOlympic.length],
+                        ['Адаптивные', response.adaptive.length]
+                    ]);
+
+                    var options = {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        chartArea: {
+                            width: '75%',
+                            height: '75%'
+                        }
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('chart-1'));
+
+                    chart.draw(data, options);
+                }
+            }
+        });
+    }
+</script>
