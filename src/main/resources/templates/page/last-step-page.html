@@ -299,7 +299,7 @@
                                                         console.log([[${place}]]);
                                                         [[${place.participant.schools}]].forEach(function (school){
                                                             $('#school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                '<option value="' + school.id + '">' + school.title + '</option>'
+                                                                '<option value="' + school.id + '">' + school.title + ' - ' + school.subject.title + '</option>'
                                                             );
                                                         });
                                                         [[${place.participant.qualifications}]].forEach(function (qualification){
@@ -364,7 +364,7 @@
                                                             <script th:inline="javascript">
                                                                 [[${place.participant.schools}]].forEach(function(school){
                                                                     $('#parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).append(
-                                                                        '<option value="' + school.id + '">' + school.title + '</option>'
+                                                                        '<option value="' + school.id + '">' + school.title + ' - ' + school.subject.title + '</option>'
                                                                     );
                                                                 });
                                                                 document.getElementById('parallel-school-' + [[${as_stat.index}]] + '-' + [[${p_stat.index}]]).value = [[${place}]].parallelSchoolId;

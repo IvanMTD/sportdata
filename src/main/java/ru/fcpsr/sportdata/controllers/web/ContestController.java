@@ -573,7 +573,11 @@ public class ContestController {
             ParticipantDTO participantDTO = new ParticipantDTO(participant);
             return schoolService.getAllByIdIn(participant.getSportSchoolIds()).flatMap(school -> {
                 SportSchoolDTO sportSchoolDTO = new SportSchoolDTO(school);
-                return Mono.just(sportSchoolDTO);
+                return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                    SubjectDTO subjectDTO = new SubjectDTO(subject);
+                    sportSchoolDTO.setSubject(subjectDTO);
+                    return Mono.just(sportSchoolDTO);
+                });
             }).collectList().flatMap(l -> {
                 l = l.stream().sorted(Comparator.comparing(SportSchoolDTO::getTitle)).collect(Collectors.toList());
                 participantDTO.setSchools(l);

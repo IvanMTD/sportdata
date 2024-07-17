@@ -1,27 +1,42 @@
 <div class="container">
-    <div id="charts" class="row row-cols-sm-1 row-cols-dm-3 row-cols-lg-4">
+    <div id="charts" class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3">
 
     </div>
 </div>
 
 <script>
+    let colorsSet = [
+        '#F46060','#F09872','#F3D179','#DCE8BA',
+        '#B0D9B1','#618264','#79AC78',
+        '#7BD3EA','#1572A1','#5D6EC7','#9F71DB'
+    ];
 
-    setupContestChart(new Date().getFullYear());
+    setupContestChartsByYear(new Date().getFullYear());
 
-    function setupContestChart(year){
+    function setupContestChartsByYear(year){
         $.ajax({
             url:'/api/contest/get/all?year=' + year,
             type:'get',
             success:function (response){
-                let htmlIn = `
-                <div class="col-sm-12 col-md-4 col-lg-3 m-auto">
+                createChartContestTotal(response);
+                createChartParticipantTotal(response);
+                createChartOlympicQualifications(response);
+                createChartNoOlympicQualifications(response);
+                createChartAdaptiveQualifications(response);
+            }
+        });
+    }
+
+    function createChartContestTotal(response){
+        let htmlIn = `
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
                     <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom">
+                        <div class="row border-bottom mx-1">
                             <div class="col d-flex">
                                 <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Прошедшие соревнования</strong></p>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row pt-4">
                             <div class="col">
                                 <div id="chart-1" class="w-100 h-100"></div>
                             </div>
@@ -29,35 +44,284 @@
                     </div>
                 </div>
                 `;
-                $('#charts').append(htmlIn);
+        $('#charts').append(htmlIn);
 
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
 
-                function drawChart() {
+        function drawChart() {
 
-                    var data = google.visualization.arrayToDataTable([
-                        ['Категории видов спорта', 'Количество прошедших соревнований'],
-                        ['Олимпийские: ' + response.olympic.length, response.olympic.length],
-                        ['Не олимпийские: ' + response.noOlympic.length, response.noOlympic.length],
-                        ['Адаптивные: ' + response.adaptive.length, response.adaptive.length]
-                    ]);
+            var data = google.visualization.arrayToDataTable([
+                ['Категории видов спорта', 'Количество прошедших соревнований'],
+                ['Олимпийские: ' + response.olympic.length, response.olympic.length],
+                ['Неолимпийские: ' + response.noOlympic.length, response.noOlympic.length],
+                ['Адаптивные: ' + response.adaptive.length, response.adaptive.length]
+            ]);
 
-                    var options = {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        chartArea: {
-                            width: '100%',
-                            height: '75%'
-                        }
-                    };
+            var options = {
+                chartArea: {
+                    width: '100%',
+                    height: '75%'
+                },
+                colors: colorsSet
+            };
 
-                    var chart = new google.visualization.PieChart(document.getElementById('chart-1'));
+            var chart = new google.visualization.PieChart(document.getElementById('chart-1'));
 
-                    chart.draw(data, options);
-                }
-            }
-        });
+            chart.draw(data, options);
+        }
+    }
+
+    function createChartParticipantTotal(response){
+        let htmlIn = `
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
+                    <div class="m-2 shadow border rounded-4" style="height: 300px">
+                        <div class="row border-bottom mx-1">
+                            <div class="col d-flex">
+                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники соревнований</strong></p>
+                            </div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="col">
+                                <div id="chart-2" class="w-100 h-100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        $('#charts').append(htmlIn);
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let olTotal = 0;
+            response.olympic.forEach(function (o){
+                olTotal += o.participantTotal;
+            });
+            let nolTotal = 0;
+            response.noOlympic.forEach(function (no){
+                nolTotal += no.participantTotal;
+            });
+            let adTotal = 0;
+            response.adaptive.forEach(function (ad){
+                adTotal += ad.participantTotal;
+            });
+
+            var data = google.visualization.arrayToDataTable([
+                ['Категории видов спорта', 'Количество участников'],
+                ['Олимпийских: ' + olTotal, olTotal],
+                ['Неолимпийских: ' + nolTotal, nolTotal],
+                ['Адаптивных: ' + adTotal, adTotal]
+            ]);
+
+            var options = {
+                chartArea: {
+                    width: '100%',
+                    height: '75%'
+                },
+                pieHole: 0.4,
+                colors: colorsSet
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart-2'));
+
+            chart.draw(data, options);
+        }
+    }
+
+    function createChartOlympicQualifications(response){
+        let htmlIn = `
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
+                    <div class="m-2 shadow border rounded-4" style="height: 300px">
+                        <div class="row border-bottom mx-1">
+                            <div class="col d-flex">
+                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Олимпийские)</strong></p>
+                            </div>
+                        </div>
+                        <div class="row pt-4">
+                            <div class="col">
+                                <div id="chart-3" class="w-100 h-100" style="overflow: visible"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        $('#charts').append(htmlIn);
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            let another = 0;
+            let r1 = 0;
+            let kms = 0;
+            let ms = 0;
+            let msmk = 0;
+            let zms = 0;
+
+            response.olympic.forEach(function (o){
+                zms += o.zms;
+                msmk += o.msmk;
+                ms += o.ms;
+                kms += o.kms;
+                r1 += o.r1;
+                another += (o.br + o.yn3 + o.yn2 + o.yn1 + o.r3 + o.r2)
+            });
+
+            var data = google.visualization.arrayToDataTable([
+                ['Квалификации участников', 'Количество участников'],
+                ['Заслуженные мастера спорта: ' + zms, zms],
+                ['Мастера спорта международного класса: ' + msmk, msmk],
+                ['Мастера спорта: ' + ms, ms],
+                ['Кандитаты в мастера спорта: ' + kms, kms],
+                ['Первого разряда: ' + r1, r1],
+                ['Другие: ' + another, another]
+            ]);
+
+            var options = {
+                chartArea: {
+                    width:  '100%',
+                    height: '75%'
+                },
+                pieHole: 0.2,
+                colors: colorsSet
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart-3'));
+
+            chart.draw(data, options);
+        }
+    }
+
+    function createChartNoOlympicQualifications(response){
+        let htmlIn = `
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
+                    <div class="m-2 shadow border rounded-4" style="height: 300px">
+                        <div class="row border-bottom mx-1">
+                            <div class="col d-flex">
+                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Неолимпийские)</strong></p>
+                            </div>
+                        </div>
+                        <div class="row pt-5">
+                            <div class="col">
+                                <div id="chart-4" class="w-100 h-100" style="overflow: visible"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        $('#charts').append(htmlIn);
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            let another = 0;
+            let r1 = 0;
+            let kms = 0;
+            let ms = 0;
+            let msmk = 0;
+            let zms = 0;
+
+            response.noOlympic.forEach(function (o){
+                zms += o.zms;
+                msmk += o.msmk;
+                ms += o.ms;
+                kms += o.kms;
+                r1 += o.r1;
+                another += (o.br + o.yn3 + o.yn2 + o.yn1 + o.r3 + o.r2)
+            });
+
+            var data = google.visualization.arrayToDataTable([
+                ['Квалификации участников', 'Количество участников'],
+                ['Заслуженные мастера спорта: ' + zms, zms],
+                ['Мастера спорта международного класса: ' + msmk, msmk],
+                ['Мастера спорта: ' + ms, ms],
+                ['Кандитаты в мастера спорта: ' + kms, kms],
+                ['Первого разряда: ' + r1, r1],
+                ['Другие: ' + another, another]
+            ]);
+
+            var options = {
+                chartArea: {
+                    width:  '100%',
+                    height: '75%'
+                },
+                pieHole: 0.2,
+                colors: colorsSet
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart-4'));
+
+            chart.draw(data, options);
+        }
+    }
+
+    function createChartAdaptiveQualifications(response){
+        let htmlIn = `
+                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
+                    <div class="m-2 shadow border rounded-4" style="height: 300px">
+                        <div class="row border-bottom mx-1">
+                            <div class="col d-flex">
+                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Адаптивные)</strong></p>
+                            </div>
+                        </div>
+                        <div class="row pt-5">
+                            <div class="col">
+                                <div id="chart-5" class="w-100 h-100" style="overflow: visible"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        $('#charts').append(htmlIn);
+
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            let another = 0;
+            let r1 = 0;
+            let kms = 0;
+            let ms = 0;
+            let msmk = 0;
+            let zms = 0;
+
+            response.adaptive.forEach(function (o){
+                zms += o.zms;
+                msmk += o.msmk;
+                ms += o.ms;
+                kms += o.kms;
+                r1 += o.r1;
+                another += (o.br + o.yn3 + o.yn2 + o.yn1 + o.r3 + o.r2)
+            });
+
+            var data = google.visualization.arrayToDataTable([
+                ['Квалификации участников', 'Количество участников'],
+                ['Заслуженные мастера спорта: ' + zms, zms],
+                ['Мастера спорта международного класса: ' + msmk, msmk],
+                ['Мастера спорта: ' + ms, ms],
+                ['Кандитаты в мастера спорта: ' + kms, kms],
+                ['Первого разряда: ' + r1, r1],
+                ['Другие: ' + another, another]
+            ]);
+
+            var options = {
+                chartArea: {
+                    width:  '100%',
+                    height: '75%'
+                },
+                pieHole: 0.2,
+                colors: colorsSet
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('chart-5'));
+
+            chart.draw(data, options);
+        }
     }
 </script>
