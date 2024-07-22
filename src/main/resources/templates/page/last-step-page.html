@@ -206,24 +206,128 @@
                     <div class="col-1 mt-1">
                         <div class="d-grid">
                             <!-- Button trigger modal -->
-                            <button disabled th:id="'create-p-btn-' + ${as_stat.index}" type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-add-person-">
+                            <button th:id="'create-p-btn-' + ${as_stat.index}" type="button" class="btn btn-lg btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-add-person-">
                                 <i class="bi bi-person-fill-add"></i>
                             </button>
 
                             <!-- Modal -->
-                            <div class="modal fade" th:id="'modal-add-person-' + ${as_stat.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal fade" th:id="'modal-add-person-' + ${as_stat.index}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modal-add-person-label" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="example">Modal title</h1>
+                                            <h1 class="modal-title fs-5">Быстрая привязка участника к виду спорта: <span th:text="${sport.title}"></span></h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            ...
+                                            <div class="row g-2">
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="text" id="input-lastname" class="form-control" placeholder="input-lastname">
+                                                    <label for="input-lastname" class="ms-2">Фамилия</label>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="text" id="input-name" class="form-control" placeholder="input-name">
+                                                    <label for="input-name" class="ms-2">Имя</label>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="text" id="input-middlename" class="form-control" placeholder="input-middlename">
+                                                    <label for="input-middlename" class="ms-2">Отчество</label>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2 pt-2">
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="date" id="input-birthday" class="form-control" placeholder="input-birthday">
+                                                    <label for="input-birthday" class="ms-2">День рождения</label>
+                                                </div>
+                                                <div class="col-sm-12 col-md-8 col-lg-8 form-floating position-relative">
+                                                    <select id="select-qualification" class="form-select">
+                                                        <option th:each="q : ${categories}" th:value="${q.category}" th:text="${q.title}"></option>
+                                                    </select>
+                                                    <label for="select-qualification" class="ms-2">Квалификация</label>
+                                                    <!-- Иконка вопроса для активации всплывающей подсказки -->
+                                                    <i class="bi bi-question-circle-fill ms-1 fs-5 text-danger position-absolute z-1 top-0 end-0" style="font-size: 10px; cursor: pointer; transform: translate(5px,-10px)" data-bs-toggle="tooltip" data-bs-placement="top" title="*Внимание! Квалификация будет привязана к текущему виду спорта."></i>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2 pt-2">
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <select id="select-subject" class="form-select">
+                                                        <option th:each="subject : ${subjects}" th:value="${subject.id}" th:text="${subject.title}"></option>
+                                                    </select>
+                                                    <label for="select-subject" class="ms-2">Субъект</label>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="text" list="schools" class="form-control" placeholder="input-school" id="input-school" oninput="searchSchools()">
+                                                    <datalist id="schools">
+
+                                                    </datalist>
+                                                    <label for="input-school">Название школы</label>
+                                                    <script>
+                                                        function searchSchools(){
+                                                            let search = $('#input-school').val();
+                                                            let subject = $('#select-subject').val();
+                                                            $.ajax({
+                                                                url: '/rest/database/search/schools',
+                                                                type: 'get',
+                                                                data: {
+                                                                    query: search,
+                                                                    id: subject
+                                                                },
+                                                                success: function (response){
+                                                                    $('#schools').empty();
+                                                                    response.forEach(function (school){
+                                                                        $('#schools').append(`
+                                                                            <option value="${school.title}"></option>
+                                                                        `);
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                    </script>
+                                                </div>
+                                                <div class="col-sm-12 col-md-4 col-lg-4 form-floating">
+                                                    <input type="text" id="input-address" class="form-control" placeholder="input-address">
+                                                    <label for="input-address" class="ms-2">Адрес</label>
+                                                    <small class="text-danger" style="font-size: 10px">*Если указана существующая в базе данных школа, то указывать адрес необязательно (он не будет учитываться), если добавляете новую школу, то укажите адрес. Если не знаете укажите '-'</small>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Save changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                            <button type="button" class="btn btn-primary" onclick="saveParticipant()">Создать</button>
+                                            <script th:inline="javascript">
+                                                function saveParticipant(){
+                                                    let participant = {
+                                                        lastname: $('#input-lastname').val(),
+                                                        name: $('#input-name').val(),
+                                                        middleName: $('#input-middlename').val(),
+                                                        birthday: $('#input-birthday').val(),
+                                                        sport: [[${sport.id}]],
+                                                        category: $('#select-qualification').val(),
+                                                        subject: $('#select-subject').val(),
+                                                        school: $('#input-school').val(),
+                                                        address: $('#input-address').val()
+                                                    };
+
+                                                    $.ajax({
+                                                        url:'/rest/database/save/participant',
+                                                        type:'get',
+                                                        data:participant,
+                                                        success:function (response){
+                                                            console.log(response);
+                                                            $('#input-lastname').val('');
+                                                            $('#input-name').val('');
+                                                            $('#input-middlename').val('');
+                                                            $('#input-birthday').val('');
+                                                            $('#select-qualification').val('');
+                                                            $('#select-subject').val('');
+                                                            $('#input-school').val('');
+                                                            $('#input-address').val('');
+                                                            var modal = document.getElementById('modal-add-person-' + [[${as_stat.index}]]);
+                                                            var modalInstance = bootstrap.Modal.getInstance(modal);
+                                                            modalInstance.hide();
+                                                        }
+                                                    });
+                                                }
+                                            </script>
                                         </div>
                                     </div>
                                 </div>

@@ -154,6 +154,7 @@ public class ContestController {
                     Rendering.view("template")
                             .modelAttribute("title","Last step")
                             .modelAttribute("index","last-step-page")
+                            .modelAttribute("subjects", subjectService.getAll())
                             .modelAttribute("contest", getCompleteContest(cid,0))
                             .modelAttribute("sport", getCompleteSport(contest.getTypeOfSportId()))
                             .modelAttribute("categories", getCategories())

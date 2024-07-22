@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import ru.fcpsr.sportdata.dto.ParticipantDTO;
+import ru.fcpsr.sportdata.dto.ParticipantModelDTO;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -40,6 +41,13 @@ public class Participant {
         setName(participantDTO.getName().trim());
         setMiddleName(participantDTO.getMiddleName().trim());
         setBirthday(participantDTO.getBirthday());
+    }
+
+    public Participant(ParticipantModelDTO participant) {
+        setLastname(participant.getLastname());
+        setName(participant.getName());
+        setMiddleName(participant.getMiddleName());
+        setBirthday(participant.getBirthday());
     }
 
     public void addSportSchool(SportSchool sportSchool){

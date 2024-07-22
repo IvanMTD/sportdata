@@ -1,4 +1,4 @@
-package ru.fcpsr.sportdata.controllers.web;
+package ru.fcpsr.sportdata.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
-import ru.fcpsr.sportdata.models.Contest;
-import ru.fcpsr.sportdata.models.Participant;
-import ru.fcpsr.sportdata.models.Place;
-import ru.fcpsr.sportdata.models.Qualification;
+import ru.fcpsr.sportdata.enums.Category;
+import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
 import java.io.*;
@@ -42,6 +40,105 @@ public class DataRestController {
     private final ContestService contestService;
     private final ArchiveSportService archiveSportService;
     private final PlaceService placeService;
+
+    @GetMapping("/search/schools")
+    public Flux<SportSchoolDTO> searchSchoolsByName(@RequestParam(name = "query") String query, @RequestParam(name = "id") int id){
+        return schoolService.getAllBySubjectIdAndTitle(id,query).flatMap(school -> Mono.justOrEmpty(new SportSchoolDTO(school))).collectList().flatMapMany(l -> {
+            if(l.size() > 20){
+                return Flux.fromIterable(l).take(20);
+            }else{
+                return Flux.fromIterable(l);
+            }
+        });
+    }
+
+    @GetMapping("/save/participant")
+    public Mono<Boolean> saveParticipant(@ModelAttribute(name = "participant") ParticipantModelDTO participant){
+        log.info("incoming data [{}]", participant);
+        ParticipantDTO participantDTO = new ParticipantDTO(participant);
+        return participantService.findByFullNameAndBirthday(participantDTO).flatMap(p -> {
+            if(p.getId() == 0){
+                return Mono.just(participant).flatMap(myp -> {
+                    Participant newParticipant = new Participant(myp);
+                    log.info("prepare new participant data [{}]", newParticipant);
+                    return participantService.saveParticipant(newParticipant).flatMap(p2 -> {
+                        log.info("pre saved data [{}]", p2);
+                        Qualification qualification = new Qualification();
+                        qualification.setParticipantId(p2.getId());
+                        qualification.setTypeOfSportId(Integer.parseInt(participant.getSport()));
+                        qualification.setCategory(Category.valueOf(participant.getCategory()));
+                        return qualificationService.save(qualification).flatMap(q -> {
+                            p2.getQualificationIds().add(q.getId());
+                            return participantService.saveParticipant(p2);
+                        }).flatMap(saved -> {
+                            SportSchoolDTO sportSchoolDTO = new SportSchoolDTO();
+                            sportSchoolDTO.setTitle(participant.getSchool());
+                            sportSchoolDTO.setSubjectId(Integer.parseInt(participant.getSubject()));
+                            sportSchoolDTO.setAddress(participant.getAddress());
+                            return schoolService.findByTitleAndSubjectId(sportSchoolDTO).flatMap(s -> {
+                                if(s.getId() == 0){
+                                    return Mono.just(new SportSchool()).flatMap(school -> {
+                                        school.setTitle(participant.getSchool());
+                                        school.setAddress(participant.getAddress());
+                                        school.setSubjectId(Integer.parseInt(participant.getSubject()));
+                                        school.getParticipantIds().add(saved.getId());
+                                        return schoolService.saveSchool(school).flatMap(ss -> {
+                                            saved.getSportSchoolIds().add(ss.getId());
+                                            return participantService.saveParticipant(saved);
+                                        });
+                                    });
+                                }else{
+                                    s.getParticipantIds().add(saved.getId());
+                                    return schoolService.saveSchool(s).flatMap(ss -> {
+                                        saved.getSportSchoolIds().add(ss.getId());
+                                        return participantService.saveParticipant(saved);
+                                    });
+                                }
+                            });
+                        });
+                    });
+                });
+            }else {
+                log.info("found in db [{}]",p);
+                Qualification qualification = new Qualification();
+                qualification.setParticipantId(p.getId());
+                qualification.setTypeOfSportId(Integer.parseInt(participant.getSport()));
+                qualification.setCategory(Category.valueOf(participant.getCategory()));
+                return qualificationService.save(qualification).flatMap(q -> {
+                    p.getQualificationIds().add(q.getId());
+                    return participantService.saveParticipant(p);
+                }).flatMap(saved -> {
+                    SportSchoolDTO sportSchoolDTO = new SportSchoolDTO();
+                    sportSchoolDTO.setTitle(participant.getSchool());
+                    sportSchoolDTO.setSubjectId(Integer.parseInt(participant.getSubject()));
+                    sportSchoolDTO.setAddress(participant.getAddress());
+                    return schoolService.findByTitleAndSubjectId(sportSchoolDTO).flatMap(s -> {
+                        if(s.getId() == 0){
+                            return Mono.just(new SportSchool()).flatMap(school -> {
+                                school.setTitle(participant.getSchool());
+                                school.setAddress(participant.getAddress());
+                                school.setSubjectId(Integer.parseInt(participant.getSubject()));
+                                school.getParticipantIds().add(saved.getId());
+                                return schoolService.saveSchool(school).flatMap(ss -> {
+                                    saved.getSportSchoolIds().add(ss.getId());
+                                    return participantService.saveParticipant(saved);
+                                });
+                            });
+                        }else{
+                            s.getParticipantIds().add(saved.getId());
+                            return schoolService.saveSchool(s).flatMap(ss -> {
+                                saved.getSportSchoolIds().add(ss.getId());
+                                return participantService.saveParticipant(saved);
+                            });
+                        }
+                    });
+                });
+            }
+            }).flatMap(participantComplete -> {
+            log.info("saved new participant: {}", participantComplete);
+            return Mono.just(true);
+        });
+    }
 
     @GetMapping("/search/contest-list")
     public Flux<Contest> searchContestsBy(@RequestParam(name = "query") String query){

@@ -70,6 +70,13 @@ public class ParticipantDTO {
         }
     }
 
+    public ParticipantDTO(ParticipantModelDTO participant) {
+        setLastname(participant.getLastname());
+        setName(participant.getName());
+        setMiddleName(participant.getMiddleName());
+        setBirthday(participant.getBirthday());
+    }
+
     public String getFullName(){
         return lastname + " " + name + " " + middleName;
     }

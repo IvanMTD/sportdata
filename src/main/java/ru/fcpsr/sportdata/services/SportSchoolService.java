@@ -127,4 +127,13 @@ public class SportSchoolService {
     public Mono<SportSchool> findByTitleAndSubjectId(SportSchoolDTO sportSchoolDTO) {
         return schoolRepository.findByTitleAndSubjectId(sportSchoolDTO.getTitle(),sportSchoolDTO.getSubjectId()).defaultIfEmpty(new SportSchool());
     }
+
+    public Flux<SportSchool> getAllBySubjectIdAndTitle(int subjectId, String query) {
+        String request = "%" + query + "%";
+        return schoolRepository.findAllByTitleLikeIgnoreCaseAndSubjectId(request,subjectId);
+    }
+
+    public Mono<SportSchool> saveSchool(SportSchool s) {
+        return schoolRepository.save(s);
+    }
 }
