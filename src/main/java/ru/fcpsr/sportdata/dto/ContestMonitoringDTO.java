@@ -468,7 +468,7 @@ public class ContestMonitoringDTO {
             result.append("участники с квалификацией - ").append(firstLetterLow(category.getTitle())).append(" - ").append(count).append(humanFormat(count));
 
             if (allowCount > 0) {
-                result.append(", подтвердили: ").append(allowCount).append(humanFormat(count));
+                result.append(", подтвердили: ").append(allowCount).append(humanFormat(allowCount));
             }
 
             if (notAllowCount > 0) {
