@@ -178,9 +178,7 @@ public class ContestService {
         });
     }
 
-    public Flux<Contest> getAllByYear(int year) {
-        LocalDate startOfYear = LocalDate.of(year, 1, 1);
-        LocalDate endOfYear = LocalDate.of(year, 12, 31);
-        return contestRepository.findAllByBeginningBetween(startOfYear,endOfYear);
+    public Flux<Contest> getAllByDate(LocalDate start, LocalDate end) {
+        return contestRepository.findAllByBeginningBetween(start,end);
     }
 }
