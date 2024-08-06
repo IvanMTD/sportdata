@@ -5,21 +5,42 @@
         </div>
     </div>
     <div class="row">
-        <div class="d-grid col-sm-12 col-md-8 col-lg-6 m-auto">
+        <div class="col-12">
             <div class="row m-2">
-                <div class="col-4">
+                <div class="col-3">
+                    <div class="input-group">
+                        <span class="input-group-text" id="sport-select-label">Спорт</span>
+                        <select type="date" id="sport-select" class="form-select" aria-label="sport select" aria-describedby="sport-select-label">
+                            <option value="-1">Все</option>
+                            <option th:each="sport : ${sports}" th:value="${sport.id}" th:text="${sport.title}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
                     <div class="input-group">
                         <span class="input-group-text" id="start-date-label">с</span>
                         <input type="date" id="start-date" class="form-control" placeholder="Start date" aria-label="Start date" aria-describedby="start-date-label">
                     </div>
                 </div>
-                <div class="col-4">
+                <script>
+                    // Формируем дату в формате YYYY-MM-DD
+                    const startDate = `${new Date().getFullYear()}-01-01`;
+                    // Устанавливаем значение по умолчанию для input
+                    document.getElementById('start-date').value = startDate;
+                </script>
+                <div class="col-3">
                     <div class="input-group">
                         <span class="input-group-text" id="end-date-label">по</span>
                         <input type="date" id="end-date" class="form-control" placeholder="End date" aria-label="End date" aria-describedby="end-date-label">
                     </div>
                 </div>
-                <div class="col-4">
+                <script>
+                    // Формируем дату в формате YYYY-MM-DD
+                    const endDate = `${new Date().getFullYear()}-12-31`;
+                    // Устанавливаем значение по умолчанию для input
+                    document.getElementById('end-date').value = endDate;
+                </script>
+                <div class="col-3">
                     <input type="button" class="btn btn-outline-secondary w-100" value="Показать" onclick="updateData()">
                 </div>
             </div>
@@ -47,12 +68,7 @@
             url:'/api/contest/get/all?year=' + year,
             type:'get',
             success:function (response){
-                createChartContestTotal(response);
-                createChartParticipantTotal(response);
-                createChartOlympicQualifications(response);
-                createChartNoOlympicQualifications(response);
-                createChartAdaptiveQualifications(response);
-                createPlaceInfoData(response);
+                setupAllData(response);
             }
         });
     }
@@ -61,23 +77,29 @@
         let charts = $('#charts');
         let start = $('#start-date').val();
         let end = $('#end-date').val();
+        let sport = $('#sport-select').val();
         $.ajax({
             url:'/api/contest/get/all/by/date',
             type:'get',
             data:{
                 start:start,
-                end:end
+                end:end,
+                sport:sport
             },
             success:function (response){
                 charts.empty();
-                createChartContestTotal(response);
-                createChartParticipantTotal(response);
-                createChartOlympicQualifications(response);
-                createChartNoOlympicQualifications(response);
-                createChartAdaptiveQualifications(response);
-                createPlaceInfoData(response);
+                setupAllData(response);
             }
         });
+    }
+
+    function setupAllData(response){
+        createChartContestTotal(response);
+        createChartParticipantTotal(response);
+        createChartOlympicQualifications(response);
+        createChartNoOlympicQualifications(response);
+        createChartAdaptiveQualifications(response);
+        createPlaceInfoData(response);
     }
 
     function createChartContestTotal(response){

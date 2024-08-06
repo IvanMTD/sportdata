@@ -12,7 +12,9 @@ import ru.fcpsr.sportdata.enums.SportFilterType;
 import ru.fcpsr.sportdata.services.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,15 +35,15 @@ public class ContestRestController {
     public Mono<RestContest> getAllContests(@RequestParam(name = "year") int year){
         LocalDate startOfYear = LocalDate.of(year, 1, 1);
         LocalDate endOfYear = LocalDate.of(year, 12, 31);
-        return getCompleteDate(startOfYear,endOfYear);
+        return getCompleteDate(startOfYear,endOfYear, -1);
     }
 
     @GetMapping("/get/all/by/date")
-    public Mono<RestContest> getAllByDate(@RequestParam(name = "start") LocalDate start, @RequestParam(name = "end") LocalDate end){
-        return getCompleteDate(start,end);
+    public Mono<RestContest> getAllByDate(@RequestParam(name = "start") LocalDate start, @RequestParam(name = "end") LocalDate end, @RequestParam(name = "sport") int sportId){
+        return getCompleteDate(start,end,sportId);
     }
 
-    private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end){
+    private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId){
         return contestService.getAllByDate(start,end).flatMap(contest -> {
             ContestDTO contestDTO = new ContestDTO(contest);
             return sportService.findById(contest.getTypeOfSportId()).flatMap(sport -> {
@@ -76,11 +78,20 @@ public class ContestRestController {
                 });
             });
         }).collectList().flatMap(l -> {
-            l = l.stream().sorted(Comparator.comparing(ContestDTO::getSportTitle)).collect(Collectors.toList());
+            List<ContestDTO> sortedList = l;
+            if(sportId != -1){
+                sortedList = new ArrayList<>();
+                for(ContestDTO contest : l){
+                    if(contest.getSportId() == sportId){
+                        sortedList.add(contest);
+                    }
+                }
+            }
+            sortedList = sortedList.stream().sorted(Comparator.comparing(ContestDTO::getSportTitle)).collect(Collectors.toList());
             RestContest restContest = new RestContest();
-            restContest.setTotal(l.size());
-            restContest.setContests(l);
-            for(ContestDTO contest : l){
+            restContest.setTotal(sortedList.size());
+            restContest.setContests(sortedList);
+            for(ContestDTO contest : sortedList){
                 if(contest.getSport().getSportFilterType().equals(SportFilterType.OLYMPIC)){
                     restContest.getOlympic().add(contest);
                 }else if(contest.getSport().getSportFilterType().equals(SportFilterType.NO_OLYMPIC)){

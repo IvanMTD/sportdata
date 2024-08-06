@@ -418,6 +418,7 @@ public class ContestController {
                 Rendering.view("template")
                         .modelAttribute("title","Contest data list")
                         .modelAttribute("index","contest-data-list")
+                        .modelAttribute("sports", sportService.getAll())
                         .build()
         );
     }
