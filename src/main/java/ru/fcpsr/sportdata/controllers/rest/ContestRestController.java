@@ -30,6 +30,8 @@ public class ContestRestController {
     private final ParticipantService participantService;
     private final DisciplineService disciplineService;
     private final AgeGroupService groupService;
+    private final SportSchoolService schoolService;
+    private final SubjectService subjectService;
 
     @GetMapping("/get/all")
     public Mono<RestContest> getAllContests(@RequestParam(name = "year") int year){
@@ -62,7 +64,15 @@ public class ContestRestController {
                                 return participantService.getById(place.getParticipantId()).flatMap(participant -> {
                                     ParticipantDTO participantDTO = new ParticipantDTO(participant);
                                     placeDTO.setParticipant(participantDTO);
-                                    return Mono.justOrEmpty(placeDTO);
+                                    return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
+                                        SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
+                                        return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                            SubjectDTO subjectDTO = new SubjectDTO(subject);
+                                            schoolDTO.setSubject(subjectDTO);
+                                            placeDTO.setSchool(schoolDTO);
+                                            return Mono.just(placeDTO);
+                                        });
+                                    });
                                 });
                             }).collectList().flatMap(placeDTOS -> {
                                 placeDTOS = placeDTOS.stream().sorted(Comparator.comparing(PlaceDTO::getPlace)).collect(Collectors.toList());

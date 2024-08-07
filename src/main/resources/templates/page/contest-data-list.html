@@ -61,7 +61,9 @@
         '#7BD3EA','#1572A1','#5D6EC7','#9F71DB'
     ];
 
-    setupContestChartsByYear(new Date().getFullYear());
+    document.addEventListener('DOMContentLoaded',function (){
+        setupContestChartsByYear(new Date().getFullYear());
+    });
 
     function setupContestChartsByYear(year){
         $.ajax({
@@ -414,6 +416,7 @@
                     <th scope="col">Дисциплина</th>
                     <th scope="col">Группа</th>
                     <th scope="col">Место</th>
+                    <th scope="col">Школа</th>
                 </thead>
                 <tbody id="t-body">
 
@@ -421,18 +424,31 @@
             </table>
         `;
         places.append(innerHTML);
-        let tBody = $('#t-body');
         let contests = response.contests;
-        let count = 1;
+        let dataArray = [];
         for(let i=0; i<contests.length; i++){
             let sports = contests[i].sports;
             for(let j=0; j<sports.length; j++){
                 let places = sports[j].places;
                 for(let k=0; k<places.length; k++){
                     let participant = places[k].participant;
-                    tBody.append(`
+                    let body = {
+                        pid: participant.id,
+                        fullName: participant.fullName,
+                        birthday: participant.birthday,
+                        cid: contests[i].id,
+                        ekp: contests[i].ekp,
+                        sport: contests[i].sport.title,
+                        discipline: sports[j].discipline.title,
+                        group: sports[j].group.title,
+                        place: places[k].place,
+                        school: places[k].school.title,
+                        subject: places[k].school.subject.title
+                    }
+                    dataArray.push(body);
+                    /*tBody.append(`
                         <tr>
-                            <th scope="row">${count}</th>
+                            <th scope="row">${currentCount}</th>
                             <td><a href="/database/participant/${participant.id}/show">${participant.fullName}</a></td>
                             <td>${participant.birthday}</td>
                             <td><a href="/contest/show?contest=${contests[i].id}">${contests[i].ekp}</a></td>
@@ -440,11 +456,51 @@
                             <td>${sports[j].discipline.title}</td>
                             <td>${sports[j].group.title}</td>
                             <td>${places[k].place}</td>
+                            <td>${places[k].school.title} - ${places[k].school.subject.title}</td>
                         </tr>
                     `);
-                    count++;
+                    count++;*/
                 }
             }
         }
+
+        dataArray.sort((a, b) => {
+            if (a.fullName < b.fullName) {
+                return -1;
+            }
+            if (a.fullName > b.fullName) {
+                return 1;
+            }
+            return 0;
+        });
+
+        let count = 1;
+        let tBody = $('#t-body');
+        let tempFullName = '';
+        dataArray.forEach(function (data){
+            let currentCount;
+            if(tempFullName === data.fullName){
+                currentCount = '-';
+            }else{
+                currentCount = count;
+            }
+            tBody.append(`
+                <tr>
+                    <th scope="row">${currentCount}</th>
+                    <td><a href="/database/participant/${data.pid}/show">${data.fullName}</a></td>
+                    <td>${data.birthday}</td>
+                    <td><a href="/contest/show?contest=${data.cid}">${data.ekp}</a></td>
+                    <td>${data.sport}</td>
+                    <td>${data.discipline}</td>
+                    <td>${data.group}</td>
+                    <td>${data.place}</td>
+                    <td>${data.school} - ${data.school}</td>
+                </tr>
+            `);
+            if(tempFullName !== data.fullName){
+                count++;
+            }
+            tempFullName = data.fullName;
+        });
     }
 </script>
