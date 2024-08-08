@@ -61,16 +61,20 @@
         '#7BD3EA','#1572A1','#5D6EC7','#9F71DB'
     ];
 
-    document.addEventListener('DOMContentLoaded',function (){
-        setupContestChartsByYear(new Date().getFullYear());
+    window.addEventListener('load', function () {
+        setTimeout(() => {
+            setupContestChartsByYear(new Date().getFullYear());
+        },100);
     });
 
     function setupContestChartsByYear(year){
+        showSpinner();
         $.ajax({
             url:'/api/contest/get/all?year=' + year,
             type:'get',
             success:function (response){
                 setupAllData(response);
+                hideSpinner();
             }
         });
     }
@@ -80,6 +84,7 @@
         let start = $('#start-date').val();
         let end = $('#end-date').val();
         let sport = $('#sport-select').val();
+        showSpinner();
         $.ajax({
             url:'/api/contest/get/all/by/date',
             type:'get',
@@ -91,6 +96,7 @@
             success:function (response){
                 charts.empty();
                 setupAllData(response);
+                hideSpinner();
             }
         });
     }
@@ -446,20 +452,6 @@
                         subject: places[k].school.subject.title
                     }
                     dataArray.push(body);
-                    /*tBody.append(`
-                        <tr>
-                            <th scope="row">${currentCount}</th>
-                            <td><a href="/database/participant/${participant.id}/show">${participant.fullName}</a></td>
-                            <td>${participant.birthday}</td>
-                            <td><a href="/contest/show?contest=${contests[i].id}">${contests[i].ekp}</a></td>
-                            <td>${contests[i].sport.title}</td>
-                            <td>${sports[j].discipline.title}</td>
-                            <td>${sports[j].group.title}</td>
-                            <td>${places[k].place}</td>
-                            <td>${places[k].school.title} - ${places[k].school.subject.title}</td>
-                        </tr>
-                    `);
-                    count++;*/
                 }
             }
         }
@@ -494,7 +486,7 @@
                     <td>${data.discipline}</td>
                     <td>${data.group}</td>
                     <td>${data.place}</td>
-                    <td>${data.school} - ${data.school}</td>
+                    <td>${data.school} - ${data.subject}</td>
                 </tr>
             `);
             if(tempFullName !== data.fullName){
