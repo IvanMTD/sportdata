@@ -272,10 +272,11 @@
                                                                     id: subject
                                                                 },
                                                                 success: function (response){
+                                                                    console.log(response);
                                                                     $('#schools').empty();
                                                                     response.forEach(function (school){
                                                                         $('#schools').append(`
-                                                                            <option value="${school.title}"></option>
+                                                                            <option value="${school.title}">${school.title}</option>
                                                                         `);
                                                                     });
                                                                 }

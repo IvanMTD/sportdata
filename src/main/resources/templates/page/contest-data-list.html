@@ -46,6 +46,11 @@
             </div>
         </div>
     </div>
+    <div class="row my-4">
+        <div class="col-12" id="big-charts">
+
+        </div>
+    </div>
     <div id="charts" class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3"></div>
     <div class="row pt-2">
         <div class="col" id="places-info">
@@ -107,6 +112,7 @@
         createChartOlympicQualifications(response);
         createChartNoOlympicQualifications(response);
         createChartAdaptiveQualifications(response);
+        createChartsSportCount(response);
         createPlaceInfoData(response);
     }
 
@@ -405,6 +411,158 @@
             var chart = new google.visualization.PieChart(document.getElementById('chart-5'));
 
             chart.draw(data, options);
+        }
+    }
+
+    function createChartsSportCount(response){
+        let olympic = response.olympic;
+        let noOlympic = response.noOlympic;
+        let adaptive = response.adaptive;
+
+        let olympicMap = new Map();
+        olympic.forEach(function (contest){
+            let key = contest.sportTitle;
+            let value = olympicMap.get(key);
+            if (value) {
+                value.push(contest);
+            } else {
+                value = [contest];
+            }
+            olympicMap.set(key,value);
+        });
+        let noOlympicMap = new Map();
+        noOlympic.forEach(function (contest){
+            let key = contest.sportTitle;
+            let value = noOlympicMap.get(key);
+            if (value) {
+                value.push(contest);
+            } else {
+                value = [contest];
+            }
+            noOlympicMap.set(key,value);
+        });
+        let adaptiveMap = new Map();
+        adaptive.forEach(function (contest){
+            let key = contest.sportTitle;
+            let value = adaptiveMap.get(key);
+            if (value) {
+                value.push(contest);
+            } else {
+                value = [contest];
+            }
+            adaptiveMap.set(key,value);
+        });
+
+        let $chartsContainer = $('#big-charts');
+        $chartsContainer.empty();
+        $chartsContainer.append(`
+            <div class="row m-2">
+                <div class="col-12">
+                    <div class="row my-1 img-thumbnail">
+                        <div class="col-12" style="height:300px" id="olympic-sport"></div>
+                    </div>
+                    <div class="row my-1 img-thumbnail">
+                        <div class="col-12" style="height:300px" id="no-olympic-sport"></div>
+                    </div>
+                    <div class="row my-1 img-thumbnail">
+                        <div class="col-12" style="height:300px" id="adaptive-sport"></div>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        setupBigCharts('olympic-sport', 'Первенства России по Олимпийским видам спорта', olympicMap);
+        setupBigCharts('no-olympic-sport', 'Первенства России по Неолимпийским видам спорта',noOlympicMap);
+        setupBigCharts('adaptive-sport', 'Первенства России по Адаптивным видам спорта',adaptiveMap);
+    }
+
+    /*function setupBigCharts(index,title, map){
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let table = [];
+            table[0] = ['Вид спорта','Количество первенств'];
+            let i = 1;
+            map.forEach((value,key) => {
+                table[i] = [key,value.length];
+                i++;
+            });
+            let data = google.visualization.arrayToDataTable(table,false);
+
+            let options = {
+                title: title,
+                legend: 'none',
+                bar: {
+                    groupWidth: '100%'
+                }
+            };
+
+            let baseSportChart = new google.visualization.ColumnChart(document.getElementById(index));
+
+            baseSportChart.draw(data, options);
+        }
+    }*/
+
+    function setupBigCharts(index,title, map){
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let table = [];
+            table[0] = ['Вид спорта'];
+            let maxContests = 0;
+
+            map.forEach((value, key) => {
+                if (value.length > maxContests) {
+                    maxContests = value.length;
+                }
+            });
+
+            for (let i = 0; i < maxContests; i++) {
+                table[0].push({ type: 'number', role: 'data' });
+                table[0].push({ type: 'string', role: 'tooltip', p: { html: true } });
+            }
+
+            let i = 1;
+            map.forEach((value, key) => {
+                let row = [key];
+                value.forEach(contest => {
+                    row.push(1);
+                   /* row.push(`Всего первенств: ${value.length} <br> Количество субъектов в первенстве: ${contest.subjects.length}`);*/
+                    row.push(`
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="fs-5 text-dark">ЕКП: ${contest.ekp}</p>
+                                <p class="fs-6 text-dark">Приняло участие субъектов: ${contest.subjects.length}</p>
+                            </div>
+                            <div class="col-12">
+                                <p class="fs-6 text-secondary">Вид спорта: ${key}</p>
+                                <p class="fs-6 text-secondary">Всего первенств: ${value.length}</p>
+                            </div>
+                        </div>
+                    `);
+                });
+                while (row.length < maxContests * 2 + 1) {
+                    row.push(null);
+                }
+                table[i] = row;
+                i++;
+            });
+
+            let data = google.visualization.arrayToDataTable(table, false);
+
+            let options = {
+                title: title,
+                legend: 'none',
+                isStacked: true,
+                tooltip: { isHtml: true },
+                colors: ['#0b4cc5'] // Синий цвет
+            };
+
+            let baseSportChart = new google.visualization.ColumnChart(document.getElementById(index));
+
+            baseSportChart.draw(data, options);
         }
     }
 

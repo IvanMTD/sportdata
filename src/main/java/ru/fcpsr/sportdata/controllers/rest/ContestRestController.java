@@ -91,6 +91,17 @@ public class ContestRestController {
                     });
                 });
             });
+        }).flatMap(contestDTO -> {
+            return contestService.getById(contestDTO.getId()).flatMap(contest -> {
+                return subjectService.getByIds(contest.getTotalSubjects()).flatMap(subject -> {
+                    SubjectDTO subjectDTO = new SubjectDTO(subject);
+                    return Mono.just(subjectDTO);
+                }).collectList().flatMap(l -> {
+                    l = l.stream().sorted(Comparator.comparing(SubjectDTO::getTitle)).collect(Collectors.toList());
+                    contestDTO.setSubjects(l);
+                    return Mono.just(contestDTO);
+                });
+            });
         }).collectList().flatMap(l -> {
             List<ContestDTO> sortedList = l;
             if(sportId != -1){
