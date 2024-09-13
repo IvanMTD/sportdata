@@ -476,34 +476,6 @@
         setupBigCharts('adaptive-sport', 'Первенства России по Адаптивным видам спорта',adaptiveMap);
     }
 
-    /*function setupBigCharts(index,title, map){
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            let table = [];
-            table[0] = ['Вид спорта','Количество первенств'];
-            let i = 1;
-            map.forEach((value,key) => {
-                table[i] = [key,value.length];
-                i++;
-            });
-            let data = google.visualization.arrayToDataTable(table,false);
-
-            let options = {
-                title: title,
-                legend: 'none',
-                bar: {
-                    groupWidth: '100%'
-                }
-            };
-
-            let baseSportChart = new google.visualization.ColumnChart(document.getElementById(index));
-
-            baseSportChart.draw(data, options);
-        }
-    }*/
-
     function setupBigCharts(index,title, map){
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
@@ -627,9 +599,10 @@
         let count = 1;
         let tBody = $('#t-body');
         let tempFullName = '';
+        let tempBirthday = '';
         dataArray.forEach(function (data){
             let currentCount;
-            if(tempFullName === data.fullName){
+            if(tempFullName === data.fullName && tempBirthday === data.birthday){
                 currentCount = '-';
             }else{
                 currentCount = count;
@@ -651,6 +624,7 @@
                 count++;
             }
             tempFullName = data.fullName;
+            tempBirthday = data.birthday;
         });
     }
 </script>
