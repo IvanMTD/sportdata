@@ -620,7 +620,7 @@
                     <td>${data.school} - ${data.subject}</td>
                 </tr>
             `);
-            if(tempFullName !== data.fullName){
+            if(tempFullName !== data.fullName || tempBirthday !== data.birthday){
                 count++;
             }
             tempFullName = data.fullName;
