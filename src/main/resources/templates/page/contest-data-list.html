@@ -51,9 +51,9 @@
 
         </div>
     </div>
-    <div id="charts" class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3"></div>
-    <div class="row pt-2">
-        <div class="col" id="places-info">
+    <div class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3 g-3" id="charts"></div>
+    <div class="row p-0 m-0">
+        <div class="col-12 p-0 m-0" id="places-info">
 
         </div>
     </div>
@@ -456,16 +456,16 @@
         let $chartsContainer = $('#big-charts');
         $chartsContainer.empty();
         $chartsContainer.append(`
-            <div class="row m-2">
+            <div class="row my-2">
                 <div class="col-12">
-                    <div class="row my-1 img-thumbnail">
-                        <div class="col-12" style="height:300px" id="olympic-sport"></div>
+                    <div class="row p-4">
+                        <div class="col-12 border shadow rounded-4" style="height:300px" id="olympic-sport"></div>
                     </div>
-                    <div class="row my-1 img-thumbnail">
-                        <div class="col-12" style="height:300px" id="no-olympic-sport"></div>
+                    <div class="row p-4">
+                        <div class="col-12 border shadow rounded-4" style="height:300px" id="no-olympic-sport"></div>
                     </div>
-                    <div class="row my-1 img-thumbnail">
-                        <div class="col-12" style="height:300px" id="adaptive-sport"></div>
+                    <div class="row p-4">
+                        <div class="col-12 border shadow rounded-4" style="height:300px" id="adaptive-sport"></div>
                     </div>
                 </div>
             </div>
