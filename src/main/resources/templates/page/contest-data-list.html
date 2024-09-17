@@ -416,6 +416,7 @@
 
     function createChartsSportCount(response){
         let olympic = response.olympic;
+        console.log(olympic);
         let noOlympic = response.noOlympic;
         let adaptive = response.adaptive;
 
@@ -476,7 +477,127 @@
         setupBigCharts('adaptive-sport', 'Первенства России по Адаптивным видам спорта',adaptiveMap);
     }
 
-    function setupBigCharts(index,title, map){
+    function setupBigCharts(index, title, map) {
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            let table = [];
+            table[0] = ['Вид спорта'];
+            let maxContests = 0;
+
+            map.forEach((value, key) => {
+                if (value.length > maxContests) {
+                    maxContests = value.length;
+                }
+            });
+
+            for (let i = 0; i < maxContests; i++) {
+                table[0].push({ type: 'number', role: 'data' });
+                table[0].push({ type: 'string', role: 'tooltip', p: { html: true } });
+            }
+
+            let violationsArray = [];
+            let i = 1;
+            map.forEach((value, key) => {
+                let row = [key];
+                value.forEach(contest => {
+
+                    let allowedMap = new Map();
+                    allowedMap.set('BR', contest.br);
+                    allowedMap.set('YN1', contest.yn1);
+                    allowedMap.set('YN2', contest.yn2);
+                    allowedMap.set('YN3', contest.yn3);
+                    allowedMap.set('R1', contest.r1);
+                    allowedMap.set('R2', contest.r2);
+                    allowedMap.set('R3', contest.r3);
+                    allowedMap.set('KMS', contest.kms);
+                    allowedMap.set('MS', contest.ms);
+                    allowedMap.set('MSMK', contest.msmk);
+                    allowedMap.set('ZMS', contest.zms);
+
+                    let violationsHtml = Array.from(allowedMap).map(([key, value]) => {
+                        let violations = value > 0;
+                        if (value > 0) {
+                            contest.sports.forEach((aSport) => {
+                                aSport.allowedList.forEach((allow) => {
+                                    if (allow.category === key) {
+                                        violations = false;
+                                    }
+                                });
+                            });
+                        }
+                        violationsArray.push(violations);
+                        if (violations === true) {
+                            return `
+                            <p class="text-danger">Было допущено ${value} участников категории - ${key}, не входящие в список допущенных</p>
+                        `;
+                        } else {
+                            return '';
+                        }
+                    }).join('');
+
+                    row.push(1);
+                    row.push(`
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="fs-5 text-dark">ЕКП: ${contest.ekp}</p>
+                            <p class="fs-6 text-dark">Приняло участие субъектов: ${contest.subjects.length}</p>
+                        </div>
+                        <div class="col-12">
+                            <p class="fs-6 text-secondary">Вид спорта: ${key}</p>
+                            <p class="fs-6 text-secondary">Всего первенств: ${value.length}</p>
+                        </div>
+                        <div class="col-12">
+                            ${violationsHtml}
+                        </div>
+                    </div>
+                `);
+                });
+                while (row.length < maxContests * 2 + 1) {
+                    row.push(null);
+                }
+                table[i] = row;
+                i++;
+            });
+
+            let data = google.visualization.arrayToDataTable(table, false);
+
+            let options = {
+                title: title,
+                legend: 'none',
+                isStacked: true,
+                tooltip: { isHtml: true },
+                colors: ['#0b4cc5'] // Синий цвет
+            };
+
+            let baseSportChart = new google.visualization.ColumnChart(document.getElementById(index));
+
+            google.visualization.events.addListener(baseSportChart, 'ready', function () {
+                let chartContainer = document.getElementById(index);
+                let svg = chartContainer.getElementsByTagName('svg')[0];
+                let rects = svg.getElementsByTagName('rect');
+
+                let j = 0;
+                for (let rect of rects) {
+                    console.log(rect.getAttribute('fill'));
+                    if (rect.getAttribute('fill') === '#0b4cc5') {
+                        if(violationsArray[j]){
+                            rect.setAttribute('fill', 'red');
+                        }
+                    }
+                    j++;
+                }
+            });
+
+            baseSportChart.draw(data, options);
+        }
+    }
+
+
+
+
+    /*function setupBigCharts(index,title, map){
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
@@ -500,8 +621,41 @@
             map.forEach((value, key) => {
                 let row = [key];
                 value.forEach(contest => {
+
+                    let allowedMap = new Map();
+                    allowedMap.set('BR', contest.br);
+                    allowedMap.set('YN1', contest.yn1);
+                    allowedMap.set('YN2', contest.yn2);
+                    allowedMap.set('YN3', contest.yn3);
+                    allowedMap.set('R1', contest.r1);
+                    allowedMap.set('R2', contest.r2);
+                    allowedMap.set('R3', contest.r3);
+                    allowedMap.set('KMS', contest.kms);
+                    allowedMap.set('MS', contest.ms);
+                    allowedMap.set('MSMK', contest.msmk);
+                    allowedMap.set('ZMS', contest.zms);
+
+                    let violationsHtml = Array.from(allowedMap).map(([key, value]) => {
+                        let violations = value > 0;
+                        if (value > 0) {
+                            contest.sports.forEach((aSport) => {
+                                aSport.allowedList.forEach((allow) => {
+                                    if (allow.category === key) {
+                                        violations = false;
+                                    }
+                                });
+                            });
+                        }
+                        if (violations === true) {
+                            return `
+                                <p class="text-danger">Было допущено ${value} участников категории - ${key}, не входящие в список допущенных</p>
+                            `;
+                        } else {
+                            return '';
+                        }
+                    }).join('');
+
                     row.push(1);
-                   /* row.push(`Всего первенств: ${value.length} <br> Количество субъектов в первенстве: ${contest.subjects.length}`);*/
                     row.push(`
                         <div class="row">
                             <div class="col-12">
@@ -511,6 +665,9 @@
                             <div class="col-12">
                                 <p class="fs-6 text-secondary">Вид спорта: ${key}</p>
                                 <p class="fs-6 text-secondary">Всего первенств: ${value.length}</p>
+                            </div>
+                            <div class="col-12">
+                                ${violationsHtml}
                             </div>
                         </div>
                     `);
@@ -536,7 +693,7 @@
 
             baseSportChart.draw(data, options);
         }
-    }
+    }*/
 
     function createPlaceInfoData(response){
         let places = $('#places-info');

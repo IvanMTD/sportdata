@@ -32,6 +32,7 @@ public class ContestRestController {
     private final AgeGroupService groupService;
     private final SportSchoolService schoolService;
     private final SubjectService subjectService;
+    private final QualificationService qualificationService;
 
     @GetMapping("/get/all")
     public Mono<RestContest> getAllContests(@RequestParam(name = "year") int year){
@@ -64,16 +65,20 @@ public class ContestRestController {
                                 sportDTO.setGroup(ageGroupDTO);
                                 return placeService.getAllByIdIn(archiveSport.getPlaceIds()).flatMap(place -> {
                                     PlaceDTO placeDTO = new PlaceDTO(place);
-                                    return participantService.getById(place.getParticipantId()).flatMap(participant -> {
-                                        ParticipantDTO participantDTO = new ParticipantDTO(participant);
-                                        placeDTO.setParticipant(participantDTO);
-                                        return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
-                                            SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
-                                            return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
-                                                SubjectDTO subjectDTO = new SubjectDTO(subject);
-                                                schoolDTO.setSubject(subjectDTO);
-                                                placeDTO.setSchool(schoolDTO);
-                                                return Mono.just(placeDTO);
+                                    return qualificationService.getById(place.getQualificationId()).flatMap(q -> {
+                                        QualificationDTO qualificationDTO = new QualificationDTO(q);
+                                        placeDTO.setQualification(qualificationDTO);
+                                        return participantService.getById(place.getParticipantId()).flatMap(participant -> {
+                                            ParticipantDTO participantDTO = new ParticipantDTO(participant);
+                                            placeDTO.setParticipant(participantDTO);
+                                            return schoolService.getById(place.getSportSchoolId()).flatMap(school -> {
+                                                SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
+                                                return subjectService.getById(school.getSubjectId()).flatMap(subject -> {
+                                                    SubjectDTO subjectDTO = new SubjectDTO(subject);
+                                                    schoolDTO.setSubject(subjectDTO);
+                                                    placeDTO.setSchool(schoolDTO);
+                                                    return Mono.just(placeDTO);
+                                                });
                                             });
                                         });
                                     });
