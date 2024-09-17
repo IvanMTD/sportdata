@@ -497,7 +497,7 @@
                 table[0].push({ type: 'string', role: 'tooltip', p: { html: true } });
             }
 
-            let violationsArray = [];
+            let violationsArray = new Map();
             let i = 1;
             map.forEach((value, key) => {
                 let row = [key];
@@ -516,6 +516,8 @@
                     allowedMap.set('MSMK', contest.msmk);
                     allowedMap.set('ZMS', contest.zms);
 
+                    violationsArray.set(i,false);
+
                     let violationsHtml = Array.from(allowedMap).map(([key, value]) => {
                         let violations = value > 0;
                         if (value > 0) {
@@ -527,8 +529,8 @@
                                 });
                             });
                         }
-                        violationsArray.push(violations);
                         if (violations === true) {
+                            violationsArray.set(i,true);
                             return `
                             <p class="text-danger">Было допущено ${value} участников категории - ${key}, не входящие в список допущенных</p>
                         `;
@@ -580,13 +582,13 @@
 
                 let j = 0;
                 for (let rect of rects) {
-                    console.log(rect.getAttribute('fill'));
                     if (rect.getAttribute('fill') === '#0b4cc5') {
-                        if(violationsArray[j]){
+                        console.log(violationsArray.get(j));
+                        if(violationsArray.get(j)){
                             rect.setAttribute('fill', 'red');
                         }
+                        j++;
                     }
-                    j++;
                 }
             });
 
