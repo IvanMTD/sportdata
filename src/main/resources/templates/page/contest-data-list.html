@@ -514,6 +514,19 @@
                     allowedMap.set('MSMK', contest.msmk);
                     allowedMap.set('ZMS', contest.zms);
 
+                    let allowedAgeMap = new Map();
+                    allowedAgeMap.set('BR', contest.brDate);
+                    allowedAgeMap.set('YN1', contest.yn1Date);
+                    allowedAgeMap.set('YN2', contest.yn2Date);
+                    allowedAgeMap.set('YN3', contest.yn3Date);
+                    allowedAgeMap.set('R1', contest.r1Date);
+                    allowedAgeMap.set('R2', contest.r2Date);
+                    allowedAgeMap.set('R3', contest.r3Date);
+                    allowedAgeMap.set('KMS', contest.kmsDate);
+                    allowedAgeMap.set('MS', contest.msDate);
+                    allowedAgeMap.set('MSMK', contest.msmkDate);
+                    allowedAgeMap.set('ZMS', contest.zmsDate);
+
                     let violationsHtml = Array.from(allowedMap).map(([key, value]) => {
                         let violations = value > 0;
 
@@ -527,50 +540,40 @@
                             });
                         }
 
-                        let ageViolations = '';
-                        let allowedAgeMap = new Map();
-                        allowedAgeMap.set('BR', contest.brDate);
-                        allowedAgeMap.set('YN1', contest.yn1Date);
-                        allowedAgeMap.set('YN2', contest.yn2Date);
-                        allowedAgeMap.set('YN3', contest.yn3Date);
-                        allowedAgeMap.set('R1', contest.r1Date);
-                        allowedAgeMap.set('R2', contest.r2Date);
-                        allowedAgeMap.set('R3', contest.r3Date);
-                        allowedAgeMap.set('KMS', contest.kmsDate);
-                        allowedAgeMap.set('MS', contest.msDate);
-                        allowedAgeMap.set('MSMK', contest.msmkDate);
-                        allowedAgeMap.set('ZMS', contest.zmsDate);
-
-                        contest.sports.forEach((aSport) => {
-                            aSport.places.forEach((place) => {
-                                let birthDate = new Date(place.participant.birthday);
-                                let contestStartDate = new Date(contest.beginning);
-                                let qualification = place.qualification.category;
-                                console.log(qualification);
-                                // Вычисляем разницу в годах
-                                let age = contestStartDate.getFullYear() - birthDate.getFullYear();
-                                // Проверяем, нужно ли уменьшить возраст на 1, если день рождения еще не наступил в текущем году
-                                if (
-                                    contestStartDate.getMonth() < birthDate.getMonth() ||
-                                    (contestStartDate.getMonth() === birthDate.getMonth() && contestStartDate.getDate() < birthDate.getDate())
-                                ) {
-                                    age--;
-                                }
-                                let permissionAge = allowedAgeMap.get(qualification);
-                                if(age < permissionAge){
-                                    ageViolations += `<p class="text-danger">${place.participant.fullName} возраст ${age}, разряд - ${qualification}. Допуск по данному разряду с: ${permissionAge} лет</p>`;
-                                }
-                            });
-                        });
-
-                        let finalViolations = ageViolations;
                         if (violations === true) {
-                            finalViolations += `
+                            return `
                                 <p class="text-danger">Было допущено ${value} участников категории - ${key}, не входящие в список допущенных</p>
                             `;
+                        }else{
+                            return '';
                         }
-                        return finalViolations;
                     }).join('');
+
+                    let ageViolations = '';
+
+                    contest.sports.forEach((aSport) => {
+                        aSport.places.forEach((place) => {
+                            let birthDate = new Date(place.participant.birthday);
+                            let contestStartDate = new Date(contest.beginning);
+                            let qualification = place.qualification.category;
+                            console.log(qualification);
+                            // Вычисляем разницу в годах
+                            let age = contestStartDate.getFullYear() - birthDate.getFullYear();
+                            // Проверяем, нужно ли уменьшить возраст на 1, если день рождения еще не наступил в текущем году
+                            if (
+                                contestStartDate.getMonth() < birthDate.getMonth() ||
+                                (contestStartDate.getMonth() === birthDate.getMonth() && contestStartDate.getDate() < birthDate.getDate())
+                            ) {
+                                age--;
+                            }
+                            let permissionAge = allowedAgeMap.get(qualification);
+                            if(age < permissionAge){
+                                ageViolations += `<p class="text-danger">${place.participant.fullName} возраст ${age}, разряд - ${qualification}. Допуск по данному разряду с: ${permissionAge} лет</p>`;
+                            }
+                        });
+                    });
+
+                    violationsHtml += ageViolations;
 
                     row.push(1);
                     row.push(`
