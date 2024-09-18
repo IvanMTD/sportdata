@@ -179,6 +179,6 @@ public class ContestService {
     }
 
     public Flux<Contest> getAllByDate(LocalDate start, LocalDate end) {
-        return contestRepository.findAllByBeginningBetween(start,end);
+        return contestRepository.findAllByBeginningBetweenAndComplete(start,end,true);
     }
 }

@@ -26,4 +26,5 @@ public interface ContestRepository extends ReactiveCrudRepository<Contest,Intege
     Flux<Contest> findAllBySubjectTitle(Pageable pageable, String search);
 
     Flux<Contest> findAllByBeginningBetween(LocalDate startOfYear, LocalDate endOfYear);
+    Flux<Contest> findAllByBeginningBetweenAndComplete(LocalDate startOfYear, LocalDate endOfYear, Boolean complete);
 }
