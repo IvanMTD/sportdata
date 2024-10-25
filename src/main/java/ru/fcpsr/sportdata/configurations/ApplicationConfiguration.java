@@ -2,6 +2,7 @@ package ru.fcpsr.sportdata.configurations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,12 @@ import java.time.LocalDate;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
+
+    @Value("${app.admin}")
+    private String username;
+    @Value("${app.admin.pass}")
+    private String password;
+
     @Bean
     public WebSessionIdResolver webSessionIdResolver() {
         CookieWebSessionIdResolver resolver = new CookieWebSessionIdResolver();
@@ -41,14 +48,14 @@ public class ApplicationConfiguration {
             }
             log.info("****************** environments end ********************");
             userRepository.findByUsername("admin").flatMap(existingUser -> {
-                log.info("User {} exist.", existingUser.getEmail());
+                log.info("User {} exist.", existingUser.getUsername());
                 return Mono.just(existingUser);
             }).switchIfEmpty(
                     Mono.defer(() -> {
-                        log.info("User not found! Create default admin user: {}, password: {}", "admin","Admin_123!");
+                        log.info("User not found! Create default admin user: {}, password: {}", username,password);
                         SysUser user = new SysUser();
-                        user.setUsername("admin");
-                        user.setPassword(encoder.encode("Admin_123!"));
+                        user.setUsername(username);
+                        user.setPassword(encoder.encode(password));
                         user.setEmail("karachkov_is@fcpsr.ru");
                         user.setRole(Role.ADMIN);
                         return userRepository.save(user);
