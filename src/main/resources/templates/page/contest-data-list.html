@@ -52,6 +52,7 @@
         </div>
     </div>
     <div class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3 g-3" id="charts"></div>
+    <br>
     <div class="row p-0 m-0">
         <div class="col-12 p-0 m-0" id="places-info">
 
@@ -68,21 +69,9 @@
 
     window.addEventListener('load', function () {
         setTimeout(() => {
-            setupContestChartsByYear(new Date().getFullYear());
+            updateData();
         },100);
     });
-
-    function setupContestChartsByYear(year){
-        showSpinner();
-        $.ajax({
-            url:'/api/contest/get/all?year=' + year,
-            type:'get',
-            success:function (response){
-                setupAllData(response);
-                hideSpinner();
-            }
-        });
-    }
 
     function updateData(){
         let charts = $('#charts');
@@ -116,23 +105,26 @@
         createPlaceInfoData(response);
     }
 
-    function createChartContestTotal(response){
-        let htmlIn = `
-                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
-                    <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom mx-1">
-                            <div class="col d-flex">
-                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Прошедшие соревнования</strong></p>
-                            </div>
-                        </div>
-                        <div class="row pt-4">
-                            <div class="col">
-                                <div id="chart-1" class="w-100 h-100"></div>
-                            </div>
+    function baseChartField(title, chart){
+        return `
+            <div class="col-12 col-md-6 col-lg-4 m-auto p-2 h-100">
+                <div class="shadow border rounded-4">
+                    <div class="row m-0 p-0 border-bottom">
+                        <div class="col d-flex m-0 p-0">
+                            <p class="text-center text-uppercase fs-5 text-dark p-0 m-auto"><strong>${title}</strong></p>
                         </div>
                     </div>
+                    <div class="row m-0 p-0 d-flex">
+                        <div id="${chart}" class="col m-auto"></div>
+                    </div>
                 </div>
-                `;
+            </div>
+        `;
+    }
+
+    function createChartContestTotal(response){
+        let chartName = 'chart-1';
+        let htmlIn = baseChartField('Прошедшие соревнования',chartName);
         $('#charts').append(htmlIn);
 
         google.charts.load('current', {'packages':['corechart']});
@@ -155,29 +147,15 @@
                 colors: colorsSet
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart-1'));
+            var chart = new google.visualization.PieChart(document.getElementById(chartName));
 
             chart.draw(data, options);
         }
     }
 
     function createChartParticipantTotal(response){
-        let htmlIn = `
-                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
-                    <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom mx-1">
-                            <div class="col d-flex">
-                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники соревнований</strong></p>
-                            </div>
-                        </div>
-                        <div class="row pt-4">
-                            <div class="col">
-                                <div id="chart-2" class="w-100 h-100"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
+        let chartName = 'chart-2';
+        let htmlIn = baseChartField('Участники соревнований',chartName);
         $('#charts').append(htmlIn);
 
         google.charts.load('current', {'packages':['corechart']});
@@ -213,29 +191,15 @@
                 colors: colorsSet
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart-2'));
+            var chart = new google.visualization.PieChart(document.getElementById(chartName));
 
             chart.draw(data, options);
         }
     }
 
     function createChartOlympicQualifications(response){
-        let htmlIn = `
-                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
-                    <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom mx-1">
-                            <div class="col d-flex">
-                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Олимпийские)</strong></p>
-                            </div>
-                        </div>
-                        <div class="row pt-4">
-                            <div class="col">
-                                <div id="chart-3" class="w-100 h-100" style="overflow: visible"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
+        let chartName = 'chart-3';
+        let htmlIn = baseChartField('Участники (Олимпийские)',chartName);
         $('#charts').append(htmlIn);
 
         google.charts.load('current', {'packages':['corechart']});
@@ -278,29 +242,15 @@
                 colors: colorsSet
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart-3'));
+            var chart = new google.visualization.PieChart(document.getElementById(chartName));
 
             chart.draw(data, options);
         }
     }
 
     function createChartNoOlympicQualifications(response){
-        let htmlIn = `
-                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
-                    <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom mx-1">
-                            <div class="col d-flex">
-                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Неолимпийские)</strong></p>
-                            </div>
-                        </div>
-                        <div class="row pt-5">
-                            <div class="col">
-                                <div id="chart-4" class="w-100 h-100" style="overflow: visible"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
+        let chartName = 'chart-4';
+        let htmlIn = baseChartField('Участники (Неолимпийские)',chartName);
         $('#charts').append(htmlIn);
 
         google.charts.load('current', {'packages':['corechart']});
@@ -343,29 +293,15 @@
                 colors: colorsSet
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart-4'));
+            var chart = new google.visualization.PieChart(document.getElementById(chartName));
 
             chart.draw(data, options);
         }
     }
 
     function createChartAdaptiveQualifications(response){
-        let htmlIn = `
-                <div class="col-sm-12 col-md-6 col-lg-4 m-auto">
-                    <div class="m-2 shadow border rounded-4" style="height: 300px">
-                        <div class="row border-bottom mx-1">
-                            <div class="col d-flex">
-                                <p class="text-center text-uppercase fs-5 text-dark m-auto p-0"><strong>Участники (Адаптивные)</strong></p>
-                            </div>
-                        </div>
-                        <div class="row pt-5">
-                            <div class="col">
-                                <div id="chart-5" class="w-100 h-100" style="overflow: visible"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `;
+        let chartName = 'chart-5';
+        let htmlIn = baseChartField('Участники (Адаптивные)',chartName);
         $('#charts').append(htmlIn);
 
         google.charts.load('current', {'packages':['corechart']});
@@ -408,7 +344,7 @@
                 colors: colorsSet
             };
 
-            var chart = new google.visualization.PieChart(document.getElementById('chart-5'));
+            var chart = new google.visualization.PieChart(document.getElementById(chartName));
 
             chart.draw(data, options);
         }
@@ -556,7 +492,6 @@
                             let birthDate = new Date(place.participant.birthday);
                             let contestStartDate = new Date(contest.beginning);
                             let qualification = place.qualification.category;
-                            console.log(qualification);
                             // Вычисляем разницу в годах
                             let age = contestStartDate.getFullYear() - birthDate.getFullYear();
                             // Проверяем, нужно ли уменьшить возраст на 1, если день рождения еще не наступил в текущем году
@@ -683,6 +618,7 @@
         let tBody = $('#t-body');
         let tempFullName = '';
         let tempBirthday = '';
+        let finalHtml = '';
         dataArray.forEach(function (data){
             let currentCount;
             if(tempFullName === data.fullName && tempBirthday === data.birthday){
@@ -690,7 +626,7 @@
             }else{
                 currentCount = count;
             }
-            tBody.append(`
+            finalHtml += `
                 <tr>
                     <th scope="row">${currentCount}</th>
                     <td><a href="/database/participant/${data.pid}/show">${data.fullName}</a></td>
@@ -702,12 +638,13 @@
                     <td>${data.place}</td>
                     <td>${data.school} - ${data.subject}</td>
                 </tr>
-            `);
+            `;
             if(tempFullName !== data.fullName || tempBirthday !== data.birthday){
                 count++;
             }
             tempFullName = data.fullName;
             tempBirthday = data.birthday;
         });
+        tBody.append(finalHtml);
     }
 </script>
