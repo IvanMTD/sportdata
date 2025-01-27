@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.controllers.web;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,12 +12,12 @@ import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.services.*;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 @RequestMapping("/analytics")
 @RequiredArgsConstructor
@@ -153,7 +154,7 @@ public class AnalyticalController {
                     int sy = baseSport.getIssueDate().getYear();
                     int ey = baseSport.getExpiration();
                     int cy = contest.getBeginning().getYear();
-                    if(sy < cy && cy < ey) {
+                    if(sy <= cy && cy < ey) {
                         return subjectService.getById(baseSport.getSubjectId()).flatMap(subject -> {
                             return Mono.just(new SubjectDTO(subject));
                         });
