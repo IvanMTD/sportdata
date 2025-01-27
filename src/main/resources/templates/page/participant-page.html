@@ -456,11 +456,6 @@
                     }
                 </script>
 
-                <script th:inline="javascript">
-                    let contestData = [[${contests}]];
-                    console.log(contestData);
-                </script>
-
                 <div class="row" th:if="${contests} != null and${contests.size()} != 0">
                     <div class="col">
                         <p class="text-center">Дата</p>
