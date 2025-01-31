@@ -25,6 +25,7 @@
         <link href="/fw/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     </head>
+
     <body>
 
         <div id="overlay">
@@ -40,11 +41,13 @@
         <div th:insert="~{page/user-reg-page}" th:if="${index} == 'user-reg-page'"></div>
         <div th:insert="~{page/login-page}" th:if="${index} == 'login-page'"></div>
         <div th:insert="~{page/profile-page}" th:if="${index} == 'profile-page'"></div>
+        <!--<div th:insert="~{page/profile-new-page}" th:if="${index} == 'profile-page'"></div>-->
         <div th:insert="~{page/data-sum-page}" th:if="${index} == 'data-sum-page'"></div>
         <div th:insert="~{page/sport-data-page}" th:if="${index} == 'sport-data-page'"></div>
         <div th:insert="~{page/subject-data-page}" th:if="${index} == 'subject-data-page'"></div>
         <div th:insert="~{page/participant-data-page}" th:if="${index} == 'participant-data-page'"></div>
         <div th:insert="~{page/participant-page}" th:if="${index} == 'participant-page'"></div>
+        <div th:insert="~{page/found-list-page}" th:if="${index} == 'found-list-page'"></div>
         <div th:insert="~{page/contest-all-page}" th:if="${index} == 'contest-all-page'"></div>
         <div th:insert="~{page/first-step-page}" th:if="${index} == 'first-step-page'"></div>
         <div th:insert="~{page/second-step-page}" th:if="${index} == 'second-step-page'"></div>

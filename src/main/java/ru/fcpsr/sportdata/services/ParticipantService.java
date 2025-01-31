@@ -1,5 +1,6 @@
 package ru.fcpsr.sportdata.services;
 
+import jakarta.mail.Part;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
@@ -92,6 +93,22 @@ public class ParticipantService {
         } else {
             return Mono.just(new Participant());
         }
+    }
+
+    public Flux<Participant> findAllBySearchQuery(String query){
+        String[] parts = query.split(" ");
+        Flux<Participant> participantFlux = Flux.empty();
+        for(String part : parts){
+            part = part.trim();
+            Flux<Participant> byLastname = participantRepository.findAllByLastnameLikeIgnoreCase(part);
+            Flux<Participant> byName = participantRepository.findAllByNameLikeIgnoreCase(part);
+            Flux<Participant> byMiddleName = participantRepository.findAllByMiddleNameLikeIgnoreCase(part);
+            participantFlux = participantFlux.mergeWith(byLastname).mergeWith(byName).mergeWith(byMiddleName);
+        }
+
+        participantFlux = participantFlux.distinct(Participant::getId);
+        //participantFlux = participantFlux.filter(participant -> query.equalsIgnoreCase(participant.getFullName()));
+        return participantFlux;
     }
 
     // CREATE

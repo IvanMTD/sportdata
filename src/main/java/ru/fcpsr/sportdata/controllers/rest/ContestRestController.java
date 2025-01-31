@@ -2,6 +2,7 @@ package ru.fcpsr.sportdata.controllers.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,11 +49,18 @@ public class ContestRestController {
     }
 
     private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId) {
+        long currentTime = System.currentTimeMillis();
         return contestService.getAllByDate(start, end)
                 .flatMap(this::buildContestDTO)
                 .collectList()
                 .map(contests -> filterAndSortContests(contests, sportId))
-                .map(this::categorizeAndBuildRestContest);
+                .map(this::categorizeAndBuildRestContest)
+                .map(restContest -> {
+                    long delta = System.currentTimeMillis();
+                    long seconds = (delta - currentTime) / 1000;
+                    log.info("Выполнено за {} секунд", seconds);
+                    return restContest;
+                });
     }
 
     private Mono<ContestDTO> buildContestDTO(Contest contest) {

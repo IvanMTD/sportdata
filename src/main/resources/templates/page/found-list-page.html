@@ -1,0 +1,285 @@
+<div class="row">
+    <div class="col"></div>
+    <div class="col-6 text-center py-5">
+        <h1>
+            <small class="text-body-secondary">
+                Детальное состояние базы данных "Участники"
+            </small>
+        </h1>
+        <h4 th:object="${participantForm}">
+            <small class="text-danger" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"></small>
+            <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+            <small class="text-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></small>
+        </h4>
+    </div>
+    <div class="col"></div>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-6">
+        <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'А'">
+                <span class="page-link">А</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'А'">
+                <a class="page-link" th:href="@{/database/participant/А}" >А</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Б'">
+                <span class="page-link">Б</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Б'">
+                <a class="page-link" th:href="@{/database/participant/Б}" >Б</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'В'">
+                <span class="page-link">В</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'В'">
+                <a class="page-link" th:href="@{/database/participant/В}">В</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Г'">
+                <span class="page-link">Г</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Г'">
+                <a class="page-link" th:href="@{/database/participant/Г}">Г</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Д'">
+                <span class="page-link">Д</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Д'">
+                <a class="page-link" th:href="@{/database/participant/Д}">Д</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Е'">
+                <span class="page-link">Е</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Е'">
+                <a class="page-link" th:href="@{/database/participant/Е}">Е</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ё'">
+                <span class="page-link">Ё</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ё'">
+                <a class="page-link" th:href="@{/database/participant/Ё}" >Ё</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ж'">
+                <span class="page-link">Ж</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ж'">
+                <a class="page-link" th:href="@{/database/participant/Ж}">Ж</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'З'">
+                <span class="page-link">З</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'З'">
+                <a class="page-link" th:href="@{/database/participant/З}">З</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'И'">
+                <span class="page-link">И</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'И'">
+                <a class="page-link" th:href="@{/database/participant/И}">И</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Й'">
+                <span class="page-link">Й</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Й'">
+                <a class="page-link" th:href="@{/database/participant/Й}">Й</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'К'">
+                <span class="page-link">К</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'К'">
+                <a class="page-link" th:href="@{/database/participant/К}">К</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Л'">
+                <span class="page-link">Л</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Л'">
+                <a class="page-link" th:href="@{/database/participant/Л}">Л</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'М'">
+                <span class="page-link">М</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'М'">
+                <a class="page-link" th:href="@{/database/participant/М}">М</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Н'">
+                <span class="page-link">Н</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Н'">
+                <a class="page-link" th:href="@{/database/participant/Н}">Н</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'О'">
+                <span class="page-link">О</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'О'">
+                <a class="page-link" th:href="@{/database/participant/О}">О</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'П'">
+                <span class="page-link">П</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'П'">
+                <a class="page-link" th:href="@{/database/participant/П}">П</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Р'">
+                <span class="page-link">Р</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Р'">
+                <a class="page-link" th:href="@{/database/participant/Р}">Р</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'С'">
+                <span class="page-link">С</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'С'">
+                <a class="page-link" th:href="@{/database/participant/С}">С</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Т'">
+                <span class="page-link">Т</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Т'">
+                <a class="page-link" th:href="@{/database/participant/Т}">Т</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'У'">
+                <span class="page-link">У</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'У'">
+                <a class="page-link" th:href="@{/database/participant/У}">У</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ф'">
+                <span class="page-link">Ф</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ф'">
+                <a class="page-link" th:href="@{/database/participant/Ф}">Ф</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Х'">
+                <span class="page-link">Х</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Х'">
+                <a class="page-link" th:href="@{/database/participant/Х}">Х</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ц'">
+                <span class="page-link">Ц</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ц'">
+                <a class="page-link" th:href="@{/database/participant/Ц}">Ц</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ч'">
+                <span class="page-link">Ч</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ч'">
+                <a class="page-link" th:href="@{/database/participant/Ч}">Ч</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ш'">
+                <span class="page-link">Ш</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ш'">
+                <a class="page-link" th:href="@{/database/participant/Ш}">Ш</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Щ'">
+                <span class="page-link">Щ</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Щ'">
+                <a class="page-link" th:href="@{/database/participant/Щ}">Щ</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ъ'">
+                <span class="page-link">Ъ</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ъ'">
+                <a class="page-link" th:href="@{/database/participant/Ъ}">Ъ</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ы'">
+                <span class="page-link">Ы</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ы'">
+                <a class="page-link" th:href="@{/database/participant/Ы}">Ы</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ь'">
+                <span class="page-link">Ь</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ь'">
+                <a class="page-link" th:href="@{/database/participant/Ь}">Ь</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Э'">
+                <span class="page-link">Э</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Э'">
+                <a class="page-link" th:href="@{/database/participant/Э}">Э</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Ю'">
+                <span class="page-link">Ю</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Ю'">
+                <a class="page-link" th:href="@{/database/participant/Ю}">Ю</a>
+            </li>
+            <li class="page-item active" aria-current="page" th:if="${letter} == 'Я'">
+                <span class="page-link">Я</span>
+            </li>
+            <li class="page-item" th:if="${letter} != 'Я'">
+                <a class="page-link" th:href="@{/database/participant/Я}">Я</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col"></div>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-6 py-5">
+        <form class="py-5" th:method="GET" th:action="@{/database/participant/search}">
+            <div class="input-group mb-3">
+                <span class="input-group-text">Поиск</span>
+                <input type="search" class="form-control" id="search-form" list="datalist-form" placeholder="Начните вводить ... " name="search">
+                <datalist id="datalist-form"></datalist>
+                <script th:inline="javascript">
+                    $('#search-form').on('input', function() {
+                        var searchQuery = this.value;
+
+                        $.ajax({
+                            url: '/rest/database/participants',
+                            type: 'get',
+                            data: {
+                                query: searchQuery
+                            },
+                            success: function(response) {
+                                var dataList = $('#datalist-form');
+                                dataList.empty();
+
+                                response.forEach(function(item) {
+                                    dataList.append(
+                                        '<option value="' + item.lastname + ' ' + item.name + ' ' + item.middleName + '">' + item.birthday + '</option>'
+                                    );
+                                });
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </form>
+    </div>
+    <div class="col"></div>
+</div>
+<div class="row">
+    <div class="col"></div>
+    <div class="col-6" id="foundContainer"></div>
+    <div class="col"></div>
+</div>
+
+<script th:inline="javascript">
+    let participants = [[${participants}]];
+    let $container = $('#foundContainer');
+    let html = '';
+    participants.forEach((participant) => {
+        console.log(participant);
+        html += `
+            <div class="row">
+                <div class="col-12 p-2">
+                    <div class="card rounded-4 shadow">
+                        <div class="card-body text-center">
+                            <p>${participant.fullName} ${participant.birthday} <a href="/database/participant/${participant.id}/show">Перейти в карточку</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    $container.empty();
+    $container.append(html);
+</script>

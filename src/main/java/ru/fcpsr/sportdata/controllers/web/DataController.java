@@ -619,7 +619,29 @@ public class DataController {
 
     @GetMapping("/participant/search")
     public Mono<Rendering> searchParticipant(@RequestParam(name = "search") String search){
-        return participantService.findByFullName(search).flatMap(participant -> Mono.just(Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build()));
+        /*return participantService.findByFullName(search).flatMap(participant -> Mono.just(
+                Rendering.redirectTo("/database/participant/" + participant.getId() + "/show").build())
+        );*/
+        return participantService.findAllBySearchQuery(search).collectList().flatMap(l -> {
+            if(l.size() == 0){
+                return Mono.just(
+                        Rendering.redirectTo("/database/participant/" + 0 + "/show").build()
+                );
+            }else if(l.size() == 1){
+                return Mono.just(
+                        Rendering.redirectTo("/database/participant/" + l.get(0).getId() + "/show").build()
+                );
+            }else{
+                return Mono.just(
+                        Rendering.view("template")
+                                .modelAttribute("title","Participant view list")
+                                .modelAttribute("index","found-list-page")
+                                .modelAttribute("participants",l)
+                                .modelAttribute("participantForm", new ParticipantDTO())
+                                .build()
+                );
+            }
+        });
     }
 
     @GetMapping("/participant/{id}/show")

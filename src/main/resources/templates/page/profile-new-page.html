@@ -1,0 +1,51 @@
+<div class="container">
+    <div class="row row-cols-sm-1 row-cols-md-1 row-cols-lg-2">
+        <div class="col-12 col-lg-3 m-2">
+            <div class="row">
+                <div class="col shadow rounded-4 p-2" id="user-field">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-9 m-2">
+            <div class="row">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    let user = [[${user}]];
+    console.log(user);
+    let $userInfo = $('#user-field');
+    $userInfo.append(`
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-person-circle fs-4"></i></span>
+            <input type="text" class="form-control" placeholder="Имя пользователя" aria-label="Username"
+                   aria-describedby="basic-addon1" value="${user.username}" disabled readonly>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-envelope-at fs-4"></i></span>
+            <input type="email" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                   aria-describedby="basic-addon1" value="${user.email}" disabled readonly>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-gear fs-4"></i></span>
+            <input type="text" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
+                   aria-describedby="basic-addon1" value="${user.role}" disabled
+                   readonly>
+        </div>
+        <div class="row">
+            <div class="col d-flex">
+                <i class="bi bi-person-lines-fill fs-4 m-auto"></i>
+            </div>
+            <div class="col d-flex">
+                <i class="bi bi-person-fill-add fs-4 m-auto"></i>
+            </div>
+            <div class="col d-flex">
+                <i class="bi bi-person-fill-add fs-4 m-auto"></i>
+            </div>
+        </div>
+    `);
+</script>

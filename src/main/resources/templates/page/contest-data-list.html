@@ -85,7 +85,7 @@
             data:{
                 start:start,
                 end:end,
-                sport:sport
+                sport:sport,
             },
             success:function (response){
                 charts.empty();
@@ -390,13 +390,13 @@
         $chartsContainer.append(`
             <div class="row my-2">
                 <div class="col-12">
-                    <div class="row p-4">
+                    <div class="row p-2">
                         <div class="col-12 border shadow rounded-4" style="height:300px" id="olympic-sport"></div>
                     </div>
-                    <div class="row p-4">
+                    <div class="row p-2">
                         <div class="col-12 border shadow rounded-4" style="height:300px" id="no-olympic-sport"></div>
                     </div>
-                    <div class="row p-4">
+                    <div class="row p-2">
                         <div class="col-12 border shadow rounded-4" style="height:300px" id="adaptive-sport"></div>
                     </div>
                 </div>
