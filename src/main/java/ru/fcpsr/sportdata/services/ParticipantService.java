@@ -107,7 +107,7 @@ public class ParticipantService {
         }
 
         participantFlux = participantFlux.distinct(Participant::getId);
-        //participantFlux = participantFlux.filter(participant -> query.equalsIgnoreCase(participant.getFullName()));
+        participantFlux = participantFlux.filter(participant -> query.equalsIgnoreCase(participant.getFullName()));
         return participantFlux;
     }
 
