@@ -1,51 +1,192 @@
 <div class="container">
     <div class="row row-cols-sm-1 row-cols-md-1 row-cols-lg-2">
-        <div class="col-12 col-lg-3 m-2">
-            <div class="row">
+        <div class="col-12 col-lg-3 m-0 p-2">
+            <div class="row m-0 p-0">
                 <div class="col shadow rounded-4 p-2" id="user-field">
 
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-9 m-2">
-            <div class="row">
+        <div class="col-12 col-lg-9 m-0 p-2">
+            <div class="row m-0 p-0">
+                <div class="col shadow rounded-4 p-2" id="action-menu">
 
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="/js/profile.validation.js"></script>
 <script th:inline="javascript">
     let user = [[${user}]];
-    console.log(user);
+    let role_admin = [[${admin}]];
+    let role_manager = [[${manager}]];
+
     let $userInfo = $('#user-field');
-    $userInfo.append(`
+    let userHtml = `
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="bi bi-person-circle fs-4"></i></span>
-            <input type="text" class="form-control" placeholder="Имя пользователя" aria-label="Username"
-                   aria-describedby="basic-addon1" value="${user.username}" disabled readonly>
+            <input type="text" class="form-control text-center" placeholder="Имя пользователя" aria-label="Username" aria-describedby="basic-addon1" value="${user.username}" disabled readonly>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="bi bi-envelope-at fs-4"></i></span>
-            <input type="email" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
-                   aria-describedby="basic-addon1" value="${user.email}" disabled readonly>
+            <input type="email" class="form-control text-center" placeholder="Ваша почта" aria-label="Confirm" aria-describedby="basic-addon1" value="${user.email}" disabled readonly>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text"><i class="bi bi-gear fs-4"></i></span>
-            <input type="text" class="form-control" placeholder="Ваша почта" aria-label="Confirm"
-                   aria-describedby="basic-addon1" value="${user.role}" disabled
-                   readonly>
+            <input type="text" class="form-control text-center" placeholder="Ваша почта" aria-label="Confirm" aria-describedby="basic-addon1" value="${user.role}" disabled readonly>
         </div>
-        <div class="row">
-            <div class="col d-flex">
-                <i class="bi bi-person-lines-fill fs-4 m-auto"></i>
+        <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-pass fs-4"></i></span>
+            <input type="submit" class="form-control rounded-end-2" aria-label="Confirm" aria-describedby="basic-addon1" value="Сменить пароль" data-bs-toggle="modal" data-bs-target="#changePassword">
+
+            <div class="modal fade" id="changePassword" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="changePasswordLabel">Окно смены пароля</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row mb-2">
+                                <div class="col-12 form-floating">
+                                    <input type="password" class="form-control" id="old" placeholder="old" oninput="passwordValidation()">
+                                    <label class="ms-2" for="old">Старый пароль</label>
+                                    <div class="valid-feedback">
+                                        <p id="old-valid" class="text-center">Отлично!</p>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        <p id="old-invalid" class="text-center">Не может быть пустым!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-12 form-floating">
+                                    <input type="password" class="form-control" id="new" placeholder="new" oninput="passwordValidation()">
+                                    <label class="ms-2" for="new">Новый пароль</label>
+                                    <div class="valid-feedback">
+                                        <p id="new-valid" class="text-center">Отлично!</p>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        <p id="new-invalid" class="text-center">Не может быть пустым!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 form-floating">
+                                    <input type="password" class="form-control" id="repeat" placeholder="repeat" oninput="passwordValidation()">
+                                    <label class="ms-2" for="repeat">Повторите новый пароль</label>
+                                    <div class="valid-feedback">
+                                        <p id="repeat-valid" class="text-center">Отлично!</p>
+                                    </div>
+                                    <div class="invalid-feedback">
+                                        <p id="repeat-invalid" class="text-center">Не может быть пустым!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-link m-0 px-1" data-bs-dismiss="modal"><i class="bi bi-x-circle text-danger fs-4"></i></button>
+                            <button type="button" class="btn btn-link m-0 px-1" id="changePasswordButton"><i class="bi bi-check-circle text-success fs-4"></i></button>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-            <div class="col d-flex">
-                <i class="bi bi-person-fill-add fs-4 m-auto"></i>
-            </div>
-            <div class="col d-flex">
-                <i class="bi bi-person-fill-add fs-4 m-auto"></i>
-            </div>
+
         </div>
-    `);
+        ${role_admin ? `
+            <!--<div class="row mt-2">
+                <div class="col d-flex">
+                    <i class="bi bi-person-lines-fill fs-4 m-auto"></i>
+                </div>
+                <div class="col d-flex">
+                    <i class="bi bi-person-fill-add fs-4 m-auto"></i>
+                </div>
+                <div class="col d-flex">
+                    <i class="bi bi-person-fill-add fs-4 m-auto"></i>
+                </div>
+            </div>-->
+        ` : ''}
+    `;
+    $userInfo.append(userHtml);
+
+    let $changePasswordButton = $('#changePasswordButton');
+    $changePasswordButton.on('click',() => {
+        passwordValidation();
+
+        let $old = $('#old');
+        let $new = $('#new');
+        let $confirm = $('#repeat');
+
+
+        if($old.hasClass('is-invalid') || $new.hasClass('is-invalid') || $confirm.hasClass('is-invalid')){
+            return;
+        }
+
+        $.ajax({
+            url:'/api/account/user/password/update',
+            type:'get',
+            data: {
+                password: $new.val()
+            },
+            success: function(response) {
+                if (response.object) {
+                    let $passwordModal = $('#changePassword');
+                    $passwordModal.modal('hide');
+                    $passwordModal.on('hidden.bs.modal', () => {
+                        // Очистка всех полей ввода вручную
+                        $old.val('');
+                        $new.val('');
+                        $confirm.val('');
+                        // Сброс классов валидации
+                        $old.removeClass('is-valid is-invalid');
+                        $new.removeClass('is-valid is-invalid');
+                        $confirm.removeClass('is-valid is-invalid');
+                    });
+                    showToast('Успех', response.message);
+                } else {
+                    showToast('Ошибка', response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                let response = xhr.responseJSON;
+                if (response && response.message) {
+                    showToast('Ошибка', response.message);
+                } else {
+                    showToast(status, error + ': ' + xhr.responseText);
+                }
+            }
+        });
+    })
+
+    let $actionMenu = $('#action-menu');
+    let actionHtml = `
+        ${role_admin ? `
+            <div class="row">
+                <div class="col d-flex">
+                    <p class="m-auto p-5 fs-4 text-dark">"На данный момент для роли администратора доступна только смена пароля."</p>
+                </div>
+            </div>
+        `
+        : role_manager ? `
+            <div class="row">
+                <div class="col d-flex">
+                    <p class="m-auto p-5 fs-4 text-dark">"На данный момент для роли менеджера доступна только смена пароля."</p>
+                </div>
+            </div>
+        `
+        : `
+            <div class="row">
+                <div class="col d-flex">
+                    <p class="m-auto p-5 fs-4 text-dark">"На данный момент для роли пользователя доступна только смена пароля."</p>
+                </div>
+            </div>
+        `}
+    `;
+    $actionMenu.append(actionHtml);
 </script>
