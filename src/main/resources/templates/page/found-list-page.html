@@ -273,7 +273,7 @@
                 <div class="col-12 p-2">
                     <div class="card rounded-4 shadow">
                         <div class="card-body text-center">
-                            <p>${participant.fullName} ${participant.birthday} <a href="/database/participant/${participant.id}/show">Перейти в карточку</a></p>
+                            <p><i class="bi bi-person"></i> ${participant.fullName} - ${formatDate(participant.birthday)} - <a href="/database/participant/${participant.id}/show">Перейти в карточку</a></p>
                         </div>
                     </div>
                 </div>
@@ -281,5 +281,14 @@
         `;
     });
     $container.empty();
+    $container.append(`
+        <div class="row">
+            <div class="col"></div>
+            <div class="col-6">
+                <p class="fs-4 text-dark text-center">Найдено несколько участников, выбирите подходящего</p>
+            </div>
+            <div class="col"></div>
+        </div>
+    `);
     $container.append(html);
 </script>

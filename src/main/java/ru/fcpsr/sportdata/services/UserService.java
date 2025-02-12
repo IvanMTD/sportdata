@@ -1,5 +1,6 @@
 package ru.fcpsr.sportdata.services;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import ru.fcpsr.sportdata.dto.UserDTO;
 import ru.fcpsr.sportdata.models.SysUser;
 import ru.fcpsr.sportdata.repositories.UserRepository;
 
+@Data
 @Service
 @RequiredArgsConstructor
 public class UserService implements ReactiveUserDetailsService {
@@ -35,6 +37,10 @@ public class UserService implements ReactiveUserDetailsService {
     public Mono<SysUser> saveUser(UserDTO user) {
         user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(new SysUser(user));
+    }
+
+    public Mono<SysUser> save(SysUser user){
+        return userRepository.save(user);
     }
     // UPDATE
     public Mono<SysUser> updateUserData(UserDTO user) {
