@@ -427,11 +427,15 @@ public class ContestMonitoringDTO {
 
     public List<String> getAnalyticsAboutFinalists(){
         Set<SupportPart> supportParts = getParts();
+        log.info("first: [{}]",supportParts);
         List<SupportPart> dis = distinctParts(supportParts);
         return generateAnalytics(dis);
     }
 
     private List<String> generateAnalytics(List<SupportPart> supportParts) {
+
+        log.info("incoming parts [{}]", supportParts);
+
         Map<Category, List<SupportPart>> groupedByCategory = supportParts.stream()
                 .collect(Collectors.groupingBy(SupportPart::getCategory));
 

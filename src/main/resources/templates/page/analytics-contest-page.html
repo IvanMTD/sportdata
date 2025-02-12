@@ -99,7 +99,7 @@
             <p th:each="l, l_stat : ${monitoring.subjectMonitoring.subjectLastPlace}" th:id="'point-10-3-' + ${l_stat.index}" class="fs-5 text-dark" th:text="${l.title}"></p>
 
             <p id="point-11" class="fs-5 text-dark">
-                11. Победители и призеры соревнования <span th:text="${monitoring.formatContestTitle}"></span> в спортивных дисциплинах вида спорта представляли следующие организации, осуществляющие спортивную подготовку в субъектах Российской Федерации:
+                11. Победители и призеры соревнования <span th:text="${monitoring.formatContestTitle}"></span> в спортивных дисциплинах вида спорта представляли следующие физкультурно-спортивные организации или образовательные организации в субъектах Российской Федерации:
             </p>
 
             <div class="border-start border-top border-end my-2" th:each="asp, asp_stat : ${monitoring.disciplines}">
