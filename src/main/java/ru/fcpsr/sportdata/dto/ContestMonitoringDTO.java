@@ -427,15 +427,11 @@ public class ContestMonitoringDTO {
 
     public List<String> getAnalyticsAboutFinalists(){
         Set<SupportPart> supportParts = getParts();
-        log.info("first: [{}]",supportParts);
         List<SupportPart> dis = distinctParts(supportParts);
         return generateAnalytics(dis);
     }
 
     private List<String> generateAnalytics(List<SupportPart> supportParts) {
-
-        log.info("incoming parts [{}]", supportParts);
-
         Map<Category, List<SupportPart>> groupedByCategory = supportParts.stream()
                 .collect(Collectors.groupingBy(SupportPart::getCategory));
 
@@ -506,9 +502,9 @@ public class ContestMonitoringDTO {
                 .collect(Collectors.groupingBy(SupportPart::getPid))
                 .values()
                 .stream()
-                .map(parts -> parts.stream().max(Comparator.comparingInt(sp -> sp.getCategory().getCount())).orElse(null))
+                .map(parts -> parts.stream().max(Comparator.comparingInt(sp -> sp.getNewCategory().getCount())).orElse(null))
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(sp -> sp.getCategory().getCount()))
+                .sorted(Comparator.comparing(sp -> sp.getNewCategory().getCount()))
                 .collect(Collectors.toCollection(ArrayList::new));
         return dis;
     }
