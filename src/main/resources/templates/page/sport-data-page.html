@@ -1,7 +1,6 @@
 <div class="container">
     <div class="row">
-        <div class="col"></div>
-        <div class="col-6 text-center py-5">
+        <div class="col-12 text-center py-5">
             <h1>
                 <small class="text-body-secondary">
                     Детальное состояние базы данных "Виды спорта"
@@ -19,12 +18,10 @@
                 <small class="text-danger" th:if="${#fields.hasErrors('maxAge')}" th:errors="*{maxAge}"></small>
             </h4>
         </div>
-        <div class="col"></div>
     </div>
     <div class="row">
-        <div class="col"></div>
-        <div class="col-6">
-            <ul class="pagination pagination-sm justify-content-center">
+        <div class="col-12">
+            <ul class="pagination pagination-sm justify-content-center flex-wrap">
                 <li class="page-item active" aria-current="page" th:if="${letter} == 'А'">
                     <span class="page-link">А</span>
                 </li>
@@ -225,7 +222,6 @@
                 </li>
             </ul>
         </div>
-        <div class="col"></div>
     </div>
 
     <div class="row">
@@ -260,17 +256,17 @@
                             <!-- НАЧАЛО БЛОКА КАРТЫ ПО НАСТРОЙКЕ ВИДА СПОРТА -->
                             <div class="row rounded-4 shadow m-4">
                                 <!-- Картинка -->
-                                <div class="col-3 p-0 img-bg-control-3 rounded-start-4" style="overflow: hidden">
+                                <div class="col-lg-3 p-0 img-bg-control-3 rounded-start-4 d-none d-lg-block" style="overflow: hidden">
                                 </div>
                                 <!-- Форма -->
-                                <div class="col-9 px-4">
+                                <div class="col-12 col-lg-9 px-sm-0 px-4">
                                     <form th:method="POST" th:action="@{/database/sport/{letter}/title/update(letter = ${letter})}" th:object="${sportForm}">
                                         <input th:id="'hidden3-0-' + ${sport_stat.index}" type="number" th:field="*{id}" hidden>
                                         <script th:inline="javascript">
                                             document.getElementById('hidden3-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
                                         </script>
-                                        <div class="row pt-4 px-4" style="height: 100%">
-                                            <div class="col-10">
+                                        <div class="row row-cols-1 row-cols-lg-2 pt-4 px-4" style="height: 100%">
+                                            <div class="col-12 col-lg-10 mb-2">
                                                 <div class="form-floating">
                                                     <input th:id="'text-0-' + ${sport_stat.index}" type="text" class="form-control" placeholder="title" th:field="*{title}">
                                                     <label th:form="'text-0-' + ${sport_stat.index}">Название</label>
@@ -279,7 +275,7 @@
                                                     document.getElementById('text-0-' + [[${sport_stat.index}]]).value = [[${sport}]].title;
                                                 </script>
                                             </div>
-                                            <div class="col-2 d-flex justify-content-center">
+                                            <div class="col-12 col-lg-2 d-flex justify-content-center mb-2">
                                                 <input type="submit" class="btn btn-lg btn-outline-secondary my-auto" value="Обновить" style="width: 100%">
                                             </div>
                                         </div>
@@ -290,8 +286,8 @@
                                         <script th:inline="javascript">
                                             document.getElementById('hidden-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
                                         </script>
-                                        <div class="row px-4" style="height: 100%">
-                                            <div class="col-5">
+                                        <div class="row row-cols-1 row-cols-lg-3 px-4" style="height: 100%">
+                                            <div class="col-12 col-lg-5 mb-2">
                                                 <div th:if="${sport.getSeason().getTitle} != ''">
                                                     <div class="form-floating">
                                                         <select th:id="'select-0-' + ${sport_stat.index}" class="form-select" th:field="*{season}">
@@ -312,7 +308,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-5">
+                                            <div class="col-12 col-lg-5 mb-2">
                                                 <div th:if="${sport.getSportFilterType().getTitle} != ''">
                                                     <div class="form-floating">
                                                         <select th:id="'select2-0-' + ${sport_stat.index}" class="form-select" th:field="*{filter}">
@@ -333,7 +329,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-2 d-flex justify-content-center">
+                                            <div class="col-12 col-lg-2 d-flex justify-content-center mb-2">
                                                 <input type="submit" class="btn btn-lg btn-outline-secondary my-auto" value="Установить" style="width: 100%">
                                             </div>
                                         </div>
@@ -346,14 +342,14 @@
                                         <script th:inline="javascript">
                                             document.getElementById('hidden2-0-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
                                         </script>
-                                        <div class="row px-4">
-                                            <div class="col-10">
+                                        <div class="row row-cols-1 row-cols-lg-2 px-4">
+                                            <div class="col-12 col-lg-10 mb-2">
                                                 <div class="form-floating">
                                                     <input th:id="'dis-name-0-' + ${sport_stat.index}" type="text" class="form-control" placeholder="Название дисциплины" th:field="*{title}">
                                                     <label th:for="'dis-name-0-' + ${sport_stat.index}">Название дисциплины</label>
                                                 </div>
                                             </div>
-                                            <div class="col-2 d-flex justify-content-center">
+                                            <div class="col-12 col-lg-2 d-flex justify-content-center mb-2">
                                                 <input type="submit" class="btn btn-lg btn-outline-secondary my-auto" value="Добавить" style="width: 100%">
                                             </div>
                                         </div>
@@ -366,26 +362,26 @@
                                         <script th:inline="javascript">
                                             document.getElementById('hidden3-1-' + [[${sport_stat.index}]]).value = [[${sport}]].id;
                                         </script>
-                                        <div class="row px-4">
-                                            <div class="col-2">
+                                        <div class="row row-cols-1 row-cols-lg-4 px-4">
+                                            <div class="col-12 col-lg-2 mb-2">
                                                 <div class="form-floating">
                                                     <input th:id="'min-age-0-' + ${sport_stat.index}" type="number" class="form-control" placeholder="numbers" th:field="*{minAge}">
                                                     <label th:for="'min-age-0-' + ${sport_stat.index}">Мин.возраст</label>
                                                 </div>
                                             </div>
-                                            <div class="col-2">
+                                            <div class="col-12 col-lg-2 mb-2">
                                                 <div class="form-floating">
                                                     <input th:id="'max-age-0-' + ${sport_stat.index}" type="number" class="form-control" placeholder="numbers" th:field="*{maxAge}">
                                                     <label th:for="'max-age-0-' + ${sport_stat.index}">Макс.возраст</label>
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-12 col-lg-6 mb-2">
                                                 <div class="form-floating">
                                                     <input th:id="'title-group-0-' + ${sport_stat.index}" type="text" class="form-control" placeholder="text" th:field="*{title}">
                                                     <label th:for="'title-group-0-' + ${sport_stat.index}">Название возрастной группы</label>
                                                 </div>
                                             </div>
-                                            <div class="col-2 d-flex justify-content-center">
+                                            <div class="col-12 col-lg-2 d-flex justify-content-center mb-2">
                                                 <input type="submit" class="btn btn-lg btn-outline-secondary my-auto" value="Добавить" style="width: 100%">
                                             </div>
                                         </div>
@@ -538,14 +534,14 @@
 
     <div class="row rounded-4 shadow m-4">
         <!-- Картинка -->
-        <div class="col-3 p-0 img-bg-control-2 rounded-start-4" style="overflow: hidden">
+        <div class="col-lg-3 p-0 img-bg-control-2 rounded-start-4 d-none d-lg-block" style="overflow: hidden">
         </div>
         <!-- Форма -->
-        <div class="col-9 px-4">
+        <div class="col-12 col-lg-9 px-4">
             <form th:method="POST" th:action="@{/database/sport/{letter}/add(letter = ${letter})}" th:object="${sportForm}">
 
-                <div class="row my-3">
-                    <div class="col">
+                <div class="row row-cols-1 row-cols-lg-2 my-3">
+                    <div class="col-12 col-lg-6 mb-2">
                         <div class="form-floating">
                             <select id="season" class="form-select" th:field="*{season}">
                                 <option th:each="season : ${seasons}" th:value="${season}" th:text="${season.getTitle()}"></option>
@@ -553,7 +549,7 @@
                             <label for="season">Сезон</label>
                         </div>
                     </div>
-                    <div class="col">
+                    <div class="col-12 col-lg-6 mb-2">
                         <div class="form-floating">
                             <select class="form-select" th:field="*{sportFilterType}">
                                 <option id="filter" th:each="filter : ${filters}" th:value="${filter}" th:text="${filter.getTitle()}"></option>
@@ -563,14 +559,14 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-8">
+                <div class="row row-cols-1 row-cols-lg-2 mb-3">
+                    <div class="col-12 col-lg-8 mb-2">
                         <div class="form-floating">
                             <input id="sport-title" type="text" class="form-control" placeholder="Введите название вида спорта" aria-label="title" aria-describedby="base-title" th:field="*{title}">
                             <label for="sport-title">Название вида спорта</label>
                         </div>
                     </div>
-                    <div class="col-4 d-flex align-items-center">
+                    <div class="col-12 col-lg-4 d-flex align-items-center mb-2">
                         <div class="d-grid" style="width: 100%">
                             <input class="btn btn-lg btn-outline-secondary" type="submit" value="Добавить">
                         </div>

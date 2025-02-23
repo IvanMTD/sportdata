@@ -6,8 +6,8 @@
     </div>
     <div class="row">
         <div class="col-12">
-            <div class="row m-2">
-                <div class="col-3">
+            <div class="row row-cols-1 row-cols-lg-4 m-2">
+                <div class="col-12 col-lg-3 mb-2">
                     <div class="input-group">
                         <span class="input-group-text" id="sport-select-label">Спорт</span>
                         <select type="date" id="sport-select" class="form-select" aria-label="sport select" aria-describedby="sport-select-label">
@@ -16,7 +16,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-12 col-lg-3 mb-2">
                     <div class="input-group">
                         <span class="input-group-text" id="start-date-label">с</span>
                         <input type="date" id="start-date" class="form-control" placeholder="Start date" aria-label="Start date" aria-describedby="start-date-label">
@@ -28,7 +28,7 @@
                     // Устанавливаем значение по умолчанию для input
                     document.getElementById('start-date').value = startDate;
                 </script>
-                <div class="col-3">
+                <div class="col-12 col-lg-3 mb-2">
                     <div class="input-group">
                         <span class="input-group-text" id="end-date-label">по</span>
                         <input type="date" id="end-date" class="form-control" placeholder="End date" aria-label="End date" aria-describedby="end-date-label">
@@ -40,7 +40,7 @@
                     // Устанавливаем значение по умолчанию для input
                     document.getElementById('end-date').value = endDate;
                 </script>
-                <div class="col-3">
+                <div class="col-12 col-lg-3 mb-2">
                     <input type="button" class="btn btn-outline-secondary w-100" value="Показать" onclick="updateData()">
                 </div>
             </div>
@@ -88,6 +88,7 @@
                 sport:sport,
             },
             success:function (response){
+                console.log(response);
                 charts.empty();
                 setupAllData(response);
                 hideSpinner();
@@ -560,13 +561,13 @@
                 <thead>
                     <th scope="col">#</th>
                     <th scope="col">ФИО</th>
-                    <th scope="col">Дата рождения</th>
-                    <th scope="col">ЕКП</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Дата рождения</th>
+                    <th scope="col" class="d-none d-lg-table-cell">ЕКП</th>
                     <th scope="col">Вид спорта</th>
-                    <th scope="col">Дисциплина</th>
-                    <th scope="col">Группа</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Дисциплина</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Группа</th>
                     <th scope="col">Место</th>
-                    <th scope="col">Школа</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Школа</th>
                 </thead>
                 <tbody id="t-body">
 
@@ -626,13 +627,13 @@
                 <tr>
                     <th scope="row">${currentCount}</th>
                     <td><a href="/database/participant/${data.pid}/show">${data.fullName}</a></td>
-                    <td>${data.birthday}</td>
-                    <td><a href="/contest/show?contest=${data.cid}">${data.ekp}</a></td>
+                    <td class="d-none d-lg-table-cell">${data.birthday}</td>
+                    <td class="d-none d-lg-table-cell"><a href="/contest/show?contest=${data.cid}">${data.ekp}</a></td>
                     <td>${data.sport}</td>
-                    <td>${data.discipline}</td>
-                    <td>${data.group}</td>
+                    <td class="d-none d-lg-table-cell">${data.discipline}</td>
+                    <td class="d-none d-lg-table-cell">${data.group}</td>
                     <td>${data.place}</td>
-                    <td>${data.school} - ${data.subject}</td>
+                    <td class="d-none d-lg-table-cell">${data.school} - ${data.subject}</td>
                 </tr>
             `;
             if(tempFullName !== data.fullName || tempBirthday !== data.birthday){

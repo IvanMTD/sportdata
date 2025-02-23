@@ -1,7 +1,6 @@
 <div class="container-fluid my-5">
     <div class="row" th:if="${participant.getId()} != 0">
-        <div class="col"></div>
-        <div class="col-6">
+        <div class="col-12">
             <div class="container border border-2 border-dark rounded-4">
                 <div class="row bg-dark text-center rounded-top-3">
                     <h1>
@@ -14,34 +13,34 @@
                 <!-- КАРТОЧКА СПОРТСМЕНА! ФИО ДАТА -->
 
                 <div id="data-i">
-                    <div class="row">
-                        <div class="col">
+                    <div class="row row-cols-1 row-cols-lg-3">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Фамилия</span>
                                 <input type="text" class="form-control" th:value="${participant.getLastname()}" disabled>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Имя</span>
                                 <input type="text" class="form-control" th:value="${participant.getName()}" disabled>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Отчество</span>
                                 <input type="text" class="form-control" th:value="${participant.getMiddleName()}" disabled>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
+                    <div class="row row-cols-1 row-cols-lg-2">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Дата рождения</span>
                                 <input type="text" class="form-control" th:value="${participant.getDate()}" disabled>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Возраст</span>
                                 <input type="text" class="form-control" th:value="${participant.getAge()}" disabled>
@@ -56,8 +55,8 @@
                         <script th:inline="javascript">
                             document.getElementById('pid').value = [[${participant}]].id;
                         </script>
-                        <div class="row">
-                            <div class="col">
+                        <div class="row row-cols-1 row-cols-lg-2">
+                            <div class="col-12 col-lg-6 my-1">
                                 <div class="input-group py-2">
                                     <span class="input-group-text">Фамилия</span>
                                     <input id="lastname" type="text" class="form-control" th:field="*{lastname}">
@@ -66,7 +65,7 @@
                                     </script>
                                 </div>
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-lg-6 my-1">
                                 <div class="input-group py-2">
                                     <span class="input-group-text">Имя</span>
                                     <input id="name" type="text" class="form-control" th:field="*{name}">
@@ -84,8 +83,8 @@
                                 <small class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col">
+                        <div class="row row-cols-1 row-cols-lg-2">
+                            <div class="col-12 col-lg-6 my-1">
                                 <div class="input-group py-2">
                                     <span class="input-group-text">Отчество</span>
                                     <input id="middleName" type="text" class="form-control" th:field="*{middleName}">
@@ -94,7 +93,7 @@
                                     </script>
                                 </div>
                             </div>
-                            <div class="col">
+                            <div class="col-12 col-lg-6 my-1">
                                 <div class="input-group py-2">
                                     <span class="input-group-text">Дата рождения</span>
                                     <input id="birthday" type="date" class="form-control" th:field="*{birthday}">
@@ -160,14 +159,14 @@
                     </p>
                 </div>
                 <div id="subject-school">
-                    <div class="row" th:each="school : ${participant.getSchools()}">
-                        <div class="col">
+                    <div class="row row-cols-1 row-cols-lg-2" th:each="school : ${participant.getSchools()}">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Субъект</span>
                                 <input type="text" class="form-control" th:value="${school.getSubject().getTitle()}" disabled>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Организация</span>
                                 <input type="text" class="form-control" th:value="${school.getTitle()}" disabled>
@@ -176,12 +175,12 @@
                     </div>
                 </div>
                 <div id="subject-school-edit" hidden>
-                    <form th:each="school, stat : ${participant.getSchools()}" class="row" th:method="POST" th:action="@{/database/participant/subject/school/update}" th:object="${participant}">
+                    <form th:each="school, stat : ${participant.getSchools()}" class="row row-cols-1 row-cols-lg-3" th:method="POST" th:action="@{/database/participant/subject/school/update}" th:object="${participant}">
                         <input th:id="'pid' + ${stat.index}" type="number" th:field="*{id}" hidden>
                         <script th:inline="javascript">
                             document.getElementById('pid' + [[${stat.index}]]).value=[[${participant}]].id;
                         </script>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Субъект</span>
                                 <input th:id="'old-subject-id' + ${stat.index}" type="number" th:field="*{oldSubjectId}" hidden>
@@ -221,7 +220,7 @@
                                 </script>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Организация</span>
                                 <input th:id="'old-school-id' + ${stat.index}" type="number" th:field="*{oldSchoolId}" hidden>
@@ -232,7 +231,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="row">
                                 <div class="col">
                                     <div class="d-grid py-2">
@@ -249,12 +248,12 @@
                     </form>
                 </div>
                 <div id="subject-school-edit-2" hidden>
-                    <form class="row" th:method="POST" th:action="@{/database/participant/subject/school/add}" th:object="${participant}">
+                    <form class="row row-cols-1 row-cols-lg-3" th:method="POST" th:action="@{/database/participant/subject/school/add}" th:object="${participant}">
                         <input id="pid-2" type="number" th:field="*{id}" hidden>
                         <script th:inline="javascript">
                             document.getElementById('pid-2').value=[[${participant}]].id;
                         </script>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Субъект</span>
                                 <select id="subject-select-2" class="form-select" th:field="*{subjectId}" onchange="setupSchools2()">
@@ -292,14 +291,14 @@
                                 </script>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Организация</span>
                                 <select id="school-select-2" class="form-select" th:field="*{schoolId}">
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="d-grid py-2">
                                 <input class="btn btn-outline-secondary" type="submit" value="Добавить">
                             </div>
@@ -341,14 +340,14 @@
                     </p>
                 </div>
                 <div id="qi">
-                    <div class="row" th:each="q : ${participant.getQualifications()}">
-                        <div class="col">
+                    <div class="row row-cols-1 row-cols-lg-2" th:each="q : ${participant.getQualifications()}">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Разряд</span>
                                 <input type="text" class="form-control" th:value="${q.getCategory.getTitle()}" disabled>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-6 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Вид спорта</span>
                                 <input type="text" class="form-control" th:value="${q.getSport().getTitle()}" disabled>
@@ -357,12 +356,12 @@
                     </div>
                 </div>
                 <div id="qi-edit" hidden>
-                    <form th:method="POST" th:action="@{/database/participant/{pid}/qualification/update(pid=${participant.getId()})}" th:each="q, qs : ${participant.getQualifications()}" class="row" th:object="${qualificationForm}">
+                    <form th:method="POST" th:action="@{/database/participant/{pid}/qualification/update(pid=${participant.getId()})}" th:each="q, qs : ${participant.getQualifications()}" class="row row-cols-1 row-cols-lg-3" th:object="${qualificationForm}">
                         <input th:id="'id-q-' + ${qs.index}" type="number" th:field="*{id}" hidden>
                         <script th:inline="javascript">
                             document.getElementById('id-q-' + [[${qs.index}]]).value = [[${q.getId()}]];
                         </script>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Разряд</span>
                                 <select th:id="'select-q-' + ${qs.index}" class="form-select" th:field="*{category}">
@@ -373,7 +372,7 @@
                                 </script>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Вид спорта</span>
                                 <select th:id="'select-s-' + ${qs.index}" class="form-select" th:field="*{sportId}">
@@ -384,7 +383,7 @@
                                 </script>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="row">
                                 <div class="col">
                                     <div class="d-grid py-2">
@@ -401,12 +400,12 @@
                     </form>
                 </div>
                 <div id="qi-add" hidden>
-                    <form class="row" th:method="POST" th:action="@{/database/participant/qualification/add}" th:object="${qualificationForm}">
+                    <form class="row row-cols-1 row-cols-lg-3" th:method="POST" th:action="@{/database/participant/qualification/add}" th:object="${qualificationForm}">
                         <input id="pid-control" type="number" th:field="*{participantId}" hidden>
                         <script th:inline="javascript">
                             document.getElementById('pid-control').value = [[${participant.getId()}]];
                         </script>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Разряд</span>
                                 <select class="form-select" th:field="*{category}">
@@ -414,7 +413,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="input-group py-2">
                                 <span class="input-group-text">Вид спорта</span>
                                 <select class="form-select" th:field="*{sportId}">
@@ -422,7 +421,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-12 col-lg-4 my-1">
                             <div class="d-grid py-2">
                                 <input class="btn btn-outline-secondary" type="submit" value="Добавить">
                             </div>
@@ -457,31 +456,31 @@
                 </script>
 
                 <div class="row" th:if="${contests} != null and${contests.size()} != 0">
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">Дата</p>
                     </div>
                     <div class="col">
                         <p class="text-center">ЕКП №</p>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">Название</p>
                     </div>
                     <div class="col">
                         <p class="text-center">Спорт</p>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">Дисциплина</p>
                     </div>
                     <div class="col">
                         <p class="text-center">Занял место</p>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">До</p>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">Состояние</p>
                     </div>
-                    <div class="col">
+                    <div class="col d-none d-xs-block d-sm-block">
                         <p class="text-center">После</p>
                     </div>
                 </div>
@@ -489,31 +488,31 @@
                 <div th:each="contest, stat : ${contests}">
                     <a class="text-dark" th:href="@{/contest/show(contest=${contest.contestId})}" style="text-decoration: none">
                         <div class="row border border-dark m-1">
-                            <div class="col border-end border-dark">
+                            <div class="col border-end border-dark d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.date}"></small>
                             </div>
                             <div class="col border-end border-dark">
                                 <small th:text="${contest.ekpNum}"></small>
                             </div>
-                            <div class="col border-end border-dark">
+                            <div class="col border-end border-dark d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.contestTitle}"></small>
                             </div>
                             <div class="col border-end border-dark">
                                 <small th:text="${contest.sportTitle}"></small>
                             </div>
-                            <div class="col border-end border-dark">
+                            <div class="col border-end border-dark d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.disciplineTitle}"></small>
                             </div>
                             <div class="col border-end border-dark">
                                 <small th:text="${contest.place}"></small>
                             </div>
-                            <div class="col border-end border-dark">
+                            <div class="col border-end border-dark d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.mainCategory.title}"></small>
                             </div>
-                            <div class="col border-end border-dark">
+                            <div class="col border-end border-dark d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.condition.title}"></small>
                             </div>
-                            <div class="col">
+                            <div class="col d-none d-xs-block d-sm-block">
                                 <small th:text="${contest.newCategory.title}"></small>
                             </div>
                         </div>
@@ -548,11 +547,9 @@
                 </div>
             </div>
         </div>
-        <div class="col"></div>
     </div>
     <div class="row py-5" th:if="${participant.getId()} == 0">
-        <div class="col"></div>
-        <div class="col-6">
+        <div class="col-12">
             <hr>
             <h1 class="text-center">
                 <small>
@@ -561,6 +558,5 @@
             </h1>
             <hr>
         </div>
-        <div class="col"></div>
     </div>
 </div>

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
+import ru.fcpsr.sportdata.enums.SportFilterType;
 import ru.fcpsr.sportdata.models.ArchiveSport;
 import ru.fcpsr.sportdata.models.Contest;
 import ru.fcpsr.sportdata.models.Place;
@@ -16,7 +17,9 @@ import ru.fcpsr.sportdata.services.*;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,102 +52,156 @@ public class ContestRestController {
     }
 
     private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId) {
-        long currentTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
+
         return contestService.getAllByDate(start, end)
-                .flatMap(this::buildContestDTO)
+                .flatMap(this::processContest)
                 .collectList()
-                .map(contests -> filterAndSortContests(contests, sportId))
-                .map(this::categorizeAndBuildRestContest)
-                .map(restContest -> {
-                    long delta = System.currentTimeMillis();
-                    long seconds = (delta - currentTime) / 1000;
-                    log.info("Выполнено за {} секунд", seconds);
-                    return restContest;
-                });
+                .flatMap(contests -> processContestList(contests, sportId))
+                .doOnTerminate(() ->
+                        log.info("Method execution time: {} second",(System.currentTimeMillis() - startTime) / 1000)
+                );
     }
 
-    private Mono<ContestDTO> buildContestDTO(Contest contest) {
+    private Mono<ContestDTO> processContest(Contest contest) {
         ContestDTO contestDTO = new ContestDTO(contest);
 
-        Mono<SubjectDTO> subjectMono = subjectService.getById(contest.getSubjectId()).map(SubjectDTO::new);
-        Mono<TypeOfSportDTO> sportMono = sportService.findById(contest.getTypeOfSportId()).map(TypeOfSportDTO::new);
-        Mono<List<SportDTO>> sportsMono = archiveSportService.getAllByIdIn(contest.getASportIds())
-                .flatMap(this::buildSportDTO)
-                .collectList();
-
-        return Mono.zip(subjectMono, sportMono, sportsMono)
-                .map(tuple -> {
+        return Mono.zip(
+                        fetchSubject(contest.getSubjectId()),
+                        fetchSport(contest.getTypeOfSportId()),
+                        fetchTotalSubjects(contest.getId(), contest.getTotalSubjects())
+                )
+                .flatMap(tuple -> {
                     contestDTO.setSubject(tuple.getT1());
                     contestDTO.setSport(tuple.getT2());
-                    contestDTO.setSports(tuple.getT3());
-                    return contestDTO;
+                    contestDTO.setSubjects(tuple.getT3());
+                    return fetchArchiveSports(contest.getASportIds())
+                            .doOnNext(contestDTO::setSports)
+                            .thenReturn(contestDTO);
                 });
     }
 
-    private Mono<SportDTO> buildSportDTO(ArchiveSport archiveSport) {
+    private Mono<SubjectDTO> fetchSubject(int subjectId) {
+        return subjectService.getById(subjectId)
+                .map(SubjectDTO::new);
+    }
+
+    private Mono<TypeOfSportDTO> fetchSport(int sportId) {
+        return sportService.findById(sportId)
+                .map(TypeOfSportDTO::new);
+    }
+
+    private Mono<List<SubjectDTO>> fetchTotalSubjects(long contestId, Set<Integer> subjectIds) {
+        return contestService.getById(contestId)
+                .flatMapMany(contest -> subjectService.getByIds(subjectIds))
+                .map(SubjectDTO::new)
+                .collectSortedList(Comparator.comparing(SubjectDTO::getTitle));
+    }
+
+    private Mono<List<SportDTO>> fetchArchiveSports(Set<Long> archiveSportIds) {
+        Set<Long> convertedIds = new HashSet<>(archiveSportIds);
+
+        return archiveSportService.getAllByIdIn(convertedIds)
+                .flatMap(this::processArchiveSport)
+                .sort(Comparator.comparing(SportDTO::getId))
+                .collectList();
+    }
+
+    private Mono<SportDTO> processArchiveSport(ArchiveSport archiveSport) {
         SportDTO sportDTO = new SportDTO(archiveSport);
 
-        Mono<DisciplineDTO> disciplineMono = disciplineService.getById(archiveSport.getDisciplineId()).map(DisciplineDTO::new);
-        Mono<AgeGroupDTO> groupMono = groupService.getById(archiveSport.getAgeGroupId()).map(AgeGroupDTO::new);
-        Mono<List<PlaceDTO>> placesMono = placeService.getAllByIdIn(archiveSport.getPlaceIds())
-                .flatMap(this::buildPlaceDTO)
-                .collectList();
-
-        return Mono.zip(disciplineMono, groupMono, placesMono)
-                .map(tuple -> {
+        return Mono.zip(
+                        fetchDiscipline(archiveSport.getDisciplineId()),
+                        fetchAgeGroup(archiveSport.getAgeGroupId()),
+                        fetchPlaces(archiveSport.getPlaceIds())
+                )
+                .doOnNext(tuple -> {
                     sportDTO.setDiscipline(tuple.getT1());
                     sportDTO.setGroup(tuple.getT2());
                     sportDTO.setPlaces(tuple.getT3());
-                    return sportDTO;
-                });
+                })
+                .thenReturn(sportDTO);
     }
 
-    private Mono<PlaceDTO> buildPlaceDTO(Place place) {
+    private Mono<DisciplineDTO> fetchDiscipline(int disciplineId) {
+        return disciplineService.getById(disciplineId)
+                .map(DisciplineDTO::new);
+    }
+
+    private Mono<AgeGroupDTO> fetchAgeGroup(int ageGroupId) {
+        return groupService.getById(ageGroupId)
+                .map(AgeGroupDTO::new);
+    }
+
+    private Mono<List<PlaceDTO>> fetchPlaces(Set<Long> placeIds) {
+        return placeService.getAllByIdIn(placeIds)
+                .flatMap(this::processPlace)
+                .sort(Comparator.comparing(PlaceDTO::getPlace))
+                .collectList();
+    }
+
+    private Mono<PlaceDTO> processPlace(Place place) {
         PlaceDTO placeDTO = new PlaceDTO(place);
 
-        Mono<QualificationDTO> qualificationMono = qualificationService.getById(place.getQualificationId()).map(QualificationDTO::new);
-        Mono<ParticipantDTO> participantMono = participantService.getById(place.getParticipantId()).map(ParticipantDTO::new);
-        Mono<SportSchoolDTO> schoolMono = schoolService.getById(place.getSportSchoolId())
-                .flatMap(school -> {
-                    SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
-                    return subjectService.getById(school.getSubjectId())
-                            .map(SubjectDTO::new)
-                            .doOnNext(schoolDTO::setSubject)
-                            .thenReturn(schoolDTO);
-                });
-
-        return Mono.zip(qualificationMono, participantMono, schoolMono)
-                .map(tuple -> {
+        return Mono.zip(
+                        fetchQualification(place.getQualificationId()),
+                        fetchParticipant(place.getParticipantId()),
+                        fetchSportSchool(place.getSportSchoolId())
+                )
+                .doOnNext(tuple -> {
                     placeDTO.setQualification(tuple.getT1());
                     placeDTO.setParticipant(tuple.getT2());
                     placeDTO.setSchool(tuple.getT3());
-                    return placeDTO;
-                });
+                })
+                .thenReturn(placeDTO);
     }
 
-    private List<ContestDTO> filterAndSortContests(List<ContestDTO> contests, int sportId) {
-        return contests.stream()
-                .filter(contest -> sportId == -1 || contest.getSportId() == sportId)
+    private Mono<QualificationDTO> fetchQualification(int qualificationId) {
+        return qualificationService.getById(qualificationId)
+                .map(QualificationDTO::new);
+    }
+
+    private Mono<ParticipantDTO> fetchParticipant(int participantId) {
+        return participantService.getById(participantId)
+                .map(ParticipantDTO::new);
+    }
+
+    private Mono<SportSchoolDTO> fetchSportSchool(int schoolId) {
+        return schoolService.getById(schoolId)
+                .flatMap(school ->
+                        fetchSubject(school.getSubjectId())
+                                .map(subjectDTO -> {
+                                    SportSchoolDTO schoolDTO = new SportSchoolDTO(school);
+                                    schoolDTO.setSubject(subjectDTO);
+                                    return schoolDTO;
+                                })
+                );
+    }
+
+    private Mono<RestContest> processContestList(List<ContestDTO> contests, int sportId) {
+        List<ContestDTO> filtered = sportId == -1
+                ? contests
+                : contests.stream()
+                .filter(c -> c.getSportId() == sportId)
+                .toList();
+
+        List<ContestDTO> sorted = filtered.stream()
                 .sorted(Comparator.comparing(ContestDTO::getSportTitle))
                 .collect(Collectors.toList());
-    }
 
-    private RestContest categorizeAndBuildRestContest(List<ContestDTO> contests) {
         RestContest restContest = new RestContest();
-        restContest.setTotal(contests.size());
-        restContest.setContests(contests);
+        restContest.setTotal(sorted.size());
+        restContest.setContests(sorted);
 
-        for (ContestDTO contest : contests) {
-            switch (contest.getSport().getSportFilterType()) {
-                case OLYMPIC -> restContest.getOlympic().add(contest);
-                case NO_OLYMPIC -> restContest.getNoOlympic().add(contest);
-                case ADAPTIVE -> restContest.getAdaptive().add(contest);
-            }
-        }
+        sorted.forEach(contest -> {
+            SportFilterType type = contest.getSport().getSportFilterType();
+            if (type == SportFilterType.OLYMPIC) restContest.getOlympic().add(contest);
+            else if (type == SportFilterType.NO_OLYMPIC) restContest.getNoOlympic().add(contest);
+            else if (type == SportFilterType.ADAPTIVE) restContest.getAdaptive().add(contest);
+        });
 
-        return restContest;
+        return Mono.just(restContest);
     }
-
 
     /*private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId){
         return contestService.getAllByDate(start,end).flatMap(contest -> {
