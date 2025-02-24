@@ -4,10 +4,10 @@
             <p class="fs-2 text-secondary">Реестр соревнований</p>
         </div>
     </div>
-    <div class="row rounded-4 shadow">
-        <div class="col-2 p-0 img-bg-control-1 rounded-start-4" style="overflow: hidden">
+    <div class="row row-cols-1 row-cols-lg-2 rounded-4 shadow">
+        <div class="col-lg-2 p-0 img-bg-control-1 rounded-start-4 d-none d-xs-block d-sm-block" style="overflow: hidden">
         </div>
-        <div class="col-10 px-4">
+        <div class="col-12 col-lg-10 px-4">
             <form class="row p-4" th:method="GET" th:action="@{/contest/search/{page}(page=${page})}">
                 <div class="col-11">
                     <div class="form-floating">
@@ -71,13 +71,13 @@
                 <div class="col border-end border-bottom">
                     <p class="text-center"><b>ЕКП</b></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p class="text-center"><b>Название и Даты</b></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p class="text-center"><b>Субъект</b></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p class="text-center"><b>Вид спорта</b></p>
                 </div>
                 <div class="col border-bottom">
@@ -88,14 +88,14 @@
                 <div class="col border-end border-bottom">
                     <p th:text="${contest.getEkp()}"></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p th:text="${contest.getTitle()}"></p>
                     <p th:text="${contest.beginningDate} + ' - ' + ${contest.endingDate}"></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p th:text="${contest.getSubject().getTitle()}"></p>
                 </div>
-                <div class="col border-end border-bottom">
+                <div class="col border-end border-bottom d-none d-xs-block d-sm-block">
                     <p th:text="${contest.getSport().getTitle()}"></p>
                 </div>
                 <div class="col border-bottom d-flex justify-content-center align-items-center">
