@@ -1,6 +1,7 @@
 package ru.fcpsr.sportdata.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ContestService {
@@ -178,7 +180,19 @@ public class ContestService {
         });
     }
 
-    public Flux<Contest> getAllByDate(LocalDate start, LocalDate end) {
-        return contestRepository.findAllByBeginningBetweenAndComplete(start,end,true);
+    public Flux<Contest> getAllBySpecification(LocalDate start, LocalDate end, int sportId, int subjectId) {
+        if(sportId != -1 && subjectId != -1){
+            log.info("first");
+            return contestRepository.findAllByBeginningBetweenAndTypeOfSportIdAndSubjectIdAndComplete(start,end,sportId,subjectId,true);
+        }else if(sportId == -1 && subjectId != -1){
+            log.info("second");
+            return contestRepository.findAllByBeginningBetweenAndSubjectIdAndComplete(start,end,subjectId,true);
+        }else if(sportId != -1){
+            log.info("third");
+            return contestRepository.findAllByBeginningBetweenAndTypeOfSportIdAndComplete(start,end,sportId,true);
+        }else{
+            log.info("fourth");
+            return contestRepository.findAllByBeginningBetweenAndComplete(start,end,true);
+        }
     }
 }

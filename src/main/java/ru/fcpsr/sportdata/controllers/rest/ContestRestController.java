@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.enums.SportFilterType;
@@ -43,18 +44,18 @@ public class ContestRestController {
     public Mono<RestContest> getAllContests(@RequestParam(name = "year") int year){
         LocalDate startOfYear = LocalDate.of(year, 1, 1);
         LocalDate endOfYear = LocalDate.of(year, 12, 31);
-        return getCompleteDate(startOfYear,endOfYear, -1);
+        return getCompleteDate(startOfYear,endOfYear, -1, -1);
     }
 
     @GetMapping("/get/all/by/date")
-    public Mono<RestContest> getAllByDate(@RequestParam(name = "start") LocalDate start, @RequestParam(name = "end") LocalDate end, @RequestParam(name = "sport") int sportId){
-        return getCompleteDate(start,end,sportId);
+    public Mono<RestContest> getAllByDate(@RequestParam(name = "start") LocalDate start, @RequestParam(name = "end") LocalDate end, @RequestParam(name = "sport") int sportId, @RequestParam(name = "subject") int subjectId){
+        return getCompleteDate(start,end,sportId,subjectId);
     }
 
-    private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId) {
+    private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId, int subjectId) {
         long startTime = System.currentTimeMillis();
 
-        return contestService.getAllByDate(start, end)
+        return contestService.getAllBySpecification(start, end,sportId, subjectId)
                 .flatMap(this::processContest)
                 .collectList()
                 .flatMap(contests -> processContestList(contests, sportId))
