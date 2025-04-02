@@ -63,6 +63,15 @@
     <div class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3 g-3" id="charts"></div>
     <br>
     <div class="row p-0 m-0">
+        <div class="d-grid col-6 mx-auto p-0">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="participant-subject-select">Участники по субъеткам</span>
+                <select class="form-select" aria-label="Subject User" aria-describedby="participant-subject-select" onchange="updateParticipant(this.value)">
+                    <option value="-1">Все</option>
+                    <option th:each="subject : ${subjects}" th:value="${subject.getId}" th:text="${subject.getTitle}"></option>
+                </select>
+            </div>
+        </div>
         <div class="col-12 p-0 m-0" id="places-info">
 
         </div>
@@ -70,6 +79,7 @@
 </div>
 
 <script>
+
     let colorsSet = [
         '#F46060','#F09872','#F3D179','#DCE8BA',
         '#B0D9B1','#618264','#79AC78',
@@ -99,7 +109,6 @@
                 subject:subject
             },
             success:function (response){
-                console.log(response);
                 charts.empty();
                 setupAllData(response);
                 hideSpinner();
@@ -564,6 +573,81 @@
         }
     }
 
+    let dataArray = [];
+
+    function updateParticipant(value) {
+        let places = $('#places-info');
+        places.empty();
+
+        let innerHTML = `
+            <table class="table table-striped table-hover">
+                <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">ФИО</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Дата рождения</th>
+                    <th scope="col" class="d-none d-lg-table-cell">ЕКП</th>
+                    <th scope="col">Вид спорта</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Дисциплина</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Группа</th>
+                    <th scope="col">Место</th>
+                    <th scope="col" class="d-none d-lg-table-cell">Школа</th>
+                </thead>
+                <tbody id="t-body">
+
+                </tbody>
+            </table>
+        `;
+        places.append(innerHTML);
+
+        let dataArrayClone = Array.from(dataArray);
+        if(value != -1){
+            dataArrayClone = dataArrayClone.filter(item => item.subjectId == value);
+        }
+
+        dataArrayClone.sort((a, b) => {
+            if (a.fullName < b.fullName) {
+                return -1;
+            }
+            if (a.fullName > b.fullName) {
+                return 1;
+            }
+            return 0;
+        });
+
+        let count = 1;
+        let tBody = $('#t-body');
+        let tempFullName = '';
+        let tempBirthday = '';
+        let finalHtml = '';
+        dataArrayClone.forEach(function (data){
+            let currentCount;
+            if(tempFullName === data.fullName && tempBirthday === data.birthday){
+                currentCount = '-';
+            }else{
+                currentCount = count;
+            }
+            finalHtml += `
+                <tr>
+                    <th scope="row">${currentCount}</th>
+                    <td><a href="/database/participant/${data.pid}/show">${data.fullName}</a></td>
+                    <td class="d-none d-lg-table-cell">${data.birthday}</td>
+                    <td class="d-none d-lg-table-cell"><a href="/contest/show?contest=${data.cid}">${data.ekp}</a></td>
+                    <td>${data.sport}</td>
+                    <td class="d-none d-lg-table-cell">${data.discipline}</td>
+                    <td class="d-none d-lg-table-cell">${data.group}</td>
+                    <td>${data.place}</td>
+                    <td class="d-none d-lg-table-cell">${data.school} - ${data.subject}</td>
+                </tr>
+            `;
+            if(tempFullName !== data.fullName || tempBirthday !== data.birthday){
+                count++;
+            }
+            tempFullName = data.fullName;
+            tempBirthday = data.birthday;
+        });
+        tBody.append(finalHtml);
+    }
+
     function createPlaceInfoData(response){
         let places = $('#places-info');
         places.empty();
@@ -587,7 +671,6 @@
         `;
         places.append(innerHTML);
         let contests = response.contests;
-        let dataArray = [];
         for(let i=0; i<contests.length; i++){
             let sports = contests[i].sports;
             for(let j=0; j<sports.length; j++){
@@ -605,7 +688,8 @@
                         group: sports[j].group.title,
                         place: places[k].place,
                         school: places[k].school.title,
-                        subject: places[k].school.subject.title
+                        subject: places[k].school.subject.title,
+                        subjectId: places[k].school.subject.id
                     }
                     dataArray.push(body);
                 }

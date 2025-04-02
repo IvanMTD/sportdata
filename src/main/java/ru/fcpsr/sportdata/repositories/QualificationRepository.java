@@ -6,6 +6,7 @@ import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.enums.Category;
 import ru.fcpsr.sportdata.models.Qualification;
 
+import java.util.List;
 import java.util.Set;
 
 public interface QualificationRepository extends ReactiveCrudRepository<Qualification,Integer> {

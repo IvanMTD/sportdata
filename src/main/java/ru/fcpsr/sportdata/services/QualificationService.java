@@ -9,6 +9,7 @@ import ru.fcpsr.sportdata.enums.Category;
 import ru.fcpsr.sportdata.models.Qualification;
 import ru.fcpsr.sportdata.repositories.QualificationRepository;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Service

@@ -455,6 +455,7 @@ public class ContestMonitoringDTO {
             long doneCount = parts.stream().filter(p -> p.getCondition() == Condition.DONE).count();
             long allowCount = parts.stream().filter(p -> p.getCondition() == Condition.ALLOW).count();
             long notAllowCount = parts.stream().filter(p -> p.getCondition() == Condition.NOT_ALLOW).count();
+            long noCount = parts.stream().filter(p -> p.getCondition() == Condition.NO).count();
 
             Map<Category, Long> doneResults = parts.stream()
                     .filter(p -> p.getCondition() == Condition.DONE)
@@ -466,6 +467,8 @@ public class ContestMonitoringDTO {
 
             StringBuilder result = new StringBuilder();
             result.append("участники с квалификацией - ").append(firstLetterLow(category.getTitle())).append(" - ").append(count).append(humanFormat(count));
+
+
 
             if (allowCount > 0) {
                 result.append(", подтвердили: ").append(allowCount).append(humanFormat(allowCount));
@@ -480,6 +483,7 @@ public class ContestMonitoringDTO {
                 result.append(", выполнили: ").append(doneCount);
                 appendCategoryResults(result, doneResults);
             }
+
             String res = result.toString() + ";";
             analytics.add(res);
         }
