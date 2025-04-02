@@ -55,7 +55,7 @@ public class ContestRestController {
     private Mono<RestContest> getCompleteDate(LocalDate start, LocalDate end, int sportId, int subjectId) {
         long startTime = System.currentTimeMillis();
 
-        return contestService.getAllBySpecification(start, end,sportId, subjectId)
+        return contestService.getAllBySpecification(start, end, sportId, subjectId)
                 .flatMap(this::processContest)
                 .collectList()
                 .flatMap(contests -> processContestList(contests, sportId))
