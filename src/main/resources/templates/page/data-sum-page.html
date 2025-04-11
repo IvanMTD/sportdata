@@ -8,108 +8,156 @@
             </h1>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row px-3 px-lg-0">
         <div class="col my-4 rounded-4 shadow">
+            <div id="chart-1"></div>
             <script th:inline="javascript">
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
 
-                function drawChart() {
-                    let baseSportList = [[${baseSportChart}]];
-                    let baseSportArray = [];
-                    for(let i=0; i<baseSportList.length; i++){
-                        if(i==0){
-                            baseSportArray[i] = ['Название','Вид спорта является базовым в'];
-                        }else{
-                            baseSportArray[i] = [baseSportList[i].title, baseSportList[i].count];
+                var bsList = [[${baseSportChart}]];
+                var titles = [];
+                var counts = [];
+                var structs = [];
+                bsList.forEach((data) => {
+                    titles.push(data.title);
+                    counts.push(data.count);
+                    structs.push({
+                        x: data.title,
+                        y: data.count
+                    })
+                });
+
+                var options = {
+                    chart: {
+                        height: 300,
+                        type: 'line',
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                    },
+                    markers: {
+                        size: 5,
+                    },
+                    title: {
+                        text: 'Количество субъектов для которых вид спорта является базовым', // Текст заголовка
+                        align: 'left', // Выравнивание заголовка (left, center, right)
+                        style: {
+                            fontSize: '16px', // Размер шрифта
+                            fontWeight: 'bold', // Жирность шрифта
+                            color: '#333' // Цвет текста
                         }
+                    },
+                    series: [{
+                        name: 'Вид спорта является базовым в',
+                        data: counts
+                    }],
+                    xaxis: {
+                        categories: titles
                     }
-                    let baseSportData = google.visualization.arrayToDataTable(baseSportArray,false);
-
-                    let baseSportOptions = {
-                        title: 'Количество субъектов для которых вид спорта является базовым',
-                        legend: 'none',
-                        bar: {
-                            groupWidth: '100%'
-                        }
-                    };
-
-                    let baseSportChart = new google.visualization.ColumnChart(document.getElementById('baseSportChart'));
-
-                    baseSportChart.draw(baseSportData, baseSportOptions);
                 }
+
+                var chart = new ApexCharts(document.querySelector("#chart-1"), options);
+
+                chart.render();
             </script>
-            <div id="baseSportChart" style="height: 300px"></div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row px-3 px-lg-0">
         <div class="col my-4 rounded-4 shadow">
+            <div id="chart-2"></div>
             <script th:inline="javascript">
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
 
-                function drawChart() {
-                    let baseSportSubjectList = [[${baseSportForSubjectChart}]];
-                    let baseSportSubjectArray = [];
-                    for(let i=0; i<baseSportSubjectList.length; i++){
-                        if(i==0){
-                            baseSportSubjectArray[i] = ['Название','Всего базовых видов спорта в субъекте'];
-                        }else{
-                            baseSportSubjectArray[i] = [baseSportSubjectList[i].title, baseSportSubjectList[i].count];
+                var bsList = [[${baseSportForSubjectChart}]];
+                var titles = [];
+                var counts = [];
+                bsList.forEach((data) => {
+                    titles.push(data.title);
+                    counts.push(data.count);
+                });
+
+                var options = {
+                    chart: {
+                        height: 300,
+                        type: 'line',
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                    },
+                    markers: {
+                        size: 5,
+                    },
+                    title: {
+                        text: 'Количество базовых видов спорта в субъектах', // Текст заголовка
+                        align: 'left', // Выравнивание заголовка (left, center, right)
+                        style: {
+                            fontSize: '16px', // Размер шрифта
+                            fontWeight: 'bold', // Жирность шрифта
+                            color: '#333' // Цвет текста
                         }
+                    },
+                    series: [{
+                        name: 'Всего базовых видов спорта в субъекте',
+                        data: counts
+                    }],
+                    xaxis: {
+                        categories: titles
                     }
-                    let baseSportSubjectData = google.visualization.arrayToDataTable(baseSportSubjectArray,false);
-
-                    let baseSportSubjectOptions = {
-                        title: 'Количество базовых видов спорта в субъектах',
-                        legend: 'none',
-                        bar: {
-                            groupWidth: '65%'
-                        }
-                    };
-
-                    let baseSportSubjectChart = new google.visualization.ColumnChart(document.getElementById('baseSportSubjectChart'));
-
-                    baseSportSubjectChart.draw(baseSportSubjectData, baseSportSubjectOptions);
                 }
+
+                var chart = new ApexCharts(document.querySelector("#chart-2"), options);
+
+                chart.render();
             </script>
-            <div id="baseSportSubjectChart" style="height: 300px"></div>
         </div>
     </div>
 
-    <div class="row">
+    <div class="row px-3 px-lg-0">
         <div class="col my-4 rounded-4 shadow">
+            <div id="chart-3"></div>
             <script th:inline="javascript">
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
 
-                function drawChart() {
-                    let baseSubjectList = [[${baseSubjectChart}]];
-                    let baseSubjectArray = [];
-                    for(let i=0; i<baseSubjectList.length; i++){
-                        if(i==0){
-                            baseSubjectArray[i] = ['Название','Всего школ в субъекте'];
-                        }else{
-                            baseSubjectArray[i] = [baseSubjectList[i].title, baseSubjectList[i].count];
+                var bsList = [[${baseSubjectChart}]];
+                var titles = [];
+                var counts = [];
+                bsList.forEach((data) => {
+                    titles.push(data.title);
+                    counts.push(data.count);
+                });
+
+                var options = {
+                    chart: {
+                        height: 300,
+                        type: 'line',
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                    },
+                    markers: {
+                        size: 5,
+                    },
+                    title: {
+                        text: 'Количество школ в субъектах', // Текст заголовка
+                        align: 'left', // Выравнивание заголовка (left, center, right)
+                        style: {
+                            fontSize: '16px', // Размер шрифта
+                            fontWeight: 'bold', // Жирность шрифта
+                            color: '#333' // Цвет текста
                         }
+                    },
+                    series: [{
+                        name: 'Всего школ в субъекте',
+                        data: counts
+                    }],
+                    xaxis: {
+                        categories: titles
                     }
-                    let baseSubjectData = google.visualization.arrayToDataTable(baseSubjectArray,false);
-
-                    let baseSubjectOptions = {
-                        title: 'Количество школ в субъектах',
-                        legend: 'none',
-                        bar: {
-                            groupWidth: '65%'
-                        }
-                    };
-
-                    let baseSubjectChart = new google.visualization.ColumnChart(document.getElementById('baseSubjectChart'));
-
-                    baseSubjectChart.draw(baseSubjectData, baseSubjectOptions);
                 }
+
+                var chart = new ApexCharts(document.querySelector("#chart-3"), options);
+
+                chart.render();
             </script>
-            <div id="baseSubjectChart" style="height: 300px"></div>
         </div>
     </div>
 
