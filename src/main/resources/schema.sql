@@ -70,6 +70,7 @@ create table if not exists sport_school(
     title text not null,
     address text,
     subject_id int,
+    inn text,
     participant_ids integer[]
 );
 

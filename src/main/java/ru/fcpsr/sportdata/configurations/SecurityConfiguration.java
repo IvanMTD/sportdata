@@ -11,6 +11,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.server.savedrequest.ServerRequestCache;
 import org.springframework.security.web.server.savedrequest.WebSessionServerRequestCache;
@@ -40,7 +41,7 @@ public class SecurityConfiguration {
         authenticationWebFilter.setServerAuthenticationConverter(authenticationConverter());
 
         return http
-                .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler))
+                .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler).csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .authorizeExchange(auth -> auth
                         .pathMatchers("/fw/**","/js/**","/css/**","/img/**","/favicon.ico").permitAll()

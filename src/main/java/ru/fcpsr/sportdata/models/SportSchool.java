@@ -23,6 +23,7 @@ public class SportSchool {
     private String title;
     private String address;
     private int subjectId;
+    private String inn;
     private Set<Integer> participantIds = new HashSet<>();
 
     public void addParticipant(Participant participant){

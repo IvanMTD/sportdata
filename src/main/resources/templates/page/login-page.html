@@ -1,7 +1,6 @@
 <div class="container">
     <div class="row">
-        <div class="col"></div>
-        <div class="col py-5">
+        <div class="d-grid col-12 col-md-6 col-lg-4 mx-auto py-5">
             <form th:method="POST" th:action="@{/auth/login}">
                 <div class="mb-3">
                     <label for="username" class="form-label">Имя пользователя</label>
@@ -28,6 +27,5 @@
                 <button type="submit" class="btn btn-primary">Войти</button>
             </form>
         </div>
-        <div class="col"></div>
     </div>
 </div>

@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.fcpsr.sportdata.dto.MyResponse;
 import ru.fcpsr.sportdata.dto.UserDTO;
@@ -34,5 +32,21 @@ public class AccountRestController {
             u.setPassword(userService.getEncoder().encode(password));
             return userService.save(u).flatMap(saved -> Mono.just(ResponseEntity.ok().body(new MyResponse(saved, "Смена пароля прошла успешно"))));
         }).onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MyResponse(null,"Не удалось сменить пароль"))));
+    }
+
+    @GetMapping("/user/get/all")
+    public Flux<SysUser> getAllUsers(){
+        return userService.getAll();
+    }
+
+    @PostMapping("/user/update")
+    public Mono<ResponseEntity<MyResponse>> updateUser(@RequestBody UserDTO userDTO){
+        log.info("incoming: [{}]",userDTO);
+        return userService.updateUserData(userDTO).flatMap(user -> {
+            MyResponse myResponse = new MyResponse();
+            myResponse.setMessage("Успешное обновление!");
+            myResponse.setObject(user);
+            return Mono.just(ResponseEntity.ok().body(myResponse));
+        });
     }
 }

@@ -9,6 +9,7 @@ import ru.fcpsr.sportdata.models.Participant;
 import ru.fcpsr.sportdata.models.SportSchool;
 import ru.fcpsr.sportdata.repositories.SportSchoolRepository;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -44,6 +45,7 @@ public class SportSchoolService {
             sportSchool.setTitle(sportSchoolDTO.getTitle());
             sportSchool.setAddress(sportSchoolDTO.getAddress());
             sportSchool.setSubjectId(sportSchoolDTO.getSubjectId());
+            sportSchool.setInn(sportSchoolDTO.getInn());
             return schoolRepository.save(sportSchool);
         });
     }
@@ -75,6 +77,7 @@ public class SportSchoolService {
         return schoolRepository.findById(sportSchoolDTO.getId()).flatMap(school -> {
             school.setTitle(sportSchoolDTO.getTitle());
             school.setAddress(sportSchoolDTO.getAddress());
+            school.setInn(sportSchoolDTO.getInn());
             return schoolRepository.save(school);
         });
     }
@@ -130,8 +133,11 @@ public class SportSchoolService {
 
     public Flux<SportSchool> getAllBySubjectIdAndTitle(int subjectId, String query) {
         String request = "%" + query + "%";
-        return schoolRepository.findAllByTitleLikeIgnoreCaseAndSubjectId(request,subjectId);
-    }
+        Flux<SportSchool> schoolByTitle = schoolRepository.findAllByTitleLikeIgnoreCaseAndSubjectId(request,subjectId);
+        Flux<SportSchool> schoolByInn = schoolRepository.findAllByInnAndSubjectId(request,subjectId);
+
+        return Flux.merge(List.of(schoolByTitle, schoolByInn));
+     }
 
     public Mono<SportSchool> saveSchool(SportSchool s) {
         return schoolRepository.save(s);

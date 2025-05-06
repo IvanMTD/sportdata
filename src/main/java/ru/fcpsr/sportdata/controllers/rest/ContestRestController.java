@@ -17,10 +17,7 @@ import ru.fcpsr.sportdata.models.Place;
 import ru.fcpsr.sportdata.services.*;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -58,7 +55,7 @@ public class ContestRestController {
         return contestService.getAllBySpecification(start, end, sportId, subjectId)
                 .flatMap(this::processContest)
                 .collectList()
-                .flatMap(contests -> processContestList(contests, sportId))
+                .flatMap(this::processContestList)
                 .doOnTerminate(() ->
                         log.info("Method execution time: {} second",(System.currentTimeMillis() - startTime) / 1000)
                 );
@@ -179,12 +176,8 @@ public class ContestRestController {
                 );
     }
 
-    private Mono<RestContest> processContestList(List<ContestDTO> contests, int sportId) {
-        List<ContestDTO> filtered = sportId == -1
-                ? contests
-                : contests.stream()
-                .filter(c -> c.getSportId() == sportId)
-                .toList();
+    private Mono<RestContest> processContestList(List<ContestDTO> contests) {
+        List<ContestDTO> filtered = new LinkedList<>(contests);
 
         List<ContestDTO> sorted = filtered.stream()
                 .sorted(Comparator.comparing(ContestDTO::getSportTitle))

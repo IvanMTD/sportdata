@@ -19,11 +19,13 @@ public class SportSchoolDTO {
     private String address;
     private int subjectId;
     private SubjectDTO subject;
+    private String inn;
     private List<ParticipantDTO> participants = new ArrayList<>();
 
     public SportSchoolDTO(SportSchool school) {
         setId(school.getId());
         setTitle(school.getTitle());
         setAddress(school.getAddress());
+        setInn(school.getInn());
     }
 }

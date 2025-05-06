@@ -259,7 +259,7 @@
                                                     <datalist id="schools">
 
                                                     </datalist>
-                                                    <label for="input-school">Название школы</label>
+                                                    <label for="input-school">Название школы или ИНН</label>
                                                     <script>
                                                         function searchSchools(){
                                                             let search = $('#input-school').val();
@@ -276,7 +276,7 @@
                                                                     $('#schools').empty();
                                                                     response.forEach(function (school){
                                                                         $('#schools').append(`
-                                                                            <option value="${school.title}">${school.title}</option>
+                                                                            <option value="${school.title}">${school.title}, ИНН: ${school.inn}</option>
                                                                         `);
                                                                     });
                                                                 }

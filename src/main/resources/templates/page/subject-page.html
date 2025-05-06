@@ -212,6 +212,15 @@
                             </div>
                         </div>
 
+                        <div class="row pt-4">
+                            <div class="col">
+                                <div class="form-floating">
+                                    <input th:id="'school-inn-' + ${subject.id}" type="text" class="form-control" placeholder="Инн организации" th:field="*{inn}">
+                                    <label th:for="'school-inn-' + ${subject.id}">ИНН</label>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row py-4">
                             <div class="col d-flex align-items-center">
                                 <div class="d-grid gap-2" style="width: 100%">
@@ -243,6 +252,9 @@
                                     </div>
                                     <div class="col">
                                         <span th:text="${school.getAddress()}"></span>
+                                    </div>
+                                    <div class="col">
+                                        <span th:text="'ИНН: ' + ${school.getInn()}"></span>
                                     </div>
                                     <div class="col">
                                         <span class="muted float-end">
@@ -278,6 +290,15 @@
                                                     document.getElementById('school-address-' + [[${subject.getId()}]] + '-' + [[${school_stat.index}]]).value = [[${school}]].address;
                                                 </script>
                                                 <label th:for="'school-address-' + ${subject.id} + '-' + ${school_stat.index}">Адрес</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-floating">
+                                                <input th:id="'school-inn-' + ${subject.id} + '-' + ${school_stat.index}" placeholder="inn" type="text" class="form-control" th:field="*{inn}">
+                                                <script th:inline="javascript">
+                                                    document.getElementById('school-inn-' + [[${subject.getId()}]] + '-' + [[${school_stat.index}]]).value = [[${school}]].inn;
+                                                </script>
+                                                <label th:for="'school-inn-' + ${subject.id} + '-' + ${school_stat.index}">ИНН</label>
                                             </div>
                                         </div>
                                     </div>
