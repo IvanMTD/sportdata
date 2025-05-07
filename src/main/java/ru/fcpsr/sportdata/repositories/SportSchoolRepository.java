@@ -21,7 +21,7 @@ public interface SportSchoolRepository extends ReactiveCrudRepository<SportSchoo
 
     Flux<SportSchool> findAllByTitleLikeIgnoreCaseAndSubjectId(String title, int subjectId);
 
-    Flux<SportSchool> findAllByInnAndSubjectId(String request, int subjectId);
+    Flux<SportSchool> findAllByInnLikeIgnoreCaseAndSubjectId(String request, int subjectId);
 
     Mono<SportSchool> findByInn(String inn);
 }

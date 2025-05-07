@@ -136,10 +136,18 @@ public class SportSchoolService {
 
     public Flux<SportSchool> getAllBySubjectIdAndTitle(int subjectId, String query) {
         String request = "%" + query + "%";
-        Flux<SportSchool> schoolByTitle = schoolRepository.findAllByTitleLikeIgnoreCaseAndSubjectId(request,subjectId);
-        Flux<SportSchool> schoolByInn = schoolRepository.findAllByInnAndSubjectId(request,subjectId);
 
-        return Flux.merge(List.of(schoolByTitle, schoolByInn));
+        Flux<SportSchool> schoolByTitle = schoolRepository.findAllByTitleLikeIgnoreCaseAndSubjectId(request,subjectId);
+        Flux<SportSchool> schoolByInn = schoolRepository.findAllByInnLikeIgnoreCaseAndSubjectId(request,subjectId);
+
+        return Flux.merge(List.of(schoolByTitle, schoolByInn)).flatMap(school -> {
+            if(school != null){
+                System.out.println(school.getInn());
+                return Mono.just(school);
+            }else{
+                return Mono.empty();
+            }
+        });
      }
 
     public Mono<SportSchool> saveSchool(SportSchool s) {
