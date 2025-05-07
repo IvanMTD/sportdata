@@ -19,6 +19,7 @@ public class SportSchoolDTO {
     private String address;
     private int subjectId;
     private SubjectDTO subject;
+    @NotBlank(message = "Поле адрес обязательно для заполнения!")
     private String inn;
     private List<ParticipantDTO> participants = new ArrayList<>();
 

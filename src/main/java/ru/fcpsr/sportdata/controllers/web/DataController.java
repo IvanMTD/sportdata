@@ -362,7 +362,7 @@ public class DataController {
 
     @PostMapping("/subject/{letter}/add/school")
     public Mono<Rendering> addSchoolInSubject(@PathVariable(name = "letter") String letter, @ModelAttribute(name = "schoolForm") @Valid SportSchoolDTO sportSchoolDTO, Errors errors){
-        return schoolService.findByTitleAndSubjectId(sportSchoolDTO).flatMap(school -> {
+        return schoolService.findByInn(sportSchoolDTO.getInn()).flatMap(school -> {
             schoolValidation.setSportSchool(school);
             schoolValidation.validate(sportSchoolDTO,errors);
             if(errors.hasErrors()){
@@ -464,7 +464,7 @@ public class DataController {
 
     @PostMapping("/subject/{letter}/school/update")
     public Mono<Rendering> updateSchool(@PathVariable String letter, @ModelAttribute(name = "schoolForm") @Valid SportSchoolDTO sportSchoolDTO, Errors errors){
-        return schoolService.findByTitleAndSubjectId(sportSchoolDTO).flatMap(sportSchool -> {
+        return schoolService.findByInn(sportSchoolDTO.getInn()).flatMap(sportSchool -> {
             schoolValidation.setSportSchool(sportSchool);
             schoolValidation.validate(sportSchoolDTO, errors);
             if(errors.hasErrors()){

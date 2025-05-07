@@ -1,5 +1,6 @@
 package ru.fcpsr.sportdata.repositories;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -21,4 +22,6 @@ public interface SportSchoolRepository extends ReactiveCrudRepository<SportSchoo
     Flux<SportSchool> findAllByTitleLikeIgnoreCaseAndSubjectId(String title, int subjectId);
 
     Flux<SportSchool> findAllByInnAndSubjectId(String request, int subjectId);
+
+    Mono<SportSchool> findByInn(String inn);
 }

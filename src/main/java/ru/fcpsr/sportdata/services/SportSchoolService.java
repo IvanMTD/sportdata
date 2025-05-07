@@ -1,5 +1,6 @@
 package ru.fcpsr.sportdata.services;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,7 +21,9 @@ public class SportSchoolService {
     /**
      * FIND MONO
      */
-
+    public Mono<SportSchool> findByInn(String inn) {
+        return schoolRepository.findByInn(inn).defaultIfEmpty(new SportSchool());
+    }
     /**
      * FIND FLUX
      */

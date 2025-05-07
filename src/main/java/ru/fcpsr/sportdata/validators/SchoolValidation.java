@@ -23,8 +23,7 @@ public class SchoolValidation implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         SportSchoolDTO sportSchoolDTO = (SportSchoolDTO) target;
-        log.info("Валидация школ по названию времена прекращена ... ");
-        /*if(sportSchoolDTO.getTitle().equals(sportSchool.getTitle())){
+        if(sportSchoolDTO.getInn().equals(sportSchool.getInn())){
             if(sportSchoolDTO.getId() != 0){
                 if(sportSchoolDTO.getId() != sportSchool.getId()){
                     errors.rejectValue("title", "", "Вы пытаетесь добавить уже существующую в базе данных организацию!");
@@ -32,6 +31,6 @@ public class SchoolValidation implements Validator {
             }else {
                 errors.rejectValue("title", "", "Вы пытаетесь добавить уже существующую в базе данных организацию!");
             }
-        }*/
+        }
     }
 }
