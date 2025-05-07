@@ -42,6 +42,12 @@ public class UserService implements ReactiveUserDetailsService {
     public Mono<SysUser> save(SysUser user){
         return userRepository.save(user);
     }
+
+    public Mono<SysUser> save(UserDTO dto){
+        dto.setPassword(encoder.encode(dto.getPassword()));
+        SysUser user = new SysUser(dto);
+        return userRepository.save(user);
+    }
     // UPDATE
     public Mono<SysUser> updateUserData(UserDTO user) {
         return userRepository.findById(user.getId()).flatMap(u -> {
@@ -59,4 +65,7 @@ public class UserService implements ReactiveUserDetailsService {
         });
     }
     // DELETE
+    public Mono<SysUser> deleteUser(UserDTO dto){
+        return userRepository.findById(dto.getId()).flatMap(user -> userRepository.delete(user).then(Mono.just(user)));
+    }
 }

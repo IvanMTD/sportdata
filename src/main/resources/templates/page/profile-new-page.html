@@ -106,7 +106,7 @@
                     <button class="btn btn-link link-dark text-decoration-none m-auto"><i class="bi bi-person-lines-fill fs-4 m-auto" onclick="showAllUsers()"></i></button>
                 </div>
                 <div class="col d-flex">
-                    <button class="btn btn-link link-dark text-decoration-none m-auto"><i class="bi bi-person-fill-add fs-4 m-auto"></i></button>
+                    <button class="btn btn-link link-dark text-decoration-none m-auto"><i class="bi bi-person-fill-add fs-4 m-auto" onclick="showAddUser()"></i></button>
                 </div>
             </div>
         ` : ''}
@@ -247,11 +247,11 @@
                                                             <select class="form-select" id="user-role-list-${user.id}">
                                                                 ${roles.map((role) => {
                                                                     return `
-                                                                        <option value="${role}">${role}</option>
+                                                                        <option value="${role}" ${user.role === role ? 'selected' : ''}>${role}</option>
                                                                     `;
                                                                 }).join('')}
                                                             </select>
-                                                            <label class="ms-2" for="user-role-${user.id}">Роль</label>
+                                                            <label class="ms-2" for="user-role-list-${user.id}">Роль</label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -263,12 +263,115 @@
                                         </div>
                                     </div>
 
-                                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-trash-fill" onclick="deleteUser('${user.id}')"></i></button>
                                 </div>
                             </div>
                         </div>
                     `);
                 });
+            }
+        });
+    }
+
+    function deleteUser(id){
+        $.ajax({
+            url:'/api/account/user/delete',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: id
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrf.headerName, csrf.token);
+            },
+            success: (response) => {
+                console.log(response);
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.log(status,error);
+            }
+        });
+    }
+
+    function showAddUser(){
+        var $field = $('#action-menu');
+        $field.empty();
+        var html = `
+            <div class="row">
+                <div class="col-12 d-flex">
+                    <p class="fs-4 m-auto">Добавить пользователя</p>
+                </div>
+            </div>
+            <div class="row p-3" id="user-add"></div>
+        `;
+        $field.append(html);
+        var $addUser = $('#user-add');
+        $addUser.append(`
+            <div class="col-12">
+                <div class="row g-2">
+                    <div class="d-grig col-7 mx-auto form-floating">
+                        <input type="text" class="form-control" id="username" placeholder="username">
+                        <label class="ms-2" for="username">username</label>
+                        <div class="valid-feedback" id="username-valid"></div>
+                        <div class="invalid-feedback" id="username-invalid"></div>
+                    </div>
+                    <div class="d-grig col-7 mx-auto form-floating">
+                        <input type="password" class="form-control" id="password" placeholder="password">
+                        <label class="ms-2" for="email">password</label>
+                        <div class="valid-feedback" id="password-valid"></div>
+                        <div class="invalid-feedback" id="password-invalid"></div>
+                    </div>
+                    <div class="d-grig col-7 mx-auto form-floating">
+                        <input type="text" class="form-control" id="email" placeholder="email">
+                        <label class="ms-2" for="email">email</label>
+                        <div class="valid-feedback" id="email-valid"></div>
+                        <div class="invalid-feedback" id="email-invalid"></div>
+                    </div>
+                    <div class="d-grig col-7 mx-auto form-floating">
+                        <select class="form-select" id="user-role-list">
+                            ${roles.map((role) => {
+                                return `
+                                    <option value="${role}">${role}</option>
+                                `;
+                            }).join('')}
+                        </select>
+                        <label class="ms-2" for="user-role-list">Роль</label>
+                    </div>
+                    <div class="d-grid col-7 mx-auto">
+                        <button class="btn btn-outline-secondary btn-lg" onclick="createUser()">Отправить</button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+    }
+
+    function createUser(){
+        var username = $('#username').val();
+        var password = $('#password').val();
+        var email = $('#email').val();
+        var role = $('#user-role-list').val();
+
+        $.ajax({
+            url:'/api/account/user/add',
+            type: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                username: username,
+                password: password,
+                email: email,
+                role: role,
+            }),
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader(csrf.headerName, csrf.token);
+            },
+            success: (response) => {
+                console.log(response);
+                window.location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.log(status,error);
             }
         });
     }
@@ -292,7 +395,6 @@
                 xhr.setRequestHeader(csrf.headerName, csrf.token);
             },
             success: (response) => {
-                console.log(response.message, response.object);
                 var $modal = $('#user-edit-' + id);
                 $modal.modal('hide');
                 $('#user-username-' + id).text(response.object.username);

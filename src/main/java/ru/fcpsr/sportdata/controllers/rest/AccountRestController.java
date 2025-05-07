@@ -39,10 +39,32 @@ public class AccountRestController {
         return userService.getAll();
     }
 
+    @PostMapping("/user/add")
+    public Mono<ResponseEntity<MyResponse>> addUser(@RequestBody UserDTO userDTO){
+        log.info("incoming: [{}]",userDTO);
+        return userService.save(userDTO).flatMap(user -> {
+            MyResponse myResponse = new MyResponse();
+            myResponse.setMessage("Успешное добавление!");
+            myResponse.setObject(user);
+            return Mono.just(ResponseEntity.ok().body(myResponse));
+        });
+    }
+
     @PostMapping("/user/update")
     public Mono<ResponseEntity<MyResponse>> updateUser(@RequestBody UserDTO userDTO){
         log.info("incoming: [{}]",userDTO);
         return userService.updateUserData(userDTO).flatMap(user -> {
+            MyResponse myResponse = new MyResponse();
+            myResponse.setMessage("Успешное обновление!");
+            myResponse.setObject(user);
+            return Mono.just(ResponseEntity.ok().body(myResponse));
+        });
+    }
+
+    @PostMapping("/user/delete")
+    public Mono<ResponseEntity<MyResponse>> deleteUser(@RequestBody UserDTO userDTO){
+        log.info("incoming: [{}]",userDTO);
+        return userService.deleteUser(userDTO).flatMap(user -> {
             MyResponse myResponse = new MyResponse();
             myResponse.setMessage("Успешное обновление!");
             myResponse.setObject(user);
