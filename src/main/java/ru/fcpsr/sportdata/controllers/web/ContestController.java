@@ -16,6 +16,7 @@ import ru.fcpsr.sportdata.dto.*;
 import ru.fcpsr.sportdata.enums.Category;
 import ru.fcpsr.sportdata.enums.Condition;
 import ru.fcpsr.sportdata.enums.FederalStandard;
+import ru.fcpsr.sportdata.enums.SportFilterType;
 import ru.fcpsr.sportdata.models.*;
 import ru.fcpsr.sportdata.services.*;
 
@@ -420,6 +421,7 @@ public class ContestController {
                         .modelAttribute("index","contest-data-list")
                         .modelAttribute("sports", sportService.getAll())
                         .modelAttribute("subjects", subjectService.getAll())
+                        .modelAttribute("sportFilterTypes", SportFilterType.values())
                         .build()
         );
     }

@@ -62,13 +62,22 @@
     </div>
     <div class="row row-cols-sm-1 row-cols-dm-2 row-cols-lg-3 g-3" id="charts"></div>
     <br>
-    <div class="row p-0 m-0">
-        <div class="d-grid col-12 col-lg-6 mx-auto p-0">
+    <div class="row px-2 py-0 m-0">
+        <div class="col-12 col-lg-6 px-3">
             <div class="input-group mb-3">
-                <span class="input-group-text" id="participant-subject-select">Участники по субъеткам</span>
-                <select class="form-select" aria-label="Subject User" aria-describedby="participant-subject-select" onchange="updateParticipant(this.value)">
+                <span class="input-group-text" id="participant-subject-select">Участники по субъектам</span>
+                <select class="form-select" aria-label="Subject User" aria-describedby="participant-subject-select" id="selector-subject" onchange="updateParticipant()">
                     <option value="-1">Все</option>
                     <option th:each="subject : ${subjects}" th:value="${subject.getId}" th:text="${subject.getTitle}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6 px-3">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="sport-type-select">Спорт</span>
+                <select class="form-select" aria-label="Sport Type" aria-describedby="sport-type-select" id="selector-sport" onchange="updateParticipant()">
+                    <option value="-1">Все</option>
+                    <option th:each="type : ${sportFilterTypes}" th:value="${type}" th:text="${type.getTitle()}"></option>
                 </select>
             </div>
         </div>
@@ -576,7 +585,7 @@
 
     let dataArray = [];
 
-    function updateParticipant(value) {
+    function updateParticipant() {
         let places = $('#places-info');
         places.empty();
 
@@ -601,8 +610,18 @@
         places.append(innerHTML);
 
         let dataArrayClone = Array.from(dataArray);
-        if(value != -1){
-            dataArrayClone = dataArrayClone.filter(item => item.subjectId == value);
+
+        let $subjectValue = $('#selector-subject').val();
+        let $sportValue = $('#selector-sport').val();
+
+        console.log($subjectValue,$sportValue);
+
+        if($subjectValue != -1){
+            dataArrayClone = dataArrayClone.filter(item => item.subjectId == $subjectValue);
+        }
+
+        if($sportValue != -1){
+            dataArrayClone = dataArrayClone.filter(item => item.sportFilterType == $sportValue);
         }
 
         dataArrayClone.sort((a, b) => {
@@ -691,7 +710,8 @@
                         place: places[k].place,
                         school: places[k].school.title,
                         subject: places[k].school.subject.title,
-                        subjectId: places[k].school.subject.id
+                        subjectId: places[k].school.subject.id,
+                        sportFilterType: contests[i].sport.sportFilterType
                     }
                     dataArray.push(body);
                 }
